@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; // Add React Router hooks
 import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import RandomGame from '../../sidePages/RandomGames/RandomGame';
@@ -6,13 +7,12 @@ import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 
 function PcGames() {
-    // Function to get URL search params
-    const getSearchParams = () => {
-        if (typeof window === 'undefined') return new URLSearchParams();
-        return new URLSearchParams(window.location.search);
-    };
+    // React Router hooks instead of window.location
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    const searchParams = getSearchParams();
+    // Parse search params using React Router's location
+    const searchParams = new URLSearchParams(location.search);
     const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
 
     // Function to check if a game is new (within 2 days) with validation
@@ -53,14 +53,11 @@ function PcGames() {
             setError(null);
             setIsLoading(true);
             try {
-                const params = new URLSearchParams();
-                params.set('page', currentPage);
-                params.set('limit', itemsPerPage);
-                if (searchParams.get('tags')) params.set('tags', searchParams.get('tags'));
-                if (searchParams.get('gameMode')) params.set('gameMode', searchParams.get('gameMode'));
-                if (searchParams.get('sizeLimit')) params.set('sizeLimit', searchParams.get('sizeLimit'));
-                if (searchParams.get('releaseYear')) params.set('releaseYear', searchParams.get('releaseYear'));
-                if (searchParams.get('sortBy')) params.set('sortBy', searchParams.get('sortBy'));
+                const params = new URLSearchParams(location.search); // Use location.search
+
+                // Ensure page and limit are set
+                if (!params.get('page')) params.set('page', currentPage.toString());
+                params.set('limit', itemsPerPage.toString());
 
                 const res = await fetch(
                     `${process.env.VITE_API_URL}/api/apps/category/pc?${params.toString()}`,
@@ -84,16 +81,16 @@ function PcGames() {
             }
         };
         fetchData();
-    }, [currentPage]);
+    }, [location.search]); // Changed to location.search instead of currentPage
 
     // Update current page when URL changes
     useEffect(() => {
-        const params = getSearchParams();
+        const params = new URLSearchParams(location.search);
         const page = parseInt(params.get('page') || '1', 10);
         if (page !== currentPage) {
             setCurrentPage(page);
         }
-    }, [currentPage]);
+    }, [location.search, currentPage]);
 
     // Helper to extract filters from URL
     const extractFiltersFromSearchParams = (params) => {
@@ -175,19 +172,17 @@ function PcGames() {
     // Sync filters state with URL
     useEffect(() => {
         setFilters(extractFiltersFromSearchParams(searchParams));
-        // eslint-disable-next-line
-    }, []);
+    }, [location.search]); // Changed to location.search
 
     const handlePageChange = (newPage) => {
         // Validate page range
         const validPage = Math.max(1, Math.min(newPage, totalPages));
         // Preserve all current filters and sortBy
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(location.search);
         params.set('page', validPage);
-        window.history.pushState({}, '', `?${params.toString()}`);
-        setCurrentPage(validPage);
+        // Use navigate instead of window.history.pushState
+        navigate(`?${params.toString()}`);
     };
-
 
     const createSlug = (title) => {
         return title
@@ -199,7 +194,7 @@ function PcGames() {
 
     // Helper: Map filter modal values to backend query params
     const mapFiltersToQuery = (filters) => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(location.search); // Use current location
         // Genres: convert selected genre IDs to names, then comma-separated
         if (filters.genres && filters.genres.length > 0) {
             // Find genre names from GENRES (copy from FilterModal)
@@ -300,8 +295,9 @@ function PcGames() {
         const params = mapFiltersToQuery(filters);
         // Always reset to page 1 on filter change
         params.set('page', '1');
-        window.history.pushState({}, '', `?${params.toString()}`);
-        setCurrentPage(1);
+        // Use navigate to trigger the navigation and re-render
+        setIsLoading(true); // Show loading state
+        navigate(`?${params.toString()}`);
         setFilterModalOpen(false);
     };
 
@@ -324,11 +320,12 @@ function PcGames() {
 
     // Clear all filters
     const handleClearFilters = () => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(location.search);
         ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
         params.set('page', '1');
-        window.history.pushState({}, '', `?${params.toString()}`);
-        setCurrentPage(1);
+        // Use navigate to trigger the navigation and re-render
+        setIsLoading(true); // Show loading state
+        navigate(`?${params.toString()}`);
     };
 
     return (
@@ -414,6 +411,7 @@ function PcGames() {
                                     alt={ele.title}
                                     onError={(e) => {
                                         e.target.onerror = null;
+                                        e.target.src = '/default-game.png';
                                     }}
                                     className="w-full h-full object-cover rounded-t-xl transition-transform duration-700 ease-in-out transform group-hover:scale-110"
                                 />
@@ -480,7 +478,7 @@ function PcGames() {
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={handlePageChange}
-                            isLoading={false}
+                            isLoading={isLoading}
                         />
                     </div>
 
