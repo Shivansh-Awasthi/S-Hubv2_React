@@ -7,8 +7,6 @@ import FilterModal from '../../Utilities/Filters/FilterModal';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import CategorySkeleton from '../../skeletons/CategorySkeleton.jsx';
 
-
-
 // Utility function to create URL-friendly slugs
 function createSlug(text) {
     return text
@@ -179,16 +177,28 @@ function MacExclusives({ serverData, initialPage = 1 }) {
         return () => clearTimeout(timer);
     }, [serverData, location.search, currentPage]);
 
-    // Fetch data when page changes (client-side)
+    // Fetch data when page changes (client-side) - FIXED: Added location.search dependency
     useEffect(() => {
-
         const fetchData = async () => {
             setIsPageTransitioning(true);
             // show skeleton while fetching
             setIsLoading(true);
             try {
+                // Use current URL search params for API call
+                const params = new URLSearchParams(location.search);
+
+                // Ensure limit is set
+                if (!params.get('limit')) {
+                    params.set('limit', ITEMS_PER_PAGE.toString());
+                }
+
+                // Ensure page is set
+                if (!params.get('page')) {
+                    params.set('page', currentPage.toString());
+                }
+
                 const res = await fetch(
-                    `${process.env.VITE_API_URL}/api/apps/category/ps4?page=${currentPage}&limit=${ITEMS_PER_PAGE}`,
+                    `${process.env.VITE_API_URL}/api/apps/category/ps4?${params.toString()}`,
                     {
                         headers: { 'X-Auth-Token': process.env.VITE_API_TOKEN },
                     }
@@ -214,35 +224,27 @@ function MacExclusives({ serverData, initialPage = 1 }) {
         };
 
         fetchData();
-    }, [currentPage, ITEMS_PER_PAGE]);
+    }, [currentPage, ITEMS_PER_PAGE, location.search]); // ADDED location.search dependency
 
 
     // Helper: Map filter modal values to backend query params
     const mapFiltersToQuery = (filters) => {
-        const params = new URLSearchParams(location.search);
+        const params = new URLSearchParams();
         const genreNames = filters.genres?.map(id => {
             const found = GENRES.find(g => g.id === id);
             return found ? found.name : null;
         }).filter(Boolean);
         if (genreNames && genreNames.length > 0) {
             params.set('tags', genreNames.join(','));
-        } else {
-            params.delete('tags');
         }
         if (filters.gameMode && filters.gameMode !== 'any') {
             params.set('gameMode', filters.gameMode === 'single' ? 'Singleplayer' : 'Multiplayer');
-        } else {
-            params.delete('gameMode');
         }
         if (filters.size) {
             params.set('sizeLimit', filters.size);
-        } else {
-            params.delete('sizeLimit');
         }
         if (filters.year) {
             params.set('releaseYear', filters.year);
-        } else {
-            params.delete('releaseYear');
         }
         if (filters.popularity && filters.popularity !== 'all') {
             let sortBy = 'newest';
@@ -256,19 +258,19 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                 default: sortBy = 'newest';
             }
             params.set('sortBy', sortBy);
-        } else {
-            params.delete('sortBy');
         }
-        params.set('page', '1');
         return params;
     };
 
-    // Handle filter apply
+    // Handle filter apply - FIXED: Now properly triggers data reload
     const handleApplyFilters = (filters) => {
         const params = mapFiltersToQuery(filters);
         // show skeleton while new filtered results load
         setIsLoading(true);
+        // Reset to page 1 when applying new filters
+        params.set('page', '1');
         navigate(`${pathname}?${params.toString()}`);
+        setFilterModalOpen(false);
     };
 
     // Check if any filter is active
@@ -277,14 +279,12 @@ function MacExclusives({ serverData, initialPage = 1 }) {
         return keys.some(key => searchParams.get(key));
     };
 
-    // Clear all filters
+    // Clear all filters - FIXED: Now properly triggers data reload
     const handleClearFilters = () => {
-        const params = new URLSearchParams(location.search);
-        ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
-        params.set('page', '1');
         // show skeleton while clearing filters and fetching
         setIsLoading(true);
-        navigate(`${pathname}?${params.toString()}`);
+        // Navigate to base URL without any filter parameters
+        navigate(`${pathname}?page=1`);
     };
 
     // Handle page change with improved UX
@@ -297,7 +297,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
         setIsLoading(true);
         // Preserve all filters
         const params = new URLSearchParams(location.search);
-        params.set('page', newPage);
+        params.set('page', newPage.toString());
         navigate(`${pathname}?${params.toString()}`);
 
         if (typeof window !== 'undefined') {
@@ -753,6 +753,5 @@ function MacExclusives({ serverData, initialPage = 1 }) {
         </div>
     );
 }
-
 
 export default MacExclusives;
