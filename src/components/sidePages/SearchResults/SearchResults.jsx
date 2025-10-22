@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom'; // ADD THIS IMPORT
 import { CiLock } from 'react-icons/ci';
 import SearchSkeleton from './../../skeletons/SeatchResultSkeleton.jsx';
 import { jwtDecode } from 'jwt-decode';
@@ -19,6 +20,9 @@ const createSlug = (text) => {
 };
 
 const SearchResults = () => {
+    // Use React Router's useLocation to get current URL
+    const location = useLocation(); // ADD THIS
+
     // Query state from URL
     const [query, setQuery] = useState('');
     const [data, setData] = useState([]);
@@ -75,12 +79,12 @@ const SearchResults = () => {
         }
     };
 
-    // Get query from URL on mount
+    // Get query from URL on mount AND when URL changes
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = new URLSearchParams(location.search);
         const urlQuery = urlParams.get('query') || '';
         setQuery(urlQuery);
-    }, []);
+    }, [location.search]); // ADD location.search dependency
 
     // Fetch user data from token
     useEffect(() => {
