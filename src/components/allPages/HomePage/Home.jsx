@@ -6,6 +6,7 @@ import { FaPlaystation } from "react-icons/fa";
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import HomeSkeleton from '../../skeletons/HomeSkeleton';
 import axios from 'axios';
+import LiveCounter from '../../Utilities/Counter/LiveCounter.jsx';
 
 
 const images = [
@@ -248,6 +249,13 @@ const HomeClient = () => {
                             />
                         ))}
                     </div>
+                </div>
+            </div>
+
+            <div>
+                {/* This div will be visible based on the role */}
+                <div style={{ display: isAdmin ? 'block' : 'none' }}>
+                    <LiveCounter />
                 </div>
             </div>
 
