@@ -32,6 +32,7 @@ import SingleApp from './components/allPages/SinglePage/SingleApp.jsx';
 import UpdateApps from './components/Admin/UpdateApps.jsx';
 import PaidGameAdminPage from './components/Admin/PaidGameAdminPage.jsx';
 import CreateApps from './components/Admin/CreateApps.jsx';
+import GamePage from './components/Utilities/Gamepage.jsx';
 
 function App() {
   return (
@@ -97,6 +98,8 @@ function App() {
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/copyright-holders" element={<Dmca />} />
                 <Route path="/donate" element={<Donate />} />
+
+                <Route path="/gamepage" element={<GamePage />} />
 
 
               </Routes>
