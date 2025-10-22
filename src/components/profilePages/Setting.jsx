@@ -20,8 +20,9 @@ const SettingsForm = ({ user, onSubmit }) => {
             await onSubmit({ avatarUrl, username, email, oldPassword });
             setSuccess("Profile updated successfully! Please log in again.");
             setTimeout(() => {
-                localStorage.removeItem("token");
-                window.location.href = "/login";
+                window.location.reload();
+                window.location.href = "/";
+
             }, 1000);
         } catch (err) {
             setError(err.message || "Update failed");
