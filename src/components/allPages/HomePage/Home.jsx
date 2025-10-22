@@ -203,7 +203,7 @@ const HomeClient = () => {
 
                     {/* Progress bar and nav buttons */}
                     <div className="container mx-auto px-6 lg:px-8">
-                        <div className="absolute bottom-8 left-0 right-0 z-12 flex items-center justify-between">
+                        <div className="absolute bottom-8 left-0 right-0 z-10 flex items-center justify-between">
                             {/* Progress bar */}
                             <div className="w-1/3">
                                 <div className="h-1 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
@@ -211,7 +211,7 @@ const HomeClient = () => {
                                 </div>
                             </div>
                             {/* Nav buttons */}
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 z-10">
                                 <button
                                     className="relative flex items-center justify-center w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all duration-300"
                                     aria-label="Previous slide"
@@ -235,7 +235,7 @@ const HomeClient = () => {
                     </div>
 
                     {/* Pagination Dots for all screens */}
-                    <div className="absolute flex space-x-3 bottom-7 left-1/2 transform -translate-x-1/2">
+                    <div className="absolute flex space-x-3 bottom-7 left-1/2 transform -translate-x-1/2 z-10">
                         {images.map((_, index) => (
                             <button
                                 key={index}
