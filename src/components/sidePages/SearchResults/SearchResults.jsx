@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom'; // ADD THIS IMPORT
+import { useLocation, Link } from 'react-router-dom'; // Added Link import
 import { CiLock } from 'react-icons/ci';
 import SearchSkeleton from './../../skeletons/SeatchResultSkeleton.jsx';
 import { jwtDecode } from 'jwt-decode';
@@ -21,7 +21,7 @@ const createSlug = (text) => {
 
 const SearchResults = () => {
     // Use React Router's useLocation to get current URL
-    const location = useLocation(); // ADD THIS
+    const location = useLocation();
 
     // Query state from URL
     const [query, setQuery] = useState('');
@@ -33,7 +33,9 @@ const SearchResults = () => {
     const itemsPerPage = 48;
     const [userData, setUserData] = useState({
         purchasedGames: [],
-        isAdmin: false
+        isAdmin: false,
+        isMod: false,
+        isPremium: false
     });
     const [hasSearched, setHasSearched] = useState(false);
 
@@ -84,23 +86,39 @@ const SearchResults = () => {
         const urlParams = new URLSearchParams(location.search);
         const urlQuery = urlParams.get('query') || '';
         setQuery(urlQuery);
-    }, [location.search]); // ADD location.search dependency
+    }, [location.search]);
 
-    // Fetch user data from token
+    // Fetch user data from token - UPDATED with full role checking
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
             try {
                 const decoded = jwtDecode(token);
                 const purchasedGames = decoded?.purchasedGames || [];
-                const isAdmin = decoded?.role === 'ADMIN';
+                const userRole = decoded?.role;
+                const isAdmin = userRole === 'ADMIN';
+                const isMod = userRole === 'MOD';
+                const isPremium = userRole === 'PREMIUM';
+
                 setUserData({
                     purchasedGames,
-                    isAdmin
+                    isAdmin,
+                    isMod,
+                    isPremium,
+                    role: userRole
                 });
             } catch (err) {
                 console.error("Failed to decode token:", err);
             }
+        } else {
+            // Reset user data if no token
+            setUserData({
+                purchasedGames: [],
+                isAdmin: false,
+                isMod: false,
+                isPremium: false,
+                role: null
+            });
         }
     }, []);
 
@@ -127,6 +145,20 @@ const SearchResults = () => {
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // UPDATED: Platform color function to match header
+    const getPlatformColorClass = (platform) => {
+        const platformColors = {
+            mac: 'text-blue-400',
+            pc: 'text-green-400',
+            android: 'text-green-500',
+            ps2: 'text-purple-400',
+            ps3: 'text-blue-500',
+            ppsspp: 'text-orange-400',
+            smac: 'text-cyan-400'
+        };
+        return platformColors[platform?.toLowerCase()] || 'text-gray-300';
     };
 
     return (
@@ -170,9 +202,10 @@ const SearchResults = () => {
                     <div className="flow-root relative z-10">
                         <ul role="list" className="divide-y divide-gray-700/30">
                             {data.map((ele) => {
-                                // Check if the game is paid and whether the user has purchased it
+                                // UPDATED: Check if the game is paid and whether the user has access (matches header logic)
                                 const isPurchased = userData.purchasedGames.includes(ele._id);
-                                const isUnlocked = userData.isAdmin || !ele.isPaid || isPurchased;
+                                const hasSpecialAccess = userData.isAdmin || userData.isMod || userData.isPremium;
+                                const isUnlocked = hasSpecialAccess || !ele.isPaid || isPurchased;
                                 const isLocked = !isUnlocked;
 
                                 return (
@@ -180,63 +213,78 @@ const SearchResults = () => {
                                         key={ele._id}
                                         className={`py-2 sm:py-2 p-8 relative hover:bg-black/20 transition-all duration-200 ${isLocked ? 'opacity-30 pointer-events-none' : ''}`}
                                     >
-                                        <a
-                                            href={isLocked ? '#' : `/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}`}
-                                            className="flex items-center justify-between w-full"
-                                        >
-                                            <div className="relative flex-shrink-0">
-                                                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
-                                                <img
-                                                    className="relative w-12 h-12 rounded-lg object-cover border border-purple-500/20 transition-all duration-300 hover:scale-105"
-                                                    src={ele.thumbnail[0]}
-                                                    alt={ele.title}
-                                                />
+                                        {isLocked ? (
+                                            // Locked item - no link, just static content
+                                            <div className="flex items-center justify-between w-full cursor-not-allowed">
+                                                <div className="relative flex-shrink-0">
+                                                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
+                                                    <img
+                                                        className="relative w-12 h-12 rounded-lg object-cover border border-purple-500/20"
+                                                        src={ele.thumbnail[0]}
+                                                        alt={ele.title}
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-0 ms-4">
+                                                    <p className={`font-medium truncate ${getPlatformColorClass(ele.platform)}`}>
+                                                        {ele.title}
+                                                    </p>
+                                                    <p className="text-sm truncate flex items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`mr-1 ${getPlatformColorClass(ele.platform)}`}>
+                                                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                                                            <path d="M12 18h.01" />
+                                                        </svg>
+                                                        <span className={`${getPlatformColorClass(ele.platform)} font-medium`}>
+                                                            {ele.platform}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <div className="flex-1 flex justify-center text-sm font-semibold text-gray-400 hidden sm:block">
+                                                    {ele.size}
+                                                </div>
+                                                <div className="text-right text-sm text-gray-400 hidden md:block">
+                                                    {formatDate(ele.updatedAt)}
+                                                </div>
                                             </div>
-                                            <div className="flex-1 min-w-0 ms-4">
-                                                <p className={`font-medium truncate ${ele.platform === 'Mac' ? 'text-blue-400' :
-                                                    ele.platform === 'PC' ? 'text-red-400' :
-                                                        ele.platform === 'Android' ? 'text-green-400' :
-                                                            ele.platform === 'Playstation' ? 'text-purple-400' :
-                                                                ele.platform === 'iOS' ? 'text-yellow-400' :
-                                                                    'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400'
-                                                    }`}>
-                                                    {ele.title}
-                                                </p>
-
-                                                <p className="text-sm truncate flex items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`mr-1 ${ele.platform === 'Mac' ? 'text-blue-400' :
-                                                        ele.platform === 'PC' ? 'text-red-400' :
-                                                            ele.platform === 'Android' ? 'text-green-400' :
-                                                                ele.platform === 'Playstation' ? 'text-purple-400' :
-                                                                    ele.platform === 'iOS' ? 'text-yellow-400' :
-                                                                        'text-gray-400'
-                                                        }`}>
-                                                        <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
-                                                        <path d="M12 18h.01" />
-                                                    </svg>
-                                                    <span className={`${ele.platform === 'Mac' ? 'text-blue-400' :
-                                                        ele.platform === 'PC' ? 'text-red-400' :
-                                                            ele.platform === 'Android' ? 'text-green-400' :
-                                                                ele.platform === 'Playstation' ? 'text-purple-400' :
-                                                                    ele.platform === 'iOS' ? 'text-yellow-400' :
-                                                                        'text-gray-300'
-                                                        } font-medium`}>
-                                                        {ele.platform}
-                                                    </span>
-                                                </p>
-                                            </div>
-                                            <div className="flex-1 flex justify-center text-sm font-semibold text-gray-400 hidden sm:block">
-                                                {ele.size}
-                                            </div>
-                                            <div className="text-right text-sm text-gray-400 hidden md:block">
-                                                {formatDate(ele.updatedAt)}
-                                            </div>
-                                        </a>
+                                        ) : (
+                                            // Unlocked item - with link
+                                            <Link
+                                                to={`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}`}
+                                                className="flex items-center justify-between w-full"
+                                            >
+                                                <div className="relative flex-shrink-0">
+                                                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
+                                                    <img
+                                                        className="relative w-12 h-12 rounded-lg object-cover border border-purple-500/20 transition-all duration-300 hover:scale-105"
+                                                        src={ele.thumbnail[0]}
+                                                        alt={ele.title}
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-0 ms-4">
+                                                    <p className={`font-medium truncate ${getPlatformColorClass(ele.platform)}`}>
+                                                        {ele.title}
+                                                    </p>
+                                                    <p className="text-sm truncate flex items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`mr-1 ${getPlatformColorClass(ele.platform)}`}>
+                                                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                                                            <path d="M12 18h.01" />
+                                                        </svg>
+                                                        <span className={`${getPlatformColorClass(ele.platform)} font-medium`}>
+                                                            {ele.platform}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <div className="flex-1 flex justify-center text-sm font-semibold text-gray-400 hidden sm:block">
+                                                    {ele.size}
+                                                </div>
+                                                <div className="text-right text-sm text-gray-400 hidden md:block">
+                                                    {formatDate(ele.updatedAt)}
+                                                </div>
+                                            </Link>
+                                        )}
 
                                         {/* Lock Icon for Locked Games */}
                                         {isLocked && (
                                             <div className="absolute top-0 left-0 right-0 bottom-0 lg:right-20 flex justify-center items-center z-10 opacity-100">
-                                                {/* Ensure lock icon is fully visible */}
                                                 <CiLock className="text-white font-bold text-4xl" />
                                             </div>
                                         )}
@@ -249,7 +297,7 @@ const SearchResults = () => {
             )}
 
             {/* Pagination Controls - Improved Design */}
-            {totalApps > itemsPerPage && !loading && query && (  // Only show pagination if query is not empty and there are multiple pages
+            {totalApps > itemsPerPage && !loading && query && (
                 <div className="flex justify-center mt-8 mb-8">
                     <nav aria-label="Page navigation" className="inline-flex items-center">
                         {/* Previous Button */}
@@ -270,34 +318,28 @@ const SearchResults = () => {
 
                         {/* Page Numbers */}
                         <div className="hidden sm:flex">
-                            {/* Generate pagination numbers with ellipsis for large page counts */}
                             {(() => {
                                 const pageNumbers = [];
                                 const maxPagesToShow = 5;
 
                                 if (totalPages <= maxPagesToShow) {
-                                    // Show all pages if there are few
                                     for (let i = 1; i <= totalPages; i++) {
                                         pageNumbers.push(i);
                                     }
                                 } else {
-                                    // Complex pagination with ellipsis
                                     if (currentPage <= 3) {
-                                        // Near the start
                                         for (let i = 1; i <= 4; i++) {
                                             pageNumbers.push(i);
                                         }
                                         pageNumbers.push('ellipsis');
                                         pageNumbers.push(totalPages);
                                     } else if (currentPage >= totalPages - 2) {
-                                        // Near the end
                                         pageNumbers.push(1);
                                         pageNumbers.push('ellipsis');
                                         for (let i = totalPages - 3; i <= totalPages; i++) {
                                             pageNumbers.push(i);
                                         }
                                     } else {
-                                        // Middle
                                         pageNumbers.push(1);
                                         pageNumbers.push('ellipsis');
                                         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
@@ -337,7 +379,7 @@ const SearchResults = () => {
                             })()}
                         </div>
 
-                        {/* Mobile Pagination - Just show current page */}
+                        {/* Mobile Pagination */}
                         <div className="flex sm:hidden">
                             <span className="relative inline-flex items-center px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 text-white border-r border-purple-500/20 shadow-lg shadow-purple-500/20">
                                 {currentPage} / {totalPages}
