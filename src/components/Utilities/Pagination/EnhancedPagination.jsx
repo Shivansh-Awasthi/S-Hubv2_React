@@ -63,12 +63,40 @@ const EnhancedPagination = ({
 
     const pageNumbers = generatePageNumbers();
 
+    // Safe scroll helper — tries element with id 'pc-page-top' then falls back to window/document
+    const safeScrollToTop = () => {
+        if (typeof window === 'undefined') return;
+        // delay slightly to allow DOM updates/navigation to take place
+        setTimeout(() => {
+            const el = document.getElementById('pc-page-top') || document.getElementById('page-top') || null;
+            if (el && typeof el.scrollIntoView === 'function') {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
+            try {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // ensure legacy scroll positions are reset
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            } catch (e) { /* ignore */ }
+        }, 60);
+    };
+
+    // Unified handler that calls parent's onPageChange then performs scroll
+    const handleChange = (page) => {
+        if (typeof onPageChange === 'function') {
+            try { onPageChange(page); } catch (e) { /* swallow handler errors */ }
+        }
+        // perform scroll after invoking handler
+        safeScrollToTop();
+    };
+
     return (
         <div className="flex justify-center mt-8">
             <nav aria-label="Page navigation" className="inline-flex items-center">
                 {/* Previous Button */}
                 <button
-                    onClick={() => onPageChange(currentPage - 1)}
+                    onClick={() => handleChange(currentPage - 1)}
                     className={`relative px-4 py-2.5 rounded-l-md text-sm font-medium transition-all duration-200
             ${currentPage === 1 || isLoading
                             ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
@@ -108,7 +136,7 @@ const EnhancedPagination = ({
                         return (
                             <button
                                 key={pageNumber}
-                                onClick={() => onPageChange(pageNumber)}
+                                onClick={() => handleChange(pageNumber)}
                                 className={`relative inline-flex items-center px-4 py-2.5 text-sm font-medium transition-all duration-200
                   ${currentPage === pageNumber
                                         ? 'z-10 bg-blue-600 text-white shadow-lg shadow-blue-500/20'
@@ -135,7 +163,7 @@ const EnhancedPagination = ({
 
                 {/* Next Button */}
                 <button
-                    onClick={() => onPageChange(currentPage + 1)}
+                    onClick={() => handleChange(currentPage + 1)}
                     className={`relative px-4 py-2.5 rounded-r-md text-sm font-medium transition-all duration-200
             ${currentPage === totalPages || isLoading
                             ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
