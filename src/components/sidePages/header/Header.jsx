@@ -236,7 +236,7 @@ const Header = () => {
     // Use global auth user so header updates immediately after login/logout
     const { user } = useAuth();
     const purchasedGames = user?.purchasedGames || [];
-    const isAdmin = user?.role === 'ADMIN';
+    const isAdmin = user?.role === 'ADMIN' || user?.role === 'MOD' || user?.role === 'PREMIUM';
 
     // Handle search input change with debounce
     useEffect(() => {
