@@ -10,7 +10,6 @@ import Dmca from './components/otherPages/Dmca.jsx';
 import Donate from './components/otherPages/Donate.jsx';
 import Header from './components/sidePages/header/Header.jsx';
 import Login from './components/User/Login.jsx';
-import { AuthProvider } from './components/hooks/AuthContext.jsx';
 import Signup from './components/User/SignUp.jsx';
 import SearchResults from './components/sidePages/SearchResults/SearchResults.jsx';
 import Setting from './components/profilePages/Setting.jsx';
@@ -36,78 +35,76 @@ import GamePage from './components/Utilities/Gamepage.jsx';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="flex min-h-screen">
-          {/* Sidebar on the left */}
-          <Sidebar />
+    <Router>
+      <div className="flex min-h-screen">
+        {/* Sidebar on the left */}
+        <Sidebar />
 
-          {/* Main content area */}
-          <main className="flex-1 w-full transition-all duration-300">
-            <div className="container mx-auto px-4 py-8">
+        {/* Main content area */}
+        <main className="flex-1 w-full transition-all duration-300">
+          <div className="container mx-auto px-4 py-8">
 
-              <div>
-                <ScrollProgressBar />
-              </div>
-
-              {/* 🔥 GLOBAL HEADER - appears on all pages */}
-              <div className="mb-6">
-                <Header />
-              </div>
-
-              <Routes>
-
-                {/* Admin Pages  */}
-                <Route path="/admin/apps/new" element={<CreateApps />} />
-                <Route path="/admin/apps/update/:id" element={<UpdateApps />} />
-                <Route path="/admin/apps/paid" element={<PaidGameAdminPage />} />
-
-                {/*Game Request Pages */}
-                <Route path="/request" element={<RequestPage />} />
-                <Route path="/request/admin" element={<AdminAction />} />
-
-                {/* main Pages */}
-                <Route path="/" element={<Home />} />
-                <Route path="/search" element={<SearchResults />} />
-                <Route path="/category/mac/games" element={<MacGames />} />
-                <Route path="/category/mac/games/exclusive" element={<MacExclusives />} />
-                <Route path="/category/mac/softwares" element={<MacSoftwares />} />
-                <Route path="/category/pc/games" element={<PcGames />} />
-                <Route path="/category/pc/softwares" element={<PcSoftwares />} />
-                <Route path="/category/android/games" element={<Android />} />
-                <Route path="/category/android/softwares" element={<AndroidSoftwares />} />
-                <Route path="/category/ppsspp/iso" element={<PpssppIso />} />
-                <Route path="/category/ps2/iso" element={<Ps2Iso />} />
-                <Route path="/category/ps3/iso" element={<Ps3Iso />} />
-                <Route path='/download/:platform/:slug/:id' element={<SingleApp />} />
-
-
-                {/* registration pages  */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-
-                {/* profile pages */}
-                <Route path="/settings" element={<Setting />} />
-                <Route path="/profile" element={<Profile />} />
-
-
-                {/* other Pages */}
-                <Route path="/faq" element={<Faq />} />
-                <Route path="/membership" element={<Membership />} />
-                <Route path="/policy" element={<Policy />} />
-                <Route path="/contacts" element={<Contacts />} />
-                <Route path="/copyright-holders" element={<Dmca />} />
-                <Route path="/donate" element={<Donate />} />
-
-                <Route path="/gamepage" element={<GamePage />} />
-
-
-              </Routes>
+            <div>
+              <ScrollProgressBar />
             </div>
-          </main>
-        </div>
-      </Router>
-    </AuthProvider>
+
+            {/* 🔥 GLOBAL HEADER - appears on all pages */}
+            <div className="mb-6">
+              <Header />
+            </div>
+
+            <Routes>
+
+              {/* Admin Pages  */}
+              <Route path="/admin/apps/new" element={<CreateApps />} />
+              <Route path="/admin/apps/update/:id" element={<UpdateApps />} />
+              <Route path="/admin/apps/paid" element={<PaidGameAdminPage />} />
+
+              {/*Game Request Pages */}
+              <Route path="/request" element={<RequestPage />} />
+              <Route path="/request/admin" element={<AdminAction />} />
+
+              {/* main Pages */}
+              <Route path="/" element={<Home />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/category/mac/games" element={<MacGames />} />
+              <Route path="/category/mac/games/exclusive" element={<MacExclusives />} />
+              <Route path="/category/mac/softwares" element={<MacSoftwares />} />
+              <Route path="/category/pc/games" element={<PcGames />} />
+              <Route path="/category/pc/softwares" element={<PcSoftwares />} />
+              <Route path="/category/android/games" element={<Android />} />
+              <Route path="/category/android/softwares" element={<AndroidSoftwares />} />
+              <Route path="/category/ppsspp/iso" element={<PpssppIso />} />
+              <Route path="/category/ps2/iso" element={<Ps2Iso />} />
+              <Route path="/category/ps3/iso" element={<Ps3Iso />} />
+              <Route path='/download/:platform/:slug/:id' element={<SingleApp />} />
+
+
+              {/* registration pages  */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+
+              {/* profile pages */}
+              <Route path="/settings" element={<Setting />} />
+              <Route path="/profile" element={<Profile />} />
+
+
+              {/* other Pages */}
+              <Route path="/faq" element={<Faq />} />
+              <Route path="/membership" element={<Membership />} />
+              <Route path="/policy" element={<Policy />} />
+              <Route path="/contacts" element={<Contacts />} />
+              <Route path="/copyright-holders" element={<Dmca />} />
+              <Route path="/donate" element={<Donate />} />
+
+              <Route path="/gamepage" element={<GamePage />} />
+
+
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </Router>
   );
 }
 
