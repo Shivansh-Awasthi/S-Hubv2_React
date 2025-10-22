@@ -41,6 +41,9 @@ function PcGames() {
         popularity: 'all',
     });
 
+    // Track fetching state so we can show skeleton during page changes
+    const [isLoading, setIsLoading] = useState(true);
+
     const itemsPerPage = 48;
     const totalPages = Math.max(Math.ceil(totalItems / itemsPerPage), 1); // Ensure at least 1 page
 
@@ -48,6 +51,7 @@ function PcGames() {
     useEffect(() => {
         const fetchData = async () => {
             setError(null);
+            setIsLoading(true);
             try {
                 const params = new URLSearchParams();
                 params.set('page', currentPage);
@@ -74,6 +78,9 @@ function PcGames() {
                 setError('Failed to load data: ' + err.message);
                 setData([]);
                 setTotalItems(0);
+            } finally {
+                // ensure loading flag cleared after fetch completes (success or failure)
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -180,6 +187,7 @@ function PcGames() {
         window.history.pushState({}, '', `?${params.toString()}`);
         setCurrentPage(validPage);
     };
+
 
     const createSlug = (title) => {
         return title
@@ -376,10 +384,12 @@ function PcGames() {
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
 
             {/* Content: Loading, Error, No Data, or Data Grid */}
-            {error ? (
+            {isLoading ? (
+                <CategorySkeleton itemCount={12} />
+            ) : error ? (
                 <p className="text-red-500 text-center py-12">{error}</p>
             ) : data.length === 0 ? (
-                <CategorySkeleton itemCount={12} />
+                <p className="text-center text-gray-500 py-12">No games found.</p>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 relative">
                     {/* Grid accent elements */}
@@ -396,7 +406,7 @@ function PcGames() {
                             <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-600 opacity-10 rounded-full blur-xl"></div>
 
                             {/* Subtle overlay gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none"></div>
 
                             <figure className="flex justify-center items-center rounded-t-xl overflow-hidden h-full">
                                 <img
