@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../../../contexts/AuthContext.jsx'; // added
 
 // Admin Dashboard for Game Requests
 import AdminRequestTable from "./AdminRequestTable";
@@ -6,8 +8,32 @@ import AdminBulkActions from "./AdminBulkActions";
 import AdminStatsModal from "./AdminStatsModal";
 
 function AdminAction() {
-    // You can add admin authentication/role check here (fetch user, check role)
-    // For now, assume admin is authenticated and authorized
+    const navigate = useNavigate();
+    const { user, loading } = useAuth();
+
+    // If auth finished and user is not authorized, redirect to home
+    useEffect(() => {
+        if (loading) return; // wait for auth to resolve
+        const role = user?.role;
+        if (!user || !['ADMIN', 'MOD'].includes(role)) {
+            // Not authorized — go back to homepage
+            navigate('/');
+        }
+    }, [user, loading, navigate]);
+
+    // show nothing (or a small placeholder) while auth resolves or when redirecting
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-blue-200">Checking permissions...</div>
+            </div>
+        );
+    }
+
+    // Only render admin UI when user is present and authorized
+    const isAuthorized = user && ['ADMIN', 'MOD'].includes(user.role);
+    if (!isAuthorized) return null;
+
     return (
         <div className="min-h-screen py-12 px-2 md:px-8">
             <div className="max-w-7xl mx-auto">
