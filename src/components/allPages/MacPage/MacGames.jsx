@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext.jsx'; // added
 import { LuAppWindowMac } from "react-icons/lu";
-import CategorySkeleton from '../../skeletons/CategorySkeleton';
+import CategorySkeleton from '../../skeletons/CategorySkeleton.jsx';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
@@ -38,6 +38,8 @@ export default function MacGames() {
     const [currentPage, setCurrentPage] = useState(1);
     const [isPageTransitioning, setIsPageTransitioning] = useState(false);
     const [error, setError] = useState(null);
+    // NEW: Track fetching state so we can show skeleton during page changes
+    const [isLoading, setIsLoading] = useState(true);
     // Use global auth state so UI updates automatically on login/logout
     const { user: userData } = useAuth();
     const [filterModalOpen, setFilterModalOpen] = useState(false);
@@ -55,6 +57,8 @@ export default function MacGames() {
     // Fetch data on mount and whenever filters/page changes
     useEffect(() => {
         const fetchData = async () => {
+            // show skeleton while fetching
+            setIsLoading(true);
             try {
                 const params = new URLSearchParams(location.search);
                 const pageFromUrl = parseInt(params.get('page') || '1', 10);
@@ -90,6 +94,8 @@ export default function MacGames() {
                 setTotalApps(0);
             } finally {
                 setIsPageTransitioning(false);
+                // ensure loading flag cleared after fetch completes
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -159,6 +165,8 @@ export default function MacGames() {
     // Handle filter apply
     const handleApplyFilters = (filters) => {
         const params = mapFiltersToQuery(filters);
+        // show skeleton while new filtered results load
+        setIsLoading(true);
         navigate(`/category/mac/games?${params.toString()}`);
     };
 
@@ -173,6 +181,8 @@ export default function MacGames() {
         const params = new URLSearchParams(location.search);
         ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
         params.set('page', '1');
+        // show skeleton while clearing filters and fetching
+        setIsLoading(true);
         navigate(`/category/mac/games?${params.toString()}`);
     };
 
@@ -182,8 +192,8 @@ export default function MacGames() {
             return; // Don't do anything if invalid page or already transitioning
         }
         setIsPageTransitioning(true);
-        // showSkeleton('Mac'); // Uncomment if you have this context
-
+        // show skeleton while the next page loads
+        setIsLoading(true);
         // Preserve all filters
         const params = new URLSearchParams(location.search);
         params.set('page', newPage);
@@ -473,10 +483,12 @@ export default function MacGames() {
                 </div>
             </div>
 
-            {error ? (
+            {isLoading ? (
+                <CategorySkeleton itemCount={12} />
+            ) : error ? (
                 <p className="text-red-500 text-center py-12">{error}</p>
             ) : data.length === 0 ? (
-                <CategorySkeleton itemCount={12} />
+                <p className="text-center text-gray-500 py-12">No games found.</p>
             ) : (
                 <>
                     <div className="relative">
@@ -502,7 +514,7 @@ export default function MacGames() {
                                     currentPage={currentPage}
                                     totalPages={totalPages}
                                     onPageChange={handlePageChange}
-                                    isLoading={false}
+                                    isLoading={isLoading}
                                 />
                             </div>
                             {/* Decorative line */}

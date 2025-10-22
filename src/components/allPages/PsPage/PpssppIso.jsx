@@ -131,6 +131,9 @@ function PpssppIso() {
     const [totalItems, setTotalItems] = useState(0);
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
+    // NEW: Track fetching state so we can show skeleton during page changes
+    const [isLoading, setIsLoading] = useState(true);
+
     const itemsPerPage = 48;
     const totalPages = Math.max(Math.ceil(totalItems / itemsPerPage), 1);
 
@@ -145,7 +148,9 @@ function PpssppIso() {
     // Fetch data on mount and whenever filters/page changes
     useEffect(() => {
         const fetchData = async () => {
+            // show both flags for compatibility; isLoading controls the skeleton display
             setLoading(true);
+            setIsLoading(true);
             setError(null);
             try {
                 const searchParams = getSearchParams();
@@ -177,6 +182,9 @@ function PpssppIso() {
                 setTotalItems(0);
             } finally {
                 setLoading(false);
+                // ensure loading flag cleared after fetch completes (success or failure)
+                setIsPageLoading(false);
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -267,6 +275,8 @@ function PpssppIso() {
 
     // Handle filter apply
     const handleApplyFilters = (filters) => {
+        // show skeleton while new filtered results load
+        setIsLoading(true);
         const params = mapFiltersToQuery(filters);
         updateURL(params);
         setCurrentPage(1);
@@ -291,6 +301,8 @@ function PpssppIso() {
     // Update handlePageChange to preserve filters
     const handlePageChange = (newPage) => {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
+        // show skeleton while the next page loads
+        setIsLoading(true);
         const searchParams = getSearchParams();
         searchParams.page = validPage.toString();
         updateURL(searchParams);
@@ -366,7 +378,7 @@ function PpssppIso() {
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
 
 
-            {loading ? (
+            {isLoading ? (
                 <CategorySkeleton itemCount={12} />
             ) : error ? (
                 <div className="text-center">
