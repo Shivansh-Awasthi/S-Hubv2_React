@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaApple, FaDownload, FaLock, FaStar, FaCoffee, FaCrown, FaRupeeSign } from "react-icons/fa";
-import axios from 'axios';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
-
+import { useAuth } from '../../../contexts/AuthContext.jsx';
+import CategorySkeleton from '../../skeletons/CategorySkeleton.jsx';
 
 
 
@@ -143,58 +143,11 @@ function MacExclusives({ serverData, initialPage = 1 }) {
     const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || initialPage.toString(), 10));
     const [isPageTransitioning, setIsPageTransitioning] = useState(false);
     const [error, setError] = useState(serverData?.error || null);
-    const [userData, setUserData] = useState(null);
+    const { user: userData } = useAuth();
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
-    // Fetch user data
-    const fetchUserData = useCallback(async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                setUserData(null);
-                return;
-            }
-
-            const res = await axios.get(
-                `${process.env.VITE_API_URL}/api/user/me`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'X-Auth-Token': process.env.VITE_API_TOKEN
-                    }
-                }
-            );
-
-            if (res.data?.user) {
-                setUserData(res.data.user);
-            } else {
-                setUserData(null);
-            }
-        } catch (error) {
-            setUserData(null);
-        }
-    }, []);
-
-    // Log user data changes
-    // useEffect(() => {
-    //     console.log("User data updated:", userData);
-    //     console.log("Purchased games:", userData?.purchasedGames || []);
-    // }, [userData]);
-
-    // Fetch user data on component mount and set up event listeners
-    useEffect(() => {
-        fetchUserData();
-
-        const handleAuthChange = () => {
-            fetchUserData();
-        };
-
-        window.addEventListener('auth-change', handleAuthChange);
-
-        return () => {
-            window.removeEventListener('auth-change', handleAuthChange);
-        };
-    }, [fetchUserData]);
+    // Note: global AuthProvider handles fetching and reacting to 'auth-change' events.
+    // This component reads userData via useAuth() above and will re-render automatically when auth changes.
 
     // Calculate total pages
     const totalPages = Math.max(1, Math.ceil(totalApps / ITEMS_PER_PAGE));
@@ -702,6 +655,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                         </div>
                     </div>
                 </div>
+
 
                 {/* Description text - responsive for small screens */}
                 <p className="text-gray-400 max-w-2xl mx-auto mb-6 text-sm sm:text-base md:text-lg px-4 sm:px-0">

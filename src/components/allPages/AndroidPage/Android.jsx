@@ -12,6 +12,8 @@ function Android() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(true);
+    // NEW: track transition/loading for pagination & filter actions
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
@@ -45,7 +47,9 @@ function Android() {
 
     useEffect(() => {
         const fetchData = async () => {
+            // show both flags for compatibility; isLoading controls skeleton display
             setLoading(true);
+            setIsLoading(true);
             setError(null);
             try {
                 const searchParams = getSearchParams();
@@ -75,6 +79,8 @@ function Android() {
                 setTotalItems(0);
             } finally {
                 setLoading(false);
+                // ensure transition flag cleared after fetch completes (success or failure)
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -106,6 +112,8 @@ function Android() {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
         const searchParams = getSearchParams();
         searchParams.page = validPage.toString();
+        // show skeleton while the next page loads
+        setIsLoading(true);
         updateURL(searchParams);
         setCurrentPage(validPage);
     };
@@ -372,7 +380,8 @@ function Android() {
             {/* Decorative grid lines */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
 
-            {loading ? (
+            {/* Content: Loading, Error, No Data, or Data Grid */}
+            {isLoading ? (
                 <CategorySkeleton itemCount={12} />
             ) : error ? (
                 <div className="text-center">
@@ -492,7 +501,7 @@ function Android() {
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={handlePageChange}
-                            isLoading={loading}
+                            isLoading={isLoading}
                         />
                     </div>
 

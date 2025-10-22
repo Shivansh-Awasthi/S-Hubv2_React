@@ -32,12 +32,16 @@ function MacSoftwares() {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [filterModalOpen, setFilterModalOpen] = useState(false);
+    // NEW: track transition/loading for pagination & filter actions
+    const [isLoading, setIsLoading] = useState(true);
     const totalPages = Math.max(Math.ceil(totalItems / ITEMS_PER_PAGE), 1);
 
     // Fetch data on mount and whenever filters/page changes
     useEffect(() => {
         const fetchData = async () => {
+            // show both flags for compatibility; isLoading controls skeleton display
             setLoading(true);
+            setIsLoading(true);
             try {
                 const searchParams = getSearchParams();
                 const params = new URLSearchParams();
@@ -81,6 +85,8 @@ function MacSoftwares() {
                 setTotalItems(0);
             } finally {
                 setLoading(false);
+                // ensure transition flag cleared after fetch completes
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -171,6 +177,8 @@ function MacSoftwares() {
 
     // Handle filter apply
     const handleApplyFilters = (filters) => {
+        // show skeleton while new filtered results load
+        setIsLoading(true);
         const params = mapFiltersToQuery(filters);
         updateURL(params);
         setCurrentPage(1);
@@ -188,6 +196,8 @@ function MacSoftwares() {
         const searchParams = getSearchParams();
         ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => delete searchParams[key]);
         searchParams.page = '1';
+        // show skeleton while clearing filters and fetching
+        setIsLoading(true);
         updateURL(searchParams);
         setCurrentPage(1);
     };
@@ -195,6 +205,8 @@ function MacSoftwares() {
     // Handle page change
     const handlePageChange = (newPage) => {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
+        // show skeleton while the next page loads
+        setIsLoading(true);
         const searchParams = getSearchParams();
         searchParams.page = validPage.toString();
         updateURL(searchParams);
@@ -366,10 +378,12 @@ function MacSoftwares() {
                 </div>
             </div>
 
-            {error ? (
+            {isLoading ? (
+                <CategorySkeleton itemCount={12} />
+            ) : error ? (
                 <p className="text-red-500 text-center py-12">{error}</p>
             ) : data.length === 0 ? (
-                <CategorySkeleton itemCount={12} />
+                <p className="text-center text-gray-500 py-12">No games found.</p>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 relative">
                     {/* Grid accent elements */}
@@ -446,7 +460,7 @@ function MacSoftwares() {
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={handlePageChange}
-                            isLoading={loading}
+                            isLoading={isLoading}
                         />
                     </div>
 

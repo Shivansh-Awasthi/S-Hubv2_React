@@ -17,6 +17,8 @@ export default function PcSoftwares() {
     const [data, setData] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(true);
+    // NEW: track transition/loading for pagination & filter actions
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
     const [filterModalOpen, setFilterModalOpen] = useState(false);
@@ -24,7 +26,9 @@ export default function PcSoftwares() {
 
     useEffect(() => {
         const fetchData = async () => {
+            // show both flags for compatibility; isLoading controls skeleton display
             setLoading(true);
+            setIsLoading(true);
             setError(null);
             try {
                 const params = new URLSearchParams();
@@ -54,6 +58,8 @@ export default function PcSoftwares() {
                 setTotalItems(0);
             } finally {
                 setLoading(false);
+                // ensure transition flag cleared after fetch completes
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -208,6 +214,8 @@ export default function PcSoftwares() {
         const params = new URLSearchParams(window.location.search);
         ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
         params.set('page', '1');
+        // show skeleton while clearing filters and fetching
+        setIsLoading(true);
         window.history.pushState({}, '', `?${params.toString()}`);
         setCurrentPage(1);
     };
@@ -215,6 +223,8 @@ export default function PcSoftwares() {
     // Handle filter apply
     const handleApplyFilters = (filters) => {
         const params = mapFiltersToQuery(filters);
+        // show skeleton while new filtered results load
+        setIsLoading(true);
         params.set('page', '1');
         window.history.pushState({}, '', `?${params.toString()}`);
         setCurrentPage(1);
@@ -224,6 +234,8 @@ export default function PcSoftwares() {
     // Handle page change
     const handlePageChange = (newPage) => {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
+        // show skeleton while the next page loads
+        setIsLoading(true);
         const params = new URLSearchParams(window.location.search);
         params.set('page', validPage);
         window.history.pushState({}, '', `?${params.toString()}`);
@@ -299,7 +311,7 @@ export default function PcSoftwares() {
             {/* Decorative grid lines */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
 
-            {loading ? (
+            {isLoading ? (
                 <CategorySkeleton itemCount={12} />
             ) : error ? (
                 <div className="text-center text-red-500">
@@ -419,7 +431,7 @@ export default function PcSoftwares() {
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
-                    isLoading={loading}
+                    isLoading={isLoading}
                 />
             </div>
         </div>
