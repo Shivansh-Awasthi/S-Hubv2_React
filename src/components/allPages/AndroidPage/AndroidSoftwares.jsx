@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaAndroid } from "react-icons/fa6";
 import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 
-
 function AndroidSoftwares() {
+    // React Router hooks instead of window.location
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Parse search params using React Router's location
+    const searchParams = new URLSearchParams(location.search);
+
     const ITEMS_PER_PAGE = 48;
     const [data, setData] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
@@ -15,86 +21,9 @@ function AndroidSoftwares() {
     // NEW: track transition/loading for pagination & filter actions
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
     const [filterModalOpen, setFilterModalOpen] = useState(false);
     const totalPages = Math.max(Math.ceil(totalItems / ITEMS_PER_PAGE), 1);
-
-    // Get URL search params
-    const getSearchParams = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const params = {};
-        for (const [key, value] of urlParams.entries()) {
-            params[key] = value;
-        }
-        return params;
-    };
-
-    // Update URL without page reload
-    const updateURL = (params) => {
-        const searchParams = new URLSearchParams(params).toString();
-        const newUrl = `${window.location.pathname}?${searchParams}`;
-        window.history.pushState({}, '', newUrl);
-    };
-
-    // Fetch data on mount and whenever filters/page changes
-    useEffect(() => {
-        const fetchData = async () => {
-            // show both flags for compatibility; isLoading controls skeleton display
-            setLoading(true);
-            setIsLoading(true);
-            setError(null);
-            try {
-                const searchParams = getSearchParams();
-                const params = new URLSearchParams();
-                params.set('page', currentPage.toString());
-                params.set('limit', ITEMS_PER_PAGE.toString());
-
-                if (searchParams.tags) params.set('tags', searchParams.tags);
-                if (searchParams.gameMode) params.set('gameMode', searchParams.gameMode);
-                if (searchParams.sizeLimit) params.set('sizeLimit', searchParams.sizeLimit);
-                if (searchParams.releaseYear) params.set('releaseYear', searchParams.releaseYear);
-                if (searchParams.sortBy) params.set('sortBy', searchParams.sortBy);
-
-                const res = await fetch(
-                    `${process.env.VITE_API_URL}/api/apps/category/sandroid?${params.toString()}`,
-                    {
-                        headers: { 'X-Auth-Token': process.env.VITE_API_TOKEN },
-                    }
-                );
-                if (!res.ok) throw new Error(`API error: ${res.status}`);
-                const json = await res.json();
-                setData(json.apps || json.data || []);
-                setTotalItems(json.total || 0);
-            } catch (err) {
-                setError('Failed to load data: ' + err.message);
-                setData([]);
-                setTotalItems(0);
-            } finally {
-                setLoading(false);
-                // ensure transition flag cleared after fetch completes
-                setIsLoading(false);
-            }
-        };
-        fetchData();
-    }, [currentPage]);
-
-    // Listen for URL changes
-    useEffect(() => {
-        const handleUrlChange = () => {
-            const searchParams = getSearchParams();
-            const pageFromUrl = parseInt(searchParams.page || '1', 10);
-            if (pageFromUrl !== currentPage) {
-                setCurrentPage(pageFromUrl);
-            }
-        };
-
-        window.addEventListener('popstate', handleUrlChange);
-        handleUrlChange();
-
-        return () => {
-            window.removeEventListener('popstate', handleUrlChange);
-        };
-    }, [currentPage]);
 
     // Unified GENRES list for both mapping and extraction
     const GENRES = [
@@ -129,36 +58,82 @@ function AndroidSoftwares() {
         { id: 18, name: "War" }, { id: 123, name: "Wargame" }, { id: 119, name: "Zombie" }
     ];
 
+    // Fetch data on mount and whenever filters/page changes
+    useEffect(() => {
+        const fetchData = async () => {
+            // show both flags for compatibility; isLoading controls skeleton display
+            setLoading(true);
+            setIsLoading(true);
+            setError(null);
+            try {
+                const params = new URLSearchParams(location.search);
+
+                // Ensure page and limit are set
+                if (!params.get('page')) params.set('page', currentPage.toString());
+                params.set('limit', ITEMS_PER_PAGE.toString());
+
+                const res = await fetch(
+                    `${process.env.VITE_API_URL}/api/apps/category/sandroid?${params.toString()}`,
+                    {
+                        headers: { 'X-Auth-Token': process.env.VITE_API_TOKEN },
+                    }
+                );
+                if (!res.ok) throw new Error(`API error: ${res.status}`);
+                const json = await res.json();
+                setData(json.apps || json.data || []);
+                setTotalItems(json.total || 0);
+            } catch (err) {
+                setError('Failed to load data: ' + err.message);
+                setData([]);
+                setTotalItems(0);
+            } finally {
+                setLoading(false);
+                // ensure transition flag cleared after fetch completes
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, [location.search]); // Changed to depend on location.search
+
+    // Update current page when URL changes
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const pageFromUrl = parseInt(params.get('page') || '1', 10);
+        if (pageFromUrl !== currentPage) {
+            setCurrentPage(pageFromUrl);
+        }
+    }, [location.search, currentPage]);
+
     // Helper: Map filter modal values to backend query params
     const mapFiltersToQuery = (filters) => {
-        const searchParams = getSearchParams();
+        const params = new URLSearchParams(location.search);
         const genreNames = filters.genres?.map(id => {
             const found = GENRES.find(g => g.id === id);
             return found ? found.name : null;
         }).filter(Boolean);
 
         if (genreNames && genreNames.length > 0) {
-            searchParams.tags = genreNames.join(',');
+            params.set('tags', genreNames.join(','));
         } else {
-            delete searchParams.tags;
+            params.delete('tags');
         }
 
         if (filters.gameMode && filters.gameMode !== 'any') {
-            searchParams.gameMode = filters.gameMode === 'single' ? 'Singleplayer' : 'Multiplayer';
+            params.set('gameMode', filters.gameMode === 'single' ? 'Singleplayer' : 'Multiplayer');
         } else {
-            delete searchParams.gameMode;
+            params.delete('gameMode');
         }
 
         if (filters.size) {
-            searchParams.sizeLimit = filters.size;
+            params.set('sizeLimit', filters.size);
         } else {
-            delete searchParams.sizeLimit;
+            params.delete('sizeLimit');
         }
 
         if (filters.year) {
-            searchParams.releaseYear = filters.year;
+            params.set('releaseYear', filters.year);
         } else {
-            delete searchParams.releaseYear;
+            params.delete('releaseYear');
         }
 
         if (filters.popularity && filters.popularity !== 'all') {
@@ -172,13 +147,13 @@ function AndroidSoftwares() {
                 case 'newest': sortBy = 'newest'; break;
                 default: sortBy = 'newest';
             }
-            searchParams.sortBy = sortBy;
+            params.set('sortBy', sortBy);
         } else {
-            delete searchParams.sortBy;
+            params.delete('sortBy');
         }
 
-        searchParams.page = '1';
-        return searchParams;
+        params.set('page', '1');
+        return params;
     };
 
     // Handle filter apply
@@ -186,26 +161,26 @@ function AndroidSoftwares() {
         // show skeleton while new filtered results load
         setIsLoading(true);
         const params = mapFiltersToQuery(filters);
-        updateURL(params);
-        setCurrentPage(1);
+        // Use navigate instead of updateURL
+        navigate(`?${params.toString()}`);
+        setFilterModalOpen(false);
     };
 
     // Check if any filter is active
     const isFilterActive = () => {
-        const searchParams = getSearchParams();
         const keys = ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'];
-        return keys.some(key => searchParams[key]);
+        return keys.some(key => searchParams.get(key));
     };
 
     // Clear all filters
     const handleClearFilters = () => {
-        const searchParams = getSearchParams();
-        ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => delete searchParams[key]);
-        searchParams.page = '1';
+        const params = new URLSearchParams(location.search);
+        ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
+        params.set('page', '1');
         // show skeleton while clearing filters and fetching
         setIsLoading(true);
-        updateURL(searchParams);
-        setCurrentPage(1);
+        // Use navigate instead of updateURL
+        navigate(`?${params.toString()}`);
     };
 
     // Handle page change
@@ -213,11 +188,13 @@ function AndroidSoftwares() {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
         // show skeleton while the next page loads
         setIsLoading(true);
-        const searchParams = getSearchParams();
-        searchParams.page = validPage.toString();
-        updateURL(searchParams);
-        setCurrentPage(validPage);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const params = new URLSearchParams(location.search);
+        params.set('page', validPage.toString());
+        // Use navigate instead of updateURL
+        navigate(`?${params.toString()}`);
+        if (typeof window !== 'undefined') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
     // Function to check if a software is new (within 2 days)
@@ -238,9 +215,9 @@ function AndroidSoftwares() {
 
     // Helper: Extract filters from URL
     const extractFiltersFromUrl = () => {
-        const searchParams = getSearchParams();
+        const params = new URLSearchParams(location.search);
         let genres = [];
-        const tags = searchParams.tags;
+        const tags = params.get('tags');
 
         if (tags) {
             const tagNames = tags.split(',');
@@ -250,15 +227,15 @@ function AndroidSoftwares() {
             }).filter(Boolean);
         }
 
-        let gameMode = searchParams.gameMode;
+        let gameMode = params.get('gameMode');
         if (gameMode === 'Singleplayer') gameMode = 'single';
         else if (gameMode === 'Multiplayer') gameMode = 'multi';
         else gameMode = 'any';
 
-        const size = searchParams.sizeLimit || '';
-        const year = searchParams.releaseYear || '';
+        const size = params.get('sizeLimit') || '';
+        const year = params.get('releaseYear') || '';
         let popularity = 'all';
-        const sortBy = searchParams.sortBy;
+        const sortBy = params.get('sortBy');
 
         if (sortBy) {
             switch (sortBy) {
@@ -287,7 +264,7 @@ function AndroidSoftwares() {
 
     useEffect(() => {
         setFilters(extractFiltersFromUrl());
-    }, [window.location.search]);
+    }, [location.search]); // Update when URL changes
 
     // Helper: Count active filters
     const getActiveFilterCount = () => {
@@ -348,7 +325,37 @@ function AndroidSoftwares() {
             {isLoading ? (
                 <CategorySkeleton itemCount={12} />
             ) : error ? (
-                <p className="text-red-500 text-center">{error}</p>
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">{error}</p>
+                    {isFilterActive() && (
+                        <button
+                            onClick={handleClearFilters}
+                            className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300 mt-2"
+                        >
+                            <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <span className="relative flex items-center gap-2 font-medium">
+                                Clear Filters
+                            </span>
+                        </button>
+                    )}
+                </div>
+            ) : data.length === 0 ? (
+                <div className="text-center py-10 text-gray-400">
+                    No Android softwares found.
+                    {isFilterActive() && (
+                        <div className="mt-4">
+                            <button
+                                onClick={handleClearFilters}
+                                className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
+                            >
+                                <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <span className="relative flex items-center gap-2 font-medium">
+                                    Clear Filters
+                                </span>
+                            </button>
+                        </div>
+                    )}
+                </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 relative">
                     {/* Grid accent elements */}
@@ -373,6 +380,10 @@ function AndroidSoftwares() {
                                         src={ele.thumbnail[0]}
                                         alt={ele.title}
                                         className="relative rounded-full w-16 h-16 transition-transform duration-700 ease-in-out transform group-hover:scale-110 border border-purple-500/20 z-10"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/default-game.png';
+                                        }}
                                     />
                                 </div>
 
@@ -440,6 +451,5 @@ function AndroidSoftwares() {
         </div>
     );
 }
-
 
 export default AndroidSoftwares;
