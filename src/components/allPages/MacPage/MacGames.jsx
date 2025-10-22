@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '../../../contexts/AuthContext.jsx'; // added
 import { LuAppWindowMac } from "react-icons/lu";
 import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
@@ -38,9 +38,8 @@ export default function MacGames() {
     const [currentPage, setCurrentPage] = useState(1);
     const [isPageTransitioning, setIsPageTransitioning] = useState(false);
     const [error, setError] = useState(null);
-    const [purchasedGames, setPurchasedGames] = useState([]);
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [userData, setUserData] = useState(null);
+    // Use global auth state so UI updates automatically on login/logout
+    const { user: userData } = useAuth();
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
     // Persistent filter state
@@ -95,23 +94,6 @@ export default function MacGames() {
         };
         fetchData();
     }, [location.search]); // Changed dependency
-
-    // Load user data from localStorage on client side
-    useEffect(() => {
-        // Read JWT token from localStorage
-        const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                setUserData(decoded);
-            } catch (err) {
-                console.error('Failed to decode JWT token:', err);
-                setUserData(null);
-            }
-        } else {
-            setUserData(null);
-        }
-    }, []);
 
     // Get loading context (if you have this in React)
     // const { showSkeleton } = useLoading();
