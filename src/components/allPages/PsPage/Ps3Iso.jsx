@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaPlaystation } from "react-icons/fa";
 import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
@@ -7,30 +7,30 @@ import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 
 function Ps3Iso() {
-    // Get URL search params
-    const getSearchParams = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const params = {};
-        for (const [key, value] of urlParams.entries()) {
-            params[key] = value;
-        }
-        return params;
-    };
+    // Use React Router hooks instead of window.location
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    // Update URL without page reload
-    const updateURL = (params) => {
-        const searchParams = new URLSearchParams(params).toString();
-        const newUrl = `${window.location.pathname}?${searchParams}`;
-        window.history.pushState({}, '', newUrl);
-    };
+    // Parse search params using React Router's location
+    const searchParams = new URLSearchParams(location.search);
+    const ITEMS_PER_PAGE = 48;
 
-    const searchParams = getSearchParams();
-    const initialPage = parseInt(searchParams.page || '1', 10);
+    // Initialize with empty data, fetch on client
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
+    const [totalItems, setTotalItems] = useState(0);
+    const [filterModalOpen, setFilterModalOpen] = useState(false);
 
-    // Extract filters from URL (robust, like Android)
+    const totalPages = Math.max(Math.ceil(totalItems / ITEMS_PER_PAGE), 1);
+
+    // Extract filters from URL (using React Router's location)
     const extractFiltersFromUrl = () => {
+        const params = new URLSearchParams(location.search);
         let genres = [];
-        const tags = searchParams.tags;
+        const tags = params.get('tags');
         const GENRES = [
             { id: 42, name: "2D" }, { id: 85, name: "3D" }, { id: 1, name: "Action" }, { id: 2, name: "Adventure" },
             { id: 83, name: "Agriculture" }, { id: 33, name: "Anime" }, { id: 40, name: "Apps" }, { id: 71, name: "Arcade" },
@@ -69,14 +69,14 @@ function Ps3Iso() {
                 return found ? found.id : null;
             }).filter(Boolean);
         }
-        let gameMode = searchParams.gameMode;
+        let gameMode = params.get('gameMode');
         if (gameMode === 'Singleplayer') gameMode = 'single';
         else if (gameMode === 'Multiplayer') gameMode = 'multi';
         else gameMode = 'any';
-        const size = searchParams.sizeLimit || '';
-        const year = searchParams.releaseYear || '';
+        const size = params.get('sizeLimit') || '';
+        const year = params.get('releaseYear') || '';
         let popularity = 'all';
-        const sortBy = searchParams.sortBy;
+        const sortBy = params.get('sortBy');
         if (sortBy) {
             switch (sortBy) {
                 case 'popular': popularity = 'popular'; break;
@@ -101,60 +101,32 @@ function Ps3Iso() {
     // Persistent filters state
     const [filters, setFilters] = useState(extractFiltersFromUrl());
 
-    // Listen for URL changes
+    // Update filters when URL changes
     useEffect(() => {
-        const handleUrlChange = () => {
-            setFilters(extractFiltersFromUrl());
-        };
-
-        window.addEventListener('popstate', handleUrlChange);
-        handleUrlChange();
-
-        return () => {
-            window.removeEventListener('popstate', handleUrlChange);
-        };
-    }, []);
-
-    // Initialize with empty data, fetch on client
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(initialPage);
-    const [totalItems, setTotalItems] = useState(0);
-    const [filterModalOpen, setFilterModalOpen] = useState(false);
-
-    // NEW: Track fetching state so we can show skeleton during page changes
-    const [isLoading, setIsLoading] = useState(true);
-
-    const itemsPerPage = 48;
-    const totalPages = Math.max(Math.ceil(totalItems / itemsPerPage), 1);
+        setFilters(extractFiltersFromUrl());
+    }, [location.search]);
 
     // Update current page when URL changes
     useEffect(() => {
-        const page = parseInt(searchParams.page || '1', 10);
-        if (page !== currentPage) {
-            setCurrentPage(page);
+        const params = new URLSearchParams(location.search);
+        const pageFromUrl = parseInt(params.get('page') || '1', 10);
+        if (pageFromUrl !== currentPage) {
+            setCurrentPage(pageFromUrl);
         }
-    }, [searchParams, currentPage]);
+    }, [location.search, currentPage]);
 
-    // Fetch data on mount and whenever filters/page changes
+    // Fetch data on mount and whenever URL search changes
     useEffect(() => {
         const fetchData = async () => {
-            // show both flags for compatibility; isLoading controls the skeleton display
             setLoading(true);
             setIsLoading(true);
             setError(null);
             try {
-                const searchParams = getSearchParams();
-                const params = new URLSearchParams();
-                params.set('page', currentPage.toString());
-                params.set('limit', itemsPerPage.toString());
+                const params = new URLSearchParams(location.search);
 
-                if (searchParams.tags) params.set('tags', searchParams.tags);
-                if (searchParams.gameMode) params.set('gameMode', searchParams.gameMode);
-                if (searchParams.sizeLimit) params.set('sizeLimit', searchParams.sizeLimit);
-                if (searchParams.releaseYear) params.set('releaseYear', searchParams.releaseYear);
-                if (searchParams.sortBy) params.set('sortBy', searchParams.sortBy);
+                // Ensure page and limit are set
+                if (!params.get('page')) params.set('page', currentPage.toString());
+                params.set('limit', ITEMS_PER_PAGE.toString());
 
                 const res = await fetch(
                     `${process.env.VITE_API_URL}/api/apps/category/ps3?${params.toString()}`,
@@ -174,16 +146,15 @@ function Ps3Iso() {
                 setTotalItems(0);
             } finally {
                 setLoading(false);
-                // ensure transition flag cleared after fetch completes
                 setIsLoading(false);
             }
         };
         fetchData();
-    }, [currentPage]);
+    }, [location.search]); // Depend on location.search instead of currentPage
 
     // Helper: Map filter modal values to backend query params
     const mapFiltersToQuery = (filters) => {
-        const searchParams = getSearchParams();
+        const params = new URLSearchParams(location.search);
         const GENRES = [
             { id: 42, name: "2D" }, { id: 85, name: "3D" }, { id: 1, name: "Action" }, { id: 2, name: "Adventure" },
             { id: 83, name: "Agriculture" }, { id: 33, name: "Anime" }, { id: 40, name: "Apps" }, { id: 71, name: "Arcade" },
@@ -221,27 +192,27 @@ function Ps3Iso() {
         }).filter(Boolean);
 
         if (genreNames && genreNames.length > 0) {
-            searchParams.tags = genreNames.join(',');
+            params.set('tags', genreNames.join(','));
         } else {
-            delete searchParams.tags;
+            params.delete('tags');
         }
 
         if (filters.gameMode && filters.gameMode !== 'any') {
-            searchParams.gameMode = filters.gameMode === 'single' ? 'Singleplayer' : 'Multiplayer';
+            params.set('gameMode', filters.gameMode === 'single' ? 'Singleplayer' : 'Multiplayer');
         } else {
-            delete searchParams.gameMode;
+            params.delete('gameMode');
         }
 
         if (filters.size) {
-            searchParams.sizeLimit = filters.size;
+            params.set('sizeLimit', filters.size);
         } else {
-            delete searchParams.sizeLimit;
+            params.delete('sizeLimit');
         }
 
         if (filters.year) {
-            searchParams.releaseYear = filters.year;
+            params.set('releaseYear', filters.year);
         } else {
-            delete searchParams.releaseYear;
+            params.delete('releaseYear');
         }
 
         if (filters.popularity && filters.popularity !== 'all') {
@@ -255,13 +226,12 @@ function Ps3Iso() {
                 case 'newest': sortBy = 'newest'; break;
                 default: sortBy = 'newest';
             }
-            searchParams.sortBy = sortBy;
+            params.set('sortBy', sortBy);
         } else {
-            delete searchParams.sortBy;
+            params.delete('sortBy');
         }
 
-        searchParams.page = '1';
-        return searchParams;
+        return params;
     };
 
     // Handle filter apply
@@ -269,37 +239,43 @@ function Ps3Iso() {
         const params = mapFiltersToQuery(filters);
         // show skeleton while new filtered results load
         setIsLoading(true);
-        updateURL(params);
-        setCurrentPage(1);
+        params.set('page', '1');
+        navigate(`?${params.toString()}`);
+        setFilterModalOpen(false);
     };
 
     // Check if any filter is active
     const isFilterActive = () => {
-        const searchParams = getSearchParams();
         const keys = ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'];
-        return keys.some(key => searchParams[key]);
+        return keys.some(key => searchParams.get(key));
     };
 
     // Clear all filters
     const handleClearFilters = () => {
-        const searchParams = getSearchParams();
-        ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => delete searchParams[key]);
-        searchParams.page = '1';
+        const params = new URLSearchParams(location.search);
+        ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
+        params.set('page', '1');
         // show skeleton while clearing filters and fetching
         setIsLoading(true);
-        updateURL(searchParams);
-        setCurrentPage(1);
+        navigate(`?${params.toString()}`);
     };
 
-    // Update handlePageChange to preserve filters
+    // Handle page change
     const handlePageChange = (newPage) => {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
         // show skeleton while the next page loads
         setIsLoading(true);
-        const searchParams = getSearchParams();
-        searchParams.page = validPage.toString();
-        updateURL(searchParams);
-        setCurrentPage(validPage);
+        const params = new URLSearchParams(location.search);
+        params.set('page', validPage.toString());
+        navigate(`?${params.toString()}`);
+    };
+
+    // Function to check if a game is new (within 2 days)
+    const isGameNew = (createdAt) => {
+        const now = new Date();
+        const twoDaysAgo = new Date(now.getTime() - (2 * 24 * 60 * 60 * 1000));
+        const gameCreatedAt = new Date(createdAt);
+        return gameCreatedAt >= twoDaysAgo;
     };
 
     const slugify = (text = '') => {
@@ -310,14 +286,6 @@ function Ps3Iso() {
             .replace(/\s+/g, '-')
             .replace(/[^\w\-]+/g, '')
             .replace(/\-\-+/g, '-');
-    };
-
-    // Function to check if a game is new (within 2 days)
-    const isGameNew = (createdAt) => {
-        const now = new Date();
-        const twoDaysAgo = new Date(now.getTime() - (2 * 24 * 60 * 60 * 1000));
-        const gameCreatedAt = new Date(createdAt);
-        return gameCreatedAt >= twoDaysAgo;
     };
 
     // Helper: Count active filters for badge
@@ -350,7 +318,6 @@ function Ps3Iso() {
                             </h1>
                         </div>
                     </div>
-
 
                     {/* Filter and clear buttons */}
                     <div className="flex flex-row items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
@@ -510,6 +477,5 @@ function Ps3Iso() {
         </div>
     );
 }
-
 
 export default Ps3Iso;
