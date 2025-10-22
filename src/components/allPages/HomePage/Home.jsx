@@ -119,13 +119,13 @@ const HomeClient = () => {
             <div className="fixed top-1/3 left-1/4 w-64 h-64 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
 
             {/* Decorative grid lines */}
-            <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
+            <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-20"></div>
 
             {/* Unified Modern Glassy Slider for all screens */}
             <div className="pb-6 lg:pb-8 w-full">
                 <div className="relative w-full aspect-[2.4/1] rounded-lg overflow-hidden">
                     {/* Edge overlays for glassy effect */}
-                    <div className="absolute inset-0 pointer-events-none z-12">
+                    <div className="absolute inset-0 pointer-events-none z-20">
                         <div className="absolute top-0 inset-x-0">
                             <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-gray-950 via-gray-950/60 to-transparent"></div>
                         </div>
@@ -203,7 +203,7 @@ const HomeClient = () => {
 
                     {/* Progress bar and nav buttons */}
                     <div className="container mx-auto px-6 lg:px-8">
-                        <div className="absolute bottom-8 left-0 right-0 z-10 flex items-center justify-between">
+                        <div className="absolute bottom-8 left-8 right-0 z-20 flex items-center justify-between">
                             {/* Progress bar */}
                             <div className="w-1/3">
                                 <div className="h-1 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
@@ -211,7 +211,7 @@ const HomeClient = () => {
                                 </div>
                             </div>
                             {/* Nav buttons */}
-                            <div className="flex items-center gap-4 z-10">
+                            <div className="flex items-center gap-4  mr-8">
                                 <button
                                     className="relative flex items-center justify-center w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all duration-300"
                                     aria-label="Previous slide"
@@ -235,7 +235,7 @@ const HomeClient = () => {
                     </div>
 
                     {/* Pagination Dots for all screens */}
-                    <div className="absolute flex space-x-3 bottom-7 left-1/2 transform -translate-x-1/2 z-10">
+                    <div>
                         {images.map((_, index) => (
                             <button
                                 key={index}
