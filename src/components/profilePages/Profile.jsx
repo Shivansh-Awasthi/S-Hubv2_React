@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
 const Profile = () => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // Use global auth state instead of local JWT decoding/fetch
+    const { user, loading: authLoading } = useAuth();
+
+    // Local UI state
     const [games, setGames] = useState([]);
     const [activeTab, setActiveTab] = useState('overview');
+    const [localLoading, setLocalLoading] = useState(false);
+
+    const loading = authLoading || localLoading;
 
     const tabList = [
         {
@@ -33,87 +38,38 @@ const Profile = () => {
         },
     ];
 
+    // Fetch purchased games when the global `user` becomes available/changes.
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchPurchasedGames = async () => {
+            if (!user || !user.purchasedGames || user.purchasedGames.length === 0) {
+                setGames([]);
+                return;
+            }
+            setLocalLoading(true);
             try {
                 const token = localStorage.getItem("token");
                 const xAuthToken = process.env.VITE_API_TOKEN;
-                if (!token) {
-                    window.location.href = "/login";
-                    return;
-                }
-                // Always send Authorization, and send X-Auth-Token if available
-                const headers = { Authorization: `Bearer ${token}` };
+                const headers = {};
+                if (token) headers.Authorization = `Bearer ${token}`;
                 if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
-                let data;
-                let decoded = null;
-                try {
-                    const res = await axios.get(
-                        process.env.VITE_API_URL + "/api/user/me",
-                        { headers }
-                    );
-                    data = res.data;
-                } catch (err) {
-                    // If backend fails, try to decode token on frontend
-                    try {
-                        decoded = jwtDecode(token);
-                        setUser({
-                            username: decoded.username || decoded.name || "User",
-                            email: decoded.email || "",
-                            avatar: decoded.avatar || DEFAULT_AVATAR,
-                            purchasedGames: decoded.purchasedGames || [],
-                            createdAt: decoded.iat ? new Date(decoded.iat * 1000) : undefined,
-                        });
-                        setGames([]);
-                        setLoading(false);
-                        return;
-                    } catch (decodeErr) {
-                        setUser(null);
-                        setLoading(false);
-                        return;
-                    }
-                }
-                setUser(data.user);
-                if (data.user.purchasedGames && data.user.purchasedGames.length > 0) {
-                    // Fetch purchased games details
-                    try {
-                        const gamesRes = await axios.get(
-                            process.env.VITE_API_URL + "/api/apps/get-multiple",
-                            {
-                                params: { ids: data.user.purchasedGames.join(",") },
-                                headers,
-                            }
-                        );
-                        setGames(gamesRes.data.apps || []);
-                    } catch (gamesErr) {
-                        setGames([]);
-                    }
-                }
-            } catch (err) {
-                // Log error for debugging
-                console.error("Profile fetch error:", err);
-                setUser(null);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUser();
-    }, []);
 
-    // Fallback: If games is empty but user.purchasedGames exists (from decoded token), fetch each game by id
-    useEffect(() => {
-        const fetchGamesById = async () => {
-            if (games.length === 0 && user && user.purchasedGames && user.purchasedGames.length > 0) {
-                const token = localStorage.getItem("token");
-                const xAuthToken = process.env.VITE_API_TOKEN;
-                const headers = { Authorization: `Bearer ${token}` };
-                if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
+                // Try bulk fetch first
                 try {
+                    const gamesRes = await axios.get(
+                        `${process.env.VITE_API_URL}/api/apps/get-multiple`,
+                        {
+                            params: { ids: user.purchasedGames.join(",") },
+                            headers,
+                        }
+                    );
+                    setGames(gamesRes.data.apps || []);
+                } catch (bulkErr) {
+                    // Fallback: fetch individually
                     const gameDetails = await Promise.all(
                         user.purchasedGames.map(async (id) => {
                             try {
                                 const res = await axios.get(
-                                    process.env.VITE_API_URL + `/api/apps/get/${id}`,
+                                    `${process.env.VITE_API_URL}/api/apps/get/${id}`,
                                     { headers }
                                 );
                                 return res.data.app;
@@ -123,13 +79,15 @@ const Profile = () => {
                         })
                     );
                     setGames(gameDetails.filter(Boolean));
-                } catch (err) {
-                    setGames([]);
                 }
+            } catch (err) {
+                console.error("Failed to load purchased games:", err);
+                setGames([]);
+            } finally {
+                setLocalLoading(false);
             }
         };
-        fetchGamesById();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        fetchPurchasedGames();
     }, [user]);
 
     // Function to create slug for download URLs
@@ -157,7 +115,7 @@ const Profile = () => {
                 <div className="text-center p-8 bg-gray-900/80 rounded-2xl border border-gray-700/50">
                     <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v5a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                     </div>
                     <p className="text-white text-lg font-semibold mb-2">Authentication Required</p>
@@ -427,7 +385,7 @@ const Profile = () => {
                     <div className="flex flex-col items-center justify-center min-h-[400px] py-16 bg-gray-900/40 rounded-2xl border border-gray-700/50 backdrop-blur-sm">
                         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center mb-6 shadow-2xl">
                             <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
                         <div className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">Coming Soon</div>
