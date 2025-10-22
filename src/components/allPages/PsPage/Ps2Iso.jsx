@@ -123,6 +123,9 @@ function Ps2Iso() {
     const [totalItems, setTotalItems] = useState(0);
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
+    // NEW: Track fetching state so we can show skeleton during page changes
+    const [isLoading, setIsLoading] = useState(true);
+
     const itemsPerPage = 48;
     const totalPages = Math.max(Math.ceil(totalItems / itemsPerPage), 1);
 
@@ -137,7 +140,9 @@ function Ps2Iso() {
     // Fetch data on mount and whenever filters/page changes
     useEffect(() => {
         const fetchData = async () => {
+            // show both flags for compatibility; isLoading controls the skeleton display
             setLoading(true);
+            setIsLoading(true);
             setError(null);
             try {
                 const searchParams = getSearchParams();
@@ -169,6 +174,8 @@ function Ps2Iso() {
                 setTotalItems(0);
             } finally {
                 setLoading(false);
+                // ensure transition flag cleared after fetch completes
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -260,6 +267,8 @@ function Ps2Iso() {
     // Handle filter apply
     const handleApplyFilters = (filters) => {
         const params = mapFiltersToQuery(filters);
+        // show skeleton while new filtered results load
+        setIsLoading(true);
         updateURL(params);
         setCurrentPage(1);
     };
@@ -276,6 +285,8 @@ function Ps2Iso() {
         const searchParams = getSearchParams();
         ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => delete searchParams[key]);
         searchParams.page = '1';
+        // show skeleton while clearing filters and fetching
+        setIsLoading(true);
         updateURL(searchParams);
         setCurrentPage(1);
     };
@@ -283,6 +294,8 @@ function Ps2Iso() {
     // Update handlePageChange to preserve filters
     const handlePageChange = (newPage) => {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
+        // show skeleton while the next page loads
+        setIsLoading(true);
         const searchParams = getSearchParams();
         searchParams.page = validPage.toString();
         updateURL(searchParams);
@@ -365,7 +378,7 @@ function Ps2Iso() {
             {/* Decorative grid lines */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
 
-            {loading ? (
+            {isLoading ? (
                 <CategorySkeleton itemCount={12} />
             ) : error ? (
                 <div className="text-center">
@@ -485,7 +498,7 @@ function Ps2Iso() {
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={handlePageChange}
-                            isLoading={loading}
+                            isLoading={isLoading}
                         />
                     </div>
 

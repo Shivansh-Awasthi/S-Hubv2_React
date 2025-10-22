@@ -146,6 +146,9 @@ function MacExclusives({ serverData, initialPage = 1 }) {
     const { user: userData } = useAuth();
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
+    // NEW: Track transition/loading for page/filter actions (controls skeleton display)
+    const [isLoading, setIsLoading] = useState(true);
+
     // Note: global AuthProvider handles fetching and reacting to 'auth-change' events.
     // This component reads userData via useAuth() above and will re-render automatically when auth changes.
 
@@ -158,6 +161,9 @@ function MacExclusives({ serverData, initialPage = 1 }) {
         const { games, total } = extractData(serverData);
         setData(games);
         setTotalApps(total);
+
+        // clear global loading when server data applied
+        setIsLoading(false);
 
         // Update current page from URL
         const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
@@ -178,6 +184,8 @@ function MacExclusives({ serverData, initialPage = 1 }) {
 
         const fetchData = async () => {
             setIsPageTransitioning(true);
+            // show skeleton while fetching
+            setIsLoading(true);
             try {
                 const res = await fetch(
                     `${process.env.VITE_API_URL}/api/apps/category/ps4?page=${currentPage}&limit=${ITEMS_PER_PAGE}`,
@@ -201,6 +209,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                 setError('Failed to load data: ' + err.message);
             } finally {
                 setIsPageTransitioning(false);
+                setIsLoading(false);
             }
         };
 
@@ -257,6 +266,8 @@ function MacExclusives({ serverData, initialPage = 1 }) {
     // Handle filter apply
     const handleApplyFilters = (filters) => {
         const params = mapFiltersToQuery(filters);
+        // show skeleton while new filtered results load
+        setIsLoading(true);
         navigate(`${pathname}?${params.toString()}`);
     };
 
@@ -271,6 +282,8 @@ function MacExclusives({ serverData, initialPage = 1 }) {
         const params = new URLSearchParams(location.search);
         ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
         params.set('page', '1');
+        // show skeleton while clearing filters and fetching
+        setIsLoading(true);
         navigate(`${pathname}?${params.toString()}`);
     };
 
@@ -280,8 +293,8 @@ function MacExclusives({ serverData, initialPage = 1 }) {
             return; // Don't do anything if invalid page or already transitioning
         }
         setIsPageTransitioning(true);
-        // showSkeleton && showSkeleton('PS4'); // Uncomment if you have this context
-
+        // show skeleton while the next page loads
+        setIsLoading(true);
         // Preserve all filters
         const params = new URLSearchParams(location.search);
         params.set('page', newPage);
@@ -476,7 +489,8 @@ function MacExclusives({ serverData, initialPage = 1 }) {
     };
 
     // Error state or no games available
-    if ((error && !data.length) || (!data.length && !isPageTransitioning)) {
+    // show the special error/empty UI only when not loading
+    if (!data.length && !isLoading) {
         return (
             <div className="container mx-auto p-2 pb-24 relative">
                 {/* Filter Bar at the top for error/empty state */}
@@ -495,10 +509,6 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                     )}
                 </div>
                 <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />
-
-
-
-
                 {/* Premium background decorative elements */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10 animate-pulse"></div>
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 opacity-5 rounded-full blur-3xl -z-10 animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -608,6 +618,11 @@ function MacExclusives({ serverData, initialPage = 1 }) {
     // Main render
     return (
         <div className="container mx-auto p-2 pb-24">
+        {/* show skeleton when loading */}
+        {isLoading ? (
+            <CategorySkeleton itemCount={12} />
+        ) : (
+            <>
             {/* Filter Bar - always visible at the top */}
             <div className="mb-6 flex justify-end items-center gap-3">
                 <FilterBar onOpenFilters={() => setFilterModalOpen(true)} activeFilterCount={getActiveFilterCount()} />
@@ -729,10 +744,12 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={handlePageChange}
-                        isLoading={isPageTransitioning}
+                        isLoading={isLoading}
                     />
                 </div>
             )}
+            </>
+        )}
         </div>
     );
 }
