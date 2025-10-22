@@ -22,6 +22,8 @@ function MacSoftwares() {
         const searchParams = new URLSearchParams(params).toString();
         const newUrl = `${window.location.pathname}?${searchParams}`;
         window.history.pushState({}, '', newUrl);
+        // ensure components listening to popstate update immediately
+        window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
     const ITEMS_PER_PAGE = 48;
