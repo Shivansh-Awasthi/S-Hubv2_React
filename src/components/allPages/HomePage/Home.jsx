@@ -6,10 +6,10 @@ import { FaPlaystation } from "react-icons/fa";
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import HomeSkeleton from '../../skeletons/HomeSkeleton';
 import axios from 'axios';
-import RandomGame from '../../sidePages/RandomGames/RandomGame';
+
 
 const images = [
-    'https://i.postimg.cc/YSVmm4NJ/god-of-war-ragnarok-game-art-wallpaper-2560x1600-7.jpg',
+    'https://i.postimg.cc/QdnS7Cv4/126a32b6498de2e5402aa8363f4b7b5d.jpg',
     'https://i.postimg.cc/9fymd8Xw/img-5817.avif',
     'https://img.playbook.com/fEFoQgs0r1pXKzOJcJIfIevmy08UHSLlInS1-Fcp8uc/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljL2RkZGUzOTQ1/LTQwNzMtNDMxNy05/N2QyLTk3OTJkNDFi/OTBlNQ',
     'https://img.playbook.com/X0CxPl24l4RbK0kdRTk7NAtbQVW_5S9PYB05cE4vFZk/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljLzM1MThlMDAx/LTNiYWQtNGQxZS1i/OWQ0LTY1MmM5MWQx/OTU4Yw'
@@ -310,7 +310,7 @@ const HomeClient = () => {
                                     {/* Glowing separator line */}
                                     <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-600/20 to-transparent"></div>
 
-                                    <div className="text-sm font-medium text-white pb-2 overflow-hidden whitespace-nowrap text-ellipsis group-hover:from-blue-400 group-hover:to-purple-400 transition-colors duration-300">
+                                    <div className="text-sm font-medium text-whitw pb-2 overflow-hidden whitespace-nowrap text-ellipsis group-hover:from-blue-400 group-hover:to-purple-400 transition-colors duration-300">
                                         {ele.title}
                                     </div>
                                     <div className="text-xs font-normal text-white flex items-center">

@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/sidePages/sidebar/Sidebar.jsx';
-import Home from './components/allPages/HomePage/Home.jsx';
+// import Home from './components/allPages/HomePage/Home.jsx';
 import Faq from './components/otherPages/Faq.jsx';
 import './App.css';
 import Membership from './components/otherPages/Membership.jsx';
@@ -33,9 +34,13 @@ import PaidGameAdminPage from './components/Admin/PaidGameAdminPage.jsx';
 import CreateApps from './components/Admin/CreateApps.jsx';
 import GamePage from './components/Utilities/Gamepage.jsx';
 
+// lazy load pages for perf
+const Home = lazy(() => import('./components/allPages/HomePage/Home.jsx'));
+const NotFound = lazy(() => import('./components/NotFound/NotFound.jsx'));
+
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <div className="flex min-h-screen">
         {/* Sidebar on the left */}
         <Sidebar />
@@ -100,11 +105,12 @@ function App() {
               <Route path="/gamepage" element={<GamePage />} />
 
 
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
         </main>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 
