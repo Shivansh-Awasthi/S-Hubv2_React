@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaAndroid } from "react-icons/fa6";
 import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
@@ -7,9 +7,16 @@ import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 
 function Android() {
+    // React Router hooks instead of window.location
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Parse search params using React Router's location
+    const searchParams = new URLSearchParams(location.search);
+
     const itemsPerPage = 48;
     const [data, setData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
     const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(true);
     // NEW: track transition/loading for pagination & filter actions
@@ -26,23 +33,6 @@ function Android() {
         popularity: 'all',
     });
 
-    // Get URL search params
-    const getSearchParams = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const params = {};
-        for (const [key, value] of urlParams.entries()) {
-            params[key] = value;
-        }
-        return params;
-    };
-
-    // Update URL without page reload
-    const updateURL = (params) => {
-        const searchParams = new URLSearchParams(params).toString();
-        const newUrl = `${window.location.pathname}?${searchParams}`;
-        window.history.pushState({}, '', newUrl);
-    };
-
     const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
 
     useEffect(() => {
@@ -52,16 +42,11 @@ function Android() {
             setIsLoading(true);
             setError(null);
             try {
-                const searchParams = getSearchParams();
-                const params = new URLSearchParams();
-                params.set('page', currentPage.toString());
-                params.set('limit', itemsPerPage.toString());
+                const params = new URLSearchParams(location.search);
 
-                if (searchParams.tags) params.set('tags', searchParams.tags);
-                if (searchParams.gameMode) params.set('gameMode', searchParams.gameMode);
-                if (searchParams.sizeLimit) params.set('sizeLimit', searchParams.sizeLimit);
-                if (searchParams.releaseYear) params.set('releaseYear', searchParams.releaseYear);
-                if (searchParams.sortBy) params.set('sortBy', searchParams.sortBy);
+                // Ensure page and limit are set
+                if (!params.get('page')) params.set('page', currentPage.toString());
+                params.set('limit', itemsPerPage.toString());
 
                 const res = await fetch(
                     `${process.env.VITE_API_URL}/api/apps/category/android?${params.toString()}`,
@@ -84,38 +69,26 @@ function Android() {
             }
         };
         fetchData();
-    }, [currentPage]);
+    }, [location.search]); // Changed to depend on location.search
 
-    // Listen for URL changes
+    // Update current page when URL changes
     useEffect(() => {
-        const handleUrlChange = () => {
-            const searchParams = getSearchParams();
-            const pageFromUrl = parseInt(searchParams.page || '1', 10);
-            if (pageFromUrl !== currentPage) {
-                setCurrentPage(pageFromUrl);
-            }
-        };
-
-        // Listen for popstate (back/forward navigation)
-        window.addEventListener('popstate', handleUrlChange);
-
-        // Initial check
-        handleUrlChange();
-
-        return () => {
-            window.removeEventListener('popstate', handleUrlChange);
-        };
-    }, [currentPage]);
+        const params = new URLSearchParams(location.search);
+        const pageFromUrl = parseInt(params.get('page') || '1', 10);
+        if (pageFromUrl !== currentPage) {
+            setCurrentPage(pageFromUrl);
+        }
+    }, [location.search, currentPage]);
 
     // Update handlePageChange to preserve filters
     const handlePageChange = (newPage) => {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
-        const searchParams = getSearchParams();
-        searchParams.page = validPage.toString();
+        const params = new URLSearchParams(location.search);
+        params.set('page', validPage.toString());
         // show skeleton while the next page loads
         setIsLoading(true);
-        updateURL(searchParams);
-        setCurrentPage(validPage);
+        // Use navigate instead of updateURL
+        navigate(`?${params.toString()}`);
     };
 
     // Function to check if a game is new (within 2 days)
@@ -136,7 +109,7 @@ function Android() {
 
     // Helper: Map filter modal values to backend query params
     const mapFiltersToQuery = (filters) => {
-        const searchParams = getSearchParams();
+        const params = new URLSearchParams(location.search);
         const GENRES = [
             { id: 42, name: "2D" }, { id: 85, name: "3D" }, { id: 1, name: "Action" }, { id: 2, name: "Adventure" },
             { id: 83, name: "Agriculture" }, { id: 33, name: "Anime" }, { id: 40, name: "Apps" }, { id: 71, name: "Arcade" },
@@ -175,27 +148,27 @@ function Android() {
         }).filter(Boolean);
 
         if (genreNames && genreNames.length > 0) {
-            searchParams.tags = genreNames.join(',');
+            params.set('tags', genreNames.join(','));
         } else {
-            delete searchParams.tags;
+            params.delete('tags');
         }
 
         if (filters.gameMode && filters.gameMode !== 'any') {
-            searchParams.gameMode = filters.gameMode === 'single' ? 'Singleplayer' : 'Multiplayer';
+            params.set('gameMode', filters.gameMode === 'single' ? 'Singleplayer' : 'Multiplayer');
         } else {
-            delete searchParams.gameMode;
+            params.delete('gameMode');
         }
 
         if (filters.size) {
-            searchParams.sizeLimit = filters.size;
+            params.set('sizeLimit', filters.size);
         } else {
-            delete searchParams.sizeLimit;
+            params.delete('sizeLimit');
         }
 
         if (filters.year) {
-            searchParams.releaseYear = filters.year;
+            params.set('releaseYear', filters.year);
         } else {
-            delete searchParams.releaseYear;
+            params.delete('releaseYear');
         }
 
         if (filters.popularity && filters.popularity !== 'all') {
@@ -209,43 +182,47 @@ function Android() {
                 case 'newest': sortBy = 'newest'; break;
                 default: sortBy = 'newest';
             }
-            searchParams.sortBy = sortBy;
+            params.set('sortBy', sortBy);
         } else {
-            delete searchParams.sortBy;
+            params.delete('sortBy');
         }
 
-        searchParams.page = '1';
-        return searchParams;
+        params.set('page', '1');
+        return params;
     };
 
     // Handle filter apply
     const handleApplyFilters = (filters) => {
         const params = mapFiltersToQuery(filters);
-        updateURL(params);
-        setCurrentPage(1);
+        // show skeleton while new filtered results load
+        setIsLoading(true);
+        // Use navigate instead of updateURL
+        navigate(`?${params.toString()}`);
+        setFilterModalOpen(false);
     };
 
     // Check if any filter is active
     const isFilterActive = () => {
-        const searchParams = getSearchParams();
         const keys = ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'];
-        return keys.some(key => searchParams[key]);
+        return keys.some(key => searchParams.get(key));
     };
 
     // Clear all filters
     const handleClearFilters = () => {
-        const searchParams = getSearchParams();
-        ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => delete searchParams[key]);
-        searchParams.page = '1';
-        updateURL(searchParams);
-        setCurrentPage(1);
+        const params = new URLSearchParams(location.search);
+        ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
+        params.set('page', '1');
+        // show skeleton while clearing filters and fetching
+        setIsLoading(true);
+        // Use navigate instead of updateURL
+        navigate(`?${params.toString()}`);
     };
 
     // Helper to extract filters from URL
     const extractFiltersFromSearchParams = () => {
-        const searchParams = getSearchParams();
+        const params = new URLSearchParams(location.search);
         let genres = [];
-        const tags = searchParams.tags;
+        const tags = params.get('tags');
 
         if (tags) {
             const GENRES = [
@@ -286,15 +263,15 @@ function Android() {
             }).filter(Boolean);
         }
 
-        let gameMode = searchParams.gameMode;
+        let gameMode = params.get('gameMode');
         if (gameMode === 'Singleplayer') gameMode = 'single';
         else if (gameMode === 'Multiplayer') gameMode = 'multi';
         else gameMode = 'any';
 
-        const size = searchParams.sizeLimit || '';
-        const year = searchParams.releaseYear || '';
+        const size = params.get('sizeLimit') || '';
+        const year = params.get('releaseYear') || '';
         let popularity = 'all';
-        const sortBy = searchParams.sortBy;
+        const sortBy = params.get('sortBy');
 
         if (sortBy) {
             switch (sortBy) {
@@ -321,7 +298,7 @@ function Android() {
     // Sync filters state with URL
     useEffect(() => {
         setFilters(extractFiltersFromSearchParams());
-    }, [window.location.search]);
+    }, [location.search]);
 
     // Count active filters for badge
     const getActiveFilterCount = () => {
@@ -439,6 +416,10 @@ function Android() {
                                         src={ele.thumbnail[0]}
                                         alt={ele.title}
                                         className="relative rounded-full w-16 h-16 transition-transform duration-700 ease-in-out transform group-hover:scale-110 border border-purple-500/20 z-10"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/default-game.png';
+                                        }}
                                     />
                                 </div>
 

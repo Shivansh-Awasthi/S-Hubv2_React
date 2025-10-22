@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; // Add React Router hooks
 import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 
 export default function PcSoftwares() {
-    // Function to get URL search params
-    const getSearchParams = () => {
-        if (typeof window === 'undefined') return new URLSearchParams();
-        return new URLSearchParams(window.location.search);
-    };
+    // React Router hooks instead of window.location
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    const searchParams = getSearchParams();
+    // Parse search params using React Router's location
+    const searchParams = new URLSearchParams(location.search);
     const ITEMS_PER_PAGE = 48;
 
     const [data, setData] = useState([]);
@@ -31,14 +31,11 @@ export default function PcSoftwares() {
             setIsLoading(true);
             setError(null);
             try {
-                const params = new URLSearchParams();
-                params.set('page', currentPage);
-                params.set('limit', ITEMS_PER_PAGE);
-                if (searchParams.get('tags')) params.set('tags', searchParams.get('tags'));
-                if (searchParams.get('gameMode')) params.set('gameMode', searchParams.get('gameMode'));
-                if (searchParams.get('sizeLimit')) params.set('sizeLimit', searchParams.get('sizeLimit'));
-                if (searchParams.get('releaseYear')) params.set('releaseYear', searchParams.get('releaseYear'));
-                if (searchParams.get('sortBy')) params.set('sortBy', searchParams.get('sortBy'));
+                const params = new URLSearchParams(location.search); // Use current location
+
+                // Ensure page and limit are set
+                if (!params.get('page')) params.set('page', currentPage.toString());
+                params.set('limit', ITEMS_PER_PAGE.toString());
 
                 const res = await fetch(
                     `${process.env.VITE_API_URL}/api/apps/category/spc?${params.toString()}`,
@@ -63,19 +60,19 @@ export default function PcSoftwares() {
             }
         };
         fetchData();
-    }, [currentPage]);
+    }, [location.search]); // Changed to depend on location.search instead of currentPage
 
     useEffect(() => {
-        const params = getSearchParams();
+        const params = new URLSearchParams(location.search);
         const pageFromUrl = parseInt(params.get('page') || '1', 10);
         if (pageFromUrl !== currentPage) {
             setCurrentPage(pageFromUrl);
         }
-    }, [currentPage]);
+    }, [location.search, currentPage]);
 
     // Helper: Map filter modal values to backend query params
     const mapFiltersToQuery = (filters) => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(location.search); // Use current location
         // Genres: convert selected genre IDs to names, then comma-separated
         if (filters.genres && filters.genres.length > 0) {
             const GENRES = [
@@ -156,13 +153,41 @@ export default function PcSoftwares() {
 
     // Helper: Extract filters from URL
     const extractFiltersFromUrl = () => {
-        const params = getSearchParams();
+        const params = new URLSearchParams(location.search); // Use current location
         let genres = [];
         const tags = params.get('tags');
         if (tags) {
             const GENRES = [
                 { id: 42, name: "2D" }, { id: 85, name: "3D" }, { id: 1, name: "Action" }, { id: 2, name: "Adventure" },
-                // ... same GENRES array as above
+                // ... same GENRES array as above (you should include the full array here)
+                { id: 83, name: "Agriculture" }, { id: 33, name: "Anime" }, { id: 40, name: "Apps" }, { id: 71, name: "Arcade" },
+                { id: 115, name: "Artificial Intelligence" }, { id: 129, name: "Assassin" }, { id: 60, name: "Atmospheric" },
+                { id: 109, name: "Automation" }, { id: 133, name: "Blood" }, { id: 24, name: "Building" }, { id: 95, name: "Cartoon" },
+                { id: 22, name: "Casual" }, { id: 107, name: "Character Customization" }, { id: 68, name: "Cinematic*" },
+                { id: 106, name: "Classic" }, { id: 49, name: "Co-Op" }, { id: 108, name: "Colony Sim" }, { id: 70, name: "Colorful" },
+                { id: 86, name: "Combat" }, { id: 78, name: "Comedy" }, { id: 103, name: "Comic Book" }, { id: 44, name: "Comptetitive" },
+                { id: 105, name: "Controller" }, { id: 72, name: "Crafting" }, { id: 5, name: "Crime" }, { id: 59, name: "Cute" },
+                { id: 67, name: "Cyberpunk" }, { id: 91, name: "Dark Humor" }, { id: 51, name: "Difficult" }, { id: 58, name: "Dragons" },
+                { id: 126, name: "Driving" }, { id: 118, name: "Early Access" }, { id: 46, name: "eSport" }, { id: 125, name: "Exploration" },
+                { id: 102, name: "Family Friendly" }, { id: 9, name: "Fantasy" }, { id: 79, name: "Farming Sim" }, { id: 124, name: "Fast-Paced" },
+                { id: 135, name: "Female Protagonist" }, { id: 36, name: "Fighting" }, { id: 121, name: "First-Person" }, { id: 84, name: "Fishing" },
+                { id: 88, name: "Flight" }, { id: 43, name: "FPS" }, { id: 64, name: "Funny" }, { id: 76, name: "Gore" },
+                { id: 134, name: "Great Soundtrack" }, { id: 73, name: "Hack and Slash" }, { id: 10, name: "History" }, { id: 11, name: "Horror" },
+                { id: 57, name: "Hunting" }, { id: 69, name: "Idler" }, { id: 100, name: "Illuminati" }, { id: 120, name: "Immersive Sim" },
+                { id: 25, name: "Indie" }, { id: 101, name: "LEGO" }, { id: 81, name: "Life Sim" }, { id: 66, name: "Loot" },
+                { id: 113, name: "Management" }, { id: 61, name: "Mature" }, { id: 96, name: "Memes" }, { id: 50, name: "Military" },
+                { id: 89, name: "Modern" }, { id: 32, name: "Multiplayer" }, { id: 13, name: "Mystery" }, { id: 77, name: "Nudity" },
+                { id: 26, name: "Open World" }, { id: 74, name: "Parkour" }, { id: 122, name: "Physics" }, { id: 80, name: "Pixel Graphics" },
+                { id: 127, name: "Post-apocalyptic" }, { id: 35, name: "Puzzle" }, { id: 48, name: "PvP" }, { id: 28, name: "Racing" },
+                { id: 53, name: "Realistic" }, { id: 82, name: "Relaxing" }, { id: 112, name: "Resource Management" }, { id: 23, name: "RPG" },
+                { id: 65, name: "Sandbox" }, { id: 34, name: "Sci-fi" }, { id: 114, name: "Science" }, { id: 15, name: "Science Fiction" },
+                { id: 99, name: "Sexual Content" }, { id: 31, name: "Shooters" }, { id: 21, name: "Simulation" }, { id: 93, name: "Singleplayer" },
+                { id: 29, name: "Sports" }, { id: 38, name: "Stealth Game" }, { id: 97, name: "Story Rich" }, { id: 27, name: "Strategy" },
+                { id: 92, name: "Superhero" }, { id: 117, name: "Surreal" }, { id: 37, name: "Survival" }, { id: 47, name: "Tactical" },
+                { id: 87, name: "Tanks" }, { id: 45, name: "Team-Based" }, { id: 104, name: "Third Person" }, { id: 54, name: "Third-Person-Shooter" },
+                { id: 17, name: "Thriller" }, { id: 56, name: "Tower Defense" }, { id: 52, name: "Trading" }, { id: 94, name: "Turn-Based" },
+                { id: 111, name: "Underwater" }, { id: 41, name: "Utilities" }, { id: 75, name: "Violent" }, { id: 20, name: "VR" },
+                { id: 18, name: "War" }, { id: 123, name: "Wargame" }, { id: 119, name: "Zombie" }
             ];
             const tagNames = tags.split(',');
             genres = tagNames.map(name => {
@@ -211,13 +236,13 @@ export default function PcSoftwares() {
 
     // Clear all filters
     const handleClearFilters = () => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(location.search);
         ['tags', 'gameMode', 'sizeLimit', 'releaseYear', 'sortBy'].forEach(key => params.delete(key));
         params.set('page', '1');
         // show skeleton while clearing filters and fetching
         setIsLoading(true);
-        window.history.pushState({}, '', `?${params.toString()}`);
-        setCurrentPage(1);
+        // Use navigate instead of window.history.pushState
+        navigate(`?${params.toString()}`);
     };
 
     // Handle filter apply
@@ -226,8 +251,8 @@ export default function PcSoftwares() {
         // show skeleton while new filtered results load
         setIsLoading(true);
         params.set('page', '1');
-        window.history.pushState({}, '', `?${params.toString()}`);
-        setCurrentPage(1);
+        // Use navigate instead of window.history.pushState
+        navigate(`?${params.toString()}`);
         setFilterModalOpen(false);
     };
 
@@ -236,10 +261,10 @@ export default function PcSoftwares() {
         const validPage = Math.max(1, Math.min(newPage, totalPages));
         // show skeleton while the next page loads
         setIsLoading(true);
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(location.search);
         params.set('page', validPage);
-        window.history.pushState({}, '', `?${params.toString()}`);
-        setCurrentPage(validPage);
+        // Use navigate instead of window.history.pushState
+        navigate(`?${params.toString()}`);
     };
 
     // Function to check if a software is new (within 2 days)
@@ -263,7 +288,7 @@ export default function PcSoftwares() {
     const [filters, setFilters] = useState(extractFiltersFromUrl());
     useEffect(() => {
         setFilters(extractFiltersFromUrl());
-    }, []);
+    }, [location.search]); // Update filters when URL changes
 
     // Main render
     return (
@@ -371,6 +396,10 @@ export default function PcSoftwares() {
                                         src={ele.thumbnail[0]}
                                         alt={ele.title}
                                         className="relative rounded-lg w-16 h-16 transition-transform duration-700 ease-in-out transform group-hover:scale-110 border border-purple-500/20 z-10"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/default-game.png';
+                                        }}
                                     />
                                 </div>
 
