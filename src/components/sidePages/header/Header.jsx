@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { CiSearch } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import { CiLock } from "react-icons/ci";
-import { jwtDecode } from 'jwt-decode';
+// import { jwtDecode } from 'jwt-decode';
+import { useAuth, triggerAuthChange } from '../../../contexts/AuthContext.jsx'; // added
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
@@ -81,27 +82,8 @@ const LiveSearchSkeleton = ({ itemCount }) => (
 const ProfileIcon = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [showLogoutWarning, setShowLogoutWarning] = useState(false);
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                setUser(null);
-                return;
-            }
-            try {
-                const decoded = jwtDecode(token);
-                setUser({
-                    username: decoded.username || decoded.name || "User",
-                    avatar: decoded.avatar || DEFAULT_AVATAR,
-                });
-            } catch {
-                setUser(null);
-            }
-        };
-        fetchUser();
-    }, []);
+    // Use global auth user so header updates when auth changes
+    const { user } = useAuth();
 
     // Click outside to close dropdown
     useEffect(() => {
@@ -119,9 +101,11 @@ const ProfileIcon = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        // notify AuthProvider to refresh global user state
+        try { triggerAuthChange(); } catch (e) { window.dispatchEvent(new Event('auth-change')); }
         setShowLogoutWarning(false);
         setShowDropdown(false);
-        setUser(null);
+        // optional: redirect to home
         window.location.href = '/';
     };
 
@@ -249,30 +233,10 @@ const Header = () => {
     const searchRef = useRef(null);
     const navigate = useNavigate();
 
-    // User data state
-    const [userData, setUserData] = useState({
-        purchasedGames: [],
-        isAdmin: false
-    });
-
-    // Load user data from localStorage
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                const purchasedGames = decoded?.purchasedGames || [];
-                const isAdmin = decoded?.role === 'ADMIN';
-
-                setUserData({
-                    purchasedGames,
-                    isAdmin
-                });
-            } catch (err) {
-                console.error("Failed to decode token:", err);
-            }
-        }
-    }, []);
+    // Use global auth user so header updates immediately after login/logout
+    const { user } = useAuth();
+    const purchasedGames = user?.purchasedGames || [];
+    const isAdmin = user?.role === 'ADMIN';
 
     // Handle search input change with debounce
     useEffect(() => {
@@ -381,8 +345,8 @@ const Header = () => {
 
                                         <ul className="divide-y divide-gray-700/30 relative z-10">
                                             {searchResults.apps.map((app) => {
-                                                const isPurchased = userData.purchasedGames.includes(app._id);
-                                                const isUnlocked = userData.isAdmin || !app.isPaid || isPurchased;
+                                                const isPurchased = purchasedGames.includes(app._id);
+                                                const isUnlocked = isAdmin || !app.isPaid || isPurchased;
                                                 const isLocked = !isUnlocked;
 
                                                 return (

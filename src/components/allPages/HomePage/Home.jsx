@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { LuAppWindowMac } from "react-icons/lu";
 import { FaAndroid } from "react-icons/fa";
 import { FaPlaystation } from "react-icons/fa";
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '../../../contexts/AuthContext.jsx';
 import HomeSkeleton from '../../skeletons/HomeSkeleton';
 import axios from 'axios';
 import RandomGame from '../../sidePages/RandomGames/RandomGame';
@@ -33,7 +33,7 @@ const HomeClient = () => {
 
     // For count visitors accessible/visible only for the admins
     const [isAdmin, setIsAdmin] = useState(false);
-    const [user, setUser] = useState(null);
+    const { user } = useAuth(); // global auth
 
     // Fetch all data on mount
     useEffect(() => {
@@ -71,52 +71,11 @@ const HomeClient = () => {
         fetchAll();
     }, []);
 
+    // React to global auth changes
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const xAuthToken = process.env.REACT_APP_API_TOKEN;
-                if (!token) {
-                    setUser(null);
-                    return null;
-                }
-                // Always send Authorization, and send X-Auth-Token if available
-                const headers = { Authorization: `Bearer ${token}` };
-                if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
-                let data;
-                let decoded = null;
-                try {
-                    const res = await axios.get(
-                        process.env.REACT_APP_API_URL + "/api/user/me",
-                        { headers }
-                    );
-                    data = res.data;
-                    let admin = data.user.role
-                    if (admin === "ADMIN") {
-                        setIsAdmin(true);
-                    }
-                } catch (err) {
-                    // If backend fails, try to decode token on frontend
-                    try {
-                        decoded = jwtDecode(token);
-                        setUser({
-                            username: decoded.role || decoded.role || "user",
-                        });
-                        if (decoded.role === "ADMIN") {
-                            setIsAdmin(true);
-                        }
-                        return;
-                    } catch (decodeErr) {
-                        setUser(null);
-                        return;
-                    }
-                }
-            } catch (err) {
-                setUser(null);
-            }
-        };
-        fetchUser();
-    }, []);
+        if (user && user.role === 'ADMIN') setIsAdmin(true);
+        else setIsAdmin(false);
+    }, [user]);
 
     const createSlug = (text = '') => {
         // First ensure we have a string
@@ -664,7 +623,7 @@ const HomeClient = () => {
                                     {/* Glowing separator line */}
                                     <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-600/20 to-transparent"></div>
 
-                                    <div className="text-sm font-medium text-white text-center pb-2 overflow-hidden whitespace-nowrap text-ellipsis group-hover:from-blue-400 group-hover:to-purple-400 transition-colors duration-300">
+                                    <div className="text-sm font-medium text-white text-center pb-2 overflow-hidden whitespace-nowrap text-ellipsis group-hover:from-blue-400 group_hover:to-purple-400 transition-colors duration-300">
                                         {ele.title}
                                     </div>
                                     <div className="text-xs font-normal text-white flex items-center justify-center">

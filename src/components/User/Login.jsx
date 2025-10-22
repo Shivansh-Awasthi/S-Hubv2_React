@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode';
-import { useAuth } from '../hooks/AuthContext';
+import { jwtDecode } from 'jwt-decode'; // optional: used only for logging, can remove if unused
+import { useAuth, triggerAuthChange } from '../../contexts/AuthContext.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
@@ -81,18 +81,19 @@ const Login = () => {
             const result = await loginUser(formData);
 
             if (result.success) {
-                // Store user data in localStorage for client-side access
+                // Store token (AuthProvider reads token from localStorage)
                 if (result.userData.token) {
-                    login(result.userData);
-
-                    // Decode token for additional user info
-                    try {
-                        const decoded = jwtDecode(result.userData.token);
-                        console.log('User decoded:', decoded);
-                    } catch (decodeError) {
-                        console.warn('Token decode error:', decodeError);
-                    }
+                    localStorage.setItem('token', result.userData.token);
                 }
+
+                // Optionally store minimal info (not required — AuthProvider will fetch full user)
+                if (result.userData.userId) {
+                    localStorage.setItem('userId', result.userData.userId);
+                }
+
+                // Notify global auth to refresh (AuthProvider listens for this event)
+                // prefer triggerAuthChange() helper for clarity
+                try { triggerAuthChange(); } catch (e) { /* fallback */ window.dispatchEvent(new Event('auth-change')); }
 
                 // Reset form fields
                 setEmail('');
@@ -104,10 +105,9 @@ const Login = () => {
                     autoClose: 2000,
                 });
 
-                // Redirect to home after 2 seconds
-                setTimeout(() => {
-                    navigate('/');
-                }, 2000);
+                // Clear submitting and redirect
+                setIsSubmitting(false);
+                setTimeout(() => navigate('/'), 2000);
             } else {
                 // Show error toast
                 toast.error(result.message, {
