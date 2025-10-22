@@ -230,6 +230,8 @@ const Header = () => {
     const [searchResults, setSearchResults] = useState({ apps: [], total: 0 });
     const [showResults, setShowResults] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    // prevent the live dropdown from reopening immediately after a deliberate navigation (Enter / View all)
+    const [preventOpen, setPreventOpen] = useState(false);
     const searchRef = useRef(null);
     const navigate = useNavigate();
 
@@ -246,7 +248,10 @@ const Header = () => {
                 searchApps(searchQuery, 1, 7)
                     .then(results => {
                         setSearchResults(results);
-                        setShowResults(true);
+                        // Only auto-open results if not prevented by a recent "submit" action
+                        if (!preventOpen) {
+                            setShowResults(true);
+                        }
                     })
                     .catch(error => {
                         console.error('Search error:', error);
@@ -289,8 +294,12 @@ const Header = () => {
         e.preventDefault();
         if (searchQuery.trim() !== '') {
             const timestamp = Date.now();
-            navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}&t=${timestamp}`);
+            // prevent the live dropdown from reopening when we navigate
+            setPreventOpen(true);
             setShowResults(false);
+            navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}&t=${timestamp}`);
+            // clear the flag after a short delay so live search resumes normally
+            setTimeout(() => setPreventOpen(false), 800);
         }
     };
 
@@ -393,9 +402,12 @@ const Header = () => {
                                                 <button
                                                     className="text-center block w-full text-sm text-purple-400 hover:text-purple-300 font-medium"
                                                     onClick={() => {
+                                                        // prevent dropdown from reopening on navigation
+                                                        setPreventOpen(true);
                                                         setShowResults(false);
                                                         const timestamp = Date.now();
                                                         navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}&t=${timestamp}`);
+                                                        setTimeout(() => setPreventOpen(false), 800);
                                                     }}
                                                 >
                                                     View all {searchResults.total} results
