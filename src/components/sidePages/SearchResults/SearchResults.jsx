@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom'; // Added Link import
+import { useLocation, Link } from 'react-router-dom';
 import { CiLock } from 'react-icons/ci';
 import SearchSkeleton from './../../skeletons/SeatchResultSkeleton.jsx';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '../../../contexts/AuthContext.jsx'; // ADD THIS IMPORT
 
 // Function to format dates consistently
 const formatDate = (dateString) => {
@@ -23,6 +23,9 @@ const SearchResults = () => {
     // Use React Router's useLocation to get current URL
     const location = useLocation();
 
+    // USE THE SAME AUTH CONTEXT AS HEADER
+    const { user } = useAuth();
+
     // Query state from URL
     const [query, setQuery] = useState('');
     const [data, setData] = useState([]);
@@ -31,12 +34,6 @@ const SearchResults = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalApps, setTotalApps] = useState(0);
     const itemsPerPage = 48;
-    const [userData, setUserData] = useState({
-        purchasedGames: [],
-        isAdmin: false,
-        isMod: false,
-        isPremium: false
-    });
     const [hasSearched, setHasSearched] = useState(false);
 
     // Fetch data from API
@@ -87,40 +84,6 @@ const SearchResults = () => {
         const urlQuery = urlParams.get('query') || '';
         setQuery(urlQuery);
     }, [location.search]);
-
-    // Fetch user data from token - UPDATED with full role checking
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                const purchasedGames = decoded?.purchasedGames || [];
-                const userRole = decoded?.role;
-                const isAdmin = userRole === 'ADMIN';
-                const isMod = userRole === 'MOD';
-                const isPremium = userRole === 'PREMIUM';
-
-                setUserData({
-                    purchasedGames,
-                    isAdmin,
-                    isMod,
-                    isPremium,
-                    role: userRole
-                });
-            } catch (err) {
-                console.error("Failed to decode token:", err);
-            }
-        } else {
-            // Reset user data if no token
-            setUserData({
-                purchasedGames: [],
-                isAdmin: false,
-                isMod: false,
-                isPremium: false,
-                role: null
-            });
-        }
-    }, []);
 
     // Reset page to 1 when query changes
     useEffect(() => {
@@ -202,10 +165,11 @@ const SearchResults = () => {
                     <div className="flow-root relative z-10">
                         <ul role="list" className="divide-y divide-gray-700/30">
                             {data.map((ele) => {
-                                // UPDATED: Check if the game is paid and whether the user has access (matches header logic)
-                                const isPurchased = userData.purchasedGames.includes(ele._id);
-                                const hasSpecialAccess = userData.isAdmin || userData.isMod || userData.isPremium;
-                                const isUnlocked = hasSpecialAccess || !ele.isPaid || isPurchased;
+                                // USE THE SAME LOGIC AS HEADER
+                                const purchasedGames = user?.purchasedGames || [];
+                                const isPurchased = purchasedGames.includes(ele._id);
+                                const isAdmin = user?.role === 'ADMIN' || user?.role === 'MOD' || user?.role === 'PREMIUM';
+                                const isUnlocked = isAdmin || !ele.isPaid || isPurchased;
                                 const isLocked = !isUnlocked;
 
                                 return (
