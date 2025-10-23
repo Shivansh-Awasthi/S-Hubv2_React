@@ -405,10 +405,12 @@ const SingleApp = () => {
 
                 {/* Right Card */}
                 <div className="w-full max-w-[24rem] mx-auto xl:ml-6 px-7 py-7 bg-gradient-to-br from-[#23233a] via-[#181828] to-[#12121a] rounded-2xl shadow-2xl mt-6 xl:mt-[8.1rem] border border-purple-600/30 relative overflow-hidden flex flex-col justify-between xl:h-[26rem] lg:h-[26rem] min-h-[26rem] transition-all duration-300">
-                    {/* Ambient background elements */}
-                    <div className="absolute -top-12 -left-12 w-44 h-44 bg-purple-600 opacity-15 rounded-full blur-2xl"></div>
-                    <div className="absolute -bottom-12 -right-12 w-44 h-44 bg-blue-600 opacity-15 rounded-full blur-2xl"></div>
-                    <div className="relative z-10 flex-1 overflow-auto custom-scrollbar">
+                    {/* Enhanced ambient background elements */}
+                    <div className="absolute -top-12 -left-12 w-44 h-44 bg-purple-600 opacity-20 rounded-full blur-2xl animate-pulse-slow"></div>
+                    <div className="absolute -bottom-12 -right-12 w-44 h-44 bg-blue-600 opacity-20 rounded-full blur-2xl animate-pulse-slow"></div>
+
+                    {/* Content wrapper with improved scrolling */}
+                    <div className="relative z-10 flex-1 overflow-auto scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-transparent">
                         <div className="grid grid-cols-1 gap-5">
                             {/* Platform */}
                             <div>
@@ -421,6 +423,7 @@ const SingleApp = () => {
                                 </div>
                                 <p className="text-sm text-gray-100 ml-6 font-medium">{data?.platform || ""}</p>
                             </div>
+
                             {/* Tested */}
                             <div>
                                 <div className="flex items-center mb-1">
@@ -436,8 +439,10 @@ const SingleApp = () => {
                                     {data?.platform === "PC" && "PC"}
                                     {data?.platform === "Android" && "Android device"}
                                     {data?.platform === "Playstation" && "PC (Emulator)"}
+                                    {!data?.platform && "Not specified"}
                                 </p>
                             </div>
+
                             {/* Size */}
                             <div>
                                 <div className="flex items-center mb-1">
@@ -448,6 +453,7 @@ const SingleApp = () => {
                                 </div>
                                 <p className="text-sm text-gray-100 ml-6 font-medium">{data?.size || ""}</p>
                             </div>
+
                             {/* Updated at */}
                             <div>
                                 <div className="flex items-center mb-1">
@@ -459,6 +465,7 @@ const SingleApp = () => {
                                 </div>
                                 <p className="text-sm text-gray-100 ml-6 font-medium">{data?.updatedAt ? formatDate(data.updatedAt) : ""}</p>
                             </div>
+
                             {/* Architecture */}
                             <div>
                                 <div className="flex items-center mb-1">

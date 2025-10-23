@@ -47,11 +47,12 @@ const DownloadSection = ({ platform, downloadLinks }) => {
     // Function to determine button color based on mirror number
     const getButtonColor = (index) => {
         const colors = [
-            'bg-blue-600 hover:bg-blue-700', // Mirror 1
+            'bg-yellow-600 hover:bg-yellow-800', // Mirror 1
             'bg-green-600 hover:bg-green-700', // Mirror 2
             'bg-purple-600 hover:bg-purple-700', // Mirror 3
             'bg-orange-600 hover:bg-orange-700', // Mirror 4
             'bg-pink-600 hover:bg-pink-700', // Mirror 5
+            'bg-blue-600 hover:bg-blue-700',
         ];
         return colors[index % colors.length];
     };
@@ -62,7 +63,7 @@ const DownloadSection = ({ platform, downloadLinks }) => {
     return (
         <div className="mt-3">
             <div className="h-0.5 bg-[#8E8E8E] opacity-10 w-full mb-2"></div>
-            <h3 className="text-xl font-medium mb-4">Download Links</h3>
+            <h3 className="text-xl text-gray-200 font-medium mb-4">Download Links</h3>
             {/* Colorful buttons for download options */}
             <div className="flex flex-wrap justify-center gap-4">
                 {downloadLinks.map((link, index) => {
