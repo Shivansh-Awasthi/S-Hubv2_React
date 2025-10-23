@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { jwtDecode } from 'jwt-decode';
+// Remove jwtDecode import since we'll use API verification
 
 const UpdateApps = () => {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ const UpdateApps = () => {
     const appId = params.id;
     const [loading, setLoading] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
-    const [userData, setUserData] = useState(null);
+    const [checkingAdmin, setCheckingAdmin] = useState(true); // Add loading state for admin check
     const [appData, setAppData] = useState(null);
     const [updating, setUpdating] = useState(false); // Loader for update button
 
@@ -45,28 +45,48 @@ const UpdateApps = () => {
     // For dynamic thumbnail input blocks (up to 20)
     const MAX_THUMBNAILS = 20;
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiAuthToken = import.meta.env.VITE_API_TOKEN;
+
+    // ✅ Get token once
+    const token = localStorage.getItem('token');
+
+    // Check admin status on mount - USING SERVER-SIDE VERIFICATION LIKE PaidGameAdminPage
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        const checkAdmin = async () => {
+            if (!token) {
+                toast.error('Unauthorized access. Redirecting to home page...');
+                setTimeout(() => navigate('/'), 2000);
+                setCheckingAdmin(false);
+                return;
+            }
+
             try {
-                const decoded = jwtDecode(token);
-                setUserData(decoded);
-                if (decoded.role === 'ADMIN' || decoded.role === 'MOD') {
+                const res = await fetch(`${apiUrl}/api/user/me`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                        'X-Auth-Token': apiAuthToken,
+                    },
+                });
+                const data = await res.json();
+                if (data.success && (data.user.role === "ADMIN" || data.user.role === "MOD")) {
                     setIsAdmin(true);
                 } else {
-                    toast.error('Unauthorized access. Redirecting to home page...');
+                    toast.error('Unauthorized access. Only admins or moderators can access this page.');
                     setTimeout(() => navigate('/'), 2000);
                 }
             } catch (err) {
-                setUserData(null);
-                navigate('/');
+                console.error('Admin check failed:', err);
+                toast.error('Authentication failed. Redirecting...');
+                setTimeout(() => navigate('/'), 2000);
+            } finally {
+                setCheckingAdmin(false);
             }
-        } else {
-            setUserData(null);
-            toast.error('Unauthorized access. Redirecting to home page...');
-            setTimeout(() => navigate('/'), 2000);
-        }
-    }, [navigate]);
+        };
+
+        checkAdmin();
+    }, [navigate, token, apiUrl, apiAuthToken]);
 
     // Fetch app data by ID from route param
     useEffect(() => {
@@ -74,7 +94,6 @@ const UpdateApps = () => {
             const fetchApp = async () => {
                 setLoading(true);
                 try {
-                    const token = localStorage.getItem('token');
                     const apiUrl = import.meta.env.VITE_API_URL || 'https://toxicgames.in';
                     const { data } = await axios.get(`${apiUrl}/api/apps/get/${appId}`,
                         {
@@ -128,8 +147,9 @@ const UpdateApps = () => {
             };
             fetchApp();
         }
-    }, [isAdmin, appId, navigate]);
+    }, [isAdmin, appId, navigate, token]);
 
+    // All other functions remain exactly the same - no changes below this line
     const handleDownloadLinkChange = (index, value) => {
         const newLinks = [...downloadLink];
         newLinks[index] = value;
@@ -159,6 +179,13 @@ const UpdateApps = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Double check admin status before submitting
+        if (!isAdmin) {
+            toast.error('Unauthorized access. Only admins or moderators can update apps.');
+            return;
+        }
+
         setUpdating(true);
 
         const token = localStorage.getItem('token');
@@ -244,7 +271,6 @@ const UpdateApps = () => {
         }
     };
 
-
     // Handler for thumbnail input change
     const handleThumbnailChange = (idx, value) => {
         let newThumbs = [...thumbnail];
@@ -312,6 +338,18 @@ const UpdateApps = () => {
         { label: "MediaFire Link (Mac) // Buzzheavier (PC)", placeholder: "Enter Mediafire link" },
         { label: "Akira Box Link (Mac, PC)", placeholder: "Enter AkiraBox link" }
     ];
+
+    // Show loading while checking admin status
+    if (checkingAdmin) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
+                    <p className="text-gray-400 mt-4">Checking admin permissions...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (loading) {
         return <div>Loading...</div>;
