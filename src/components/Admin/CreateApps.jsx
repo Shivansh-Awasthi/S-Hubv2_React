@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { jwtDecode } from 'jwt-decode';
+// Remove jwtDecode import since we'll use API verification
 
 const CreateApps = () => {
     const navigate = useNavigate();
@@ -31,37 +31,57 @@ const CreateApps = () => {
     });
     const [loading, setLoading] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
-    const [userData, setUserData] = useState(null);
+    const [checkingAdmin, setCheckingAdmin] = useState(true); // Add loading state for admin check
     const [showTagSelector, setShowTagSelector] = useState(false);
     const [gameMode, setGameMode] = useState("");
     const [releaseYear, setReleaseYear] = useState("");
     const fileInputRef = useRef(null);
     const thumbnailInputRef = useRef(null);
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiAuthToken = import.meta.env.VITE_API_TOKEN;
+
+    // ✅ Get token once
+    const token = localStorage.getItem('token');
+
+    // Check admin status on mount - USING SERVER-SIDE VERIFICATION LIKE PaidGameAdminPage
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        const checkAdmin = async () => {
+            if (!token) {
+                toast.error('Unauthorized access. Redirecting to home page...');
+                setTimeout(() => navigate('/'), 2000);
+                setCheckingAdmin(false);
+                return;
+            }
+
             try {
-                const decoded = jwtDecode(token);
-                setUserData(decoded);
-                if (decoded.role === 'ADMIN') {
+                const res = await fetch(`${apiUrl}/api/user/me`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                        'X-Auth-Token': apiAuthToken,
+                    },
+                });
+                const data = await res.json();
+                if (data.success && data.user.role === "ADMIN") {
                     setIsAdmin(true);
                 } else {
-                    toast.error('Unauthorized access. Redirecting to home page...');
+                    toast.error('Unauthorized access. Only admins can access this page.');
                     setTimeout(() => navigate('/'), 2000);
                 }
             } catch (err) {
-                console.error('Failed to decode JWT token:', err);
-                setUserData(null);
-                navigate('/');
+                console.error('Admin check failed:', err);
+                toast.error('Authentication failed. Redirecting...');
+                setTimeout(() => navigate('/'), 2000);
+            } finally {
+                setCheckingAdmin(false);
             }
-        } else {
-            setUserData(null);
-            toast.error('Unauthorized access. Redirecting to home page...');
-            setTimeout(() => navigate('/'), 2000);
-        }
-    }, [navigate]);
+        };
 
+        checkAdmin();
+    }, [navigate, token, apiUrl, apiAuthToken]);
+
+    // All other functions remain exactly the same - no changes below this line
     const handleThumbnail = (e) => {
         const files = Array.from(e.target.files);
         if (files.length + thumbnail.length > 20) {
@@ -115,26 +135,14 @@ const CreateApps = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
 
-        const token = localStorage.getItem('token');
-        let decoded = null;
-        if (token) {
-            try {
-                decoded = jwtDecode(token);
-            } catch (err) {
-                toast.error('Invalid token. Please login again.');
-                setLoading(false);
-                navigate('/');
-                return;
-            }
-        }
-        if (!decoded || decoded.role !== 'ADMIN') {
+        // Double check admin status before submitting (server will also verify)
+        if (!isAdmin) {
             toast.error('Unauthorized access. Only admins can create apps.');
-            setTimeout(() => navigate('/'), 2000);
-            setLoading(false);
             return;
         }
+
+        setLoading(true);
 
         const filteredDownloadLink = downloadLink.filter(link => link.trim() !== "");
 
@@ -184,7 +192,6 @@ const CreateApps = () => {
         });
 
         try {
-            const token = localStorage.getItem('token');
             const apiUrl = import.meta.env.VITE_API_URL || 'https://toxicgames.in';
 
             await axios.post(`${apiUrl}/api/apps/admin/create`, formData, {
@@ -265,6 +272,18 @@ const CreateApps = () => {
         thumbnailInputRef.current.click();
     };
 
+    // Show loading while checking admin status
+    if (checkingAdmin) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
+                    <p className="text-gray-400 mt-4">Checking admin permissions...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 py-8 px-4 sm:px-6 lg:px-8">
             <ToastContainer position="bottom-right" theme="dark" />
@@ -292,7 +311,7 @@ const CreateApps = () => {
                             <p className="text-gray-400">Build something amazing for our community</p>
                         </div>
 
-                        {/* Main Form Content */}
+                        {/* Main Form Content - ALL REMAINS EXACTLY THE SAME */}
                         <div className="space-y-8">
                             {/* Basic Info Block */}
                             <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 shadow-lg">
