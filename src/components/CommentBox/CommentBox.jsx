@@ -22,6 +22,7 @@ const CommentBox = () => {
     const [submittingEdit, setSubmittingEdit] = useState(false);
     const [showMenu, setShowMenu] = useState(null);
     const [deletingComment, setDeletingComment] = useState(null);
+    const [pinningComment, setPinningComment] = useState(null);
 
     // For testing - hardcoded app ID
     const appId = "6714f917fa2f0dd3a91d2911";
@@ -230,6 +231,36 @@ const CommentBox = () => {
         }
     };
 
+    const handlePinComment = async (commentId) => {
+        if (!user) return;
+
+        try {
+            setPinningComment(commentId);
+            console.log("Toggling pin for comment with ID:", commentId);
+
+            const token = localStorage.getItem("token");
+            const xAuthToken = process.env.VITE_API_TOKEN;
+
+            const headers = {};
+            if (token) headers.Authorization = `Bearer ${token}`;
+            if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
+
+            await axios.post(
+                `${process.env.VITE_API_URL}/api/comments/pin/${commentId}`,
+                {},
+                { headers }
+            );
+
+            setShowMenu(null);
+            setPinningComment(null);
+            fetchComments();
+        } catch (err) {
+            console.error("Failed to pin/unpin comment:", err);
+            setError(err.response?.data?.error || 'Failed to pin/unpin comment');
+            setPinningComment(null);
+        }
+    };
+
     const toggleReplies = (commentId) => {
         setExpandedReplies(prev => ({
             ...prev,
@@ -348,6 +379,11 @@ const CommentBox = () => {
                         </h2>
                         <p className="text-gray-400 text-sm mt-1">
                             {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+                            {comments.filter(c => c.isPinned).length > 0 && (
+                                <span className="text-cyan-400 ml-2">
+                                    ({comments.filter(c => c.isPinned).length} pinned)
+                                </span>
+                            )}
                         </p>
                     </div>
 
@@ -359,9 +395,8 @@ const CommentBox = () => {
                             onChange={(e) => setSortBy(e.target.value)}
                             className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         >
-                            <option value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
-                            <option value="pinned">Pinned</option>
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
                         </select>
                     </div>
                 </div>
@@ -443,7 +478,13 @@ const CommentBox = () => {
                             const isAdminMod = isAdminOrMod();
 
                             return (
-                                <div key={comment._id} className="bg-gray-700/30 rounded-lg border border-gray-600 p-4">
+                                <div
+                                    key={comment._id}
+                                    className={`bg-gray-700/30 rounded-lg border ${comment.isPinned
+                                            ? 'border-cyan-500/50 bg-cyan-500/10'
+                                            : 'border-gray-600'
+                                        } p-4 transition-all duration-200`}
+                                >
                                     {/* Comment Header */}
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-3">
@@ -477,9 +518,9 @@ const CommentBox = () => {
 
                                         <div className="flex items-center gap-2">
                                             {comment.isPinned && (
-                                                <div className="flex items-center gap-1 text-cyan-400 text-sm">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                <div className="flex items-center gap-1 text-cyan-400 text-sm bg-cyan-500/20 px-2 py-1 rounded-full">
+                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
                                                     </svg>
                                                     Pinned
                                                 </div>
@@ -500,7 +541,7 @@ const CommentBox = () => {
                                                     {/* Dropdown Menu */}
                                                     {showMenu === comment._id && (
                                                         <div
-                                                            className="absolute right-0 top-full mt-1 w-32 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10"
+                                                            className="absolute right-0 top-full mt-1 w-36 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             {/* Edit button - only for comment owner */}
@@ -513,6 +554,27 @@ const CommentBox = () => {
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                     </svg>
                                                                     Edit
+                                                                </button>
+                                                            )}
+
+                                                            {/* Pin/Unpin button - only for admin/mod */}
+                                                            {isAdminMod && (
+                                                                <button
+                                                                    onClick={() => handlePinComment(comment._id)}
+                                                                    disabled={pinningComment === comment._id}
+                                                                    className={`w-full px-4 py-2 text-sm ${comment.isPinned ? 'text-yellow-400' : 'text-yellow-300'
+                                                                        } hover:bg-gray-600 flex items-center gap-2 disabled:opacity-50 ${canEdit ? '' : 'rounded-t-lg'
+                                                                        }`}
+                                                                >
+                                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+                                                                    </svg>
+                                                                    {pinningComment === comment._id
+                                                                        ? 'Toggling...'
+                                                                        : comment.isPinned
+                                                                            ? 'Unpin'
+                                                                            : 'Pin to Top'
+                                                                    }
                                                                 </button>
                                                             )}
 
@@ -532,8 +594,7 @@ const CommentBox = () => {
                                                                     }
                                                                 }}
                                                                 disabled={deletingComment === comment._id}
-                                                                className={`w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-600 flex items-center gap-2 disabled:opacity-50 ${canEdit ? '' : 'rounded-t-lg'
-                                                                    } ${canEdit ? 'rounded-b-lg' : ''}`}
+                                                                className="w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-600 rounded-b-lg flex items-center gap-2 disabled:opacity-50"
                                                             >
                                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
