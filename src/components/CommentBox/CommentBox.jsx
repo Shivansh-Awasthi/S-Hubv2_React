@@ -11,10 +11,14 @@ const CommentBox = () => {
     const [error, setError] = useState(null);
     const [newComment, setNewComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
-    const [sortBy, setSortBy] = useState('newest'); // newest, oldest, pinned
+    const [sortBy, setSortBy] = useState('newest');
+    const [replyingTo, setReplyingTo] = useState(null);
+    const [replyContent, setReplyContent] = useState('');
+    const [submittingReply, setSubmittingReply] = useState(false);
+    const [expandedReplies, setExpandedReplies] = useState({});
+    const [replyPages, setReplyPages] = useState({});
 
     // For testing - hardcoded app ID
-    // Later we'll get this from URL: window.location.pathname.split('/').pop()
     const appId = "6714f917fa2f0dd3a91d2911";
 
     useEffect(() => {
@@ -31,13 +35,22 @@ const CommentBox = () => {
             if (token) headers.Authorization = `Bearer ${token}`;
             if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
 
-            // Fetch comments for the specific app
             const response = await axios.get(
                 `${process.env.VITE_API_URL}/api/comments/${appId}?sort=${sortBy}`,
                 { headers }
             );
 
             setComments(response.data.comments || []);
+
+            // Initialize reply pages and expanded state
+            const initialExpanded = {};
+            const initialPages = {};
+            response.data.comments?.forEach(comment => {
+                initialExpanded[comment._id] = false;
+                initialPages[comment._id] = 1;
+            });
+            setExpandedReplies(initialExpanded);
+            setReplyPages(initialPages);
         } catch (err) {
             console.error("Failed to fetch comments:", err);
             setError(err.response?.data?.error || 'Failed to load comments');
@@ -66,7 +79,6 @@ const CommentBox = () => {
             );
 
             setNewComment('');
-            // Refresh comments to show the new one
             fetchComments();
         } catch (err) {
             console.error("Failed to post comment:", err);
@@ -74,6 +86,59 @@ const CommentBox = () => {
         } finally {
             setSubmitting(false);
         }
+    };
+
+    const handleStartReply = (commentId) => {
+        setReplyingTo(commentId);
+        setReplyContent('');
+    };
+
+    const handleCancelReply = () => {
+        setReplyingTo(null);
+        setReplyContent('');
+    };
+
+    const handleSubmitReply = async (commentId) => {
+        if (!replyContent.trim() || !user) return;
+
+        try {
+            setSubmittingReply(true);
+            const token = localStorage.getItem("token");
+            const xAuthToken = process.env.VITE_API_TOKEN;
+
+            const headers = {};
+            if (token) headers.Authorization = `Bearer ${token}`;
+            if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
+
+            await axios.post(
+                `${process.env.VITE_API_URL}/api/comments/reply/${commentId}`,
+                { content: replyContent },
+                { headers }
+            );
+
+            setReplyingTo(null);
+            setReplyContent('');
+            fetchComments(); // Refresh to get updated replies count and new reply
+        } catch (err) {
+            console.error("Failed to post reply:", err);
+            setError(err.response?.data?.error || 'Failed to post reply');
+        } finally {
+            setSubmittingReply(false);
+        }
+    };
+
+    const toggleReplies = (commentId) => {
+        setExpandedReplies(prev => ({
+            ...prev,
+            [commentId]: !prev[commentId]
+        }));
+    };
+
+    const loadMoreReplies = (commentId) => {
+        setReplyPages(prev => ({
+            ...prev,
+            [commentId]: (prev[commentId] || 1) + 1
+        }));
     };
 
     const formatDate = (dateString) => {
@@ -84,6 +149,21 @@ const CommentBox = () => {
             hour: '2-digit',
             minute: '2-digit'
         });
+    };
+
+    // Calculate visible replies based on current page
+    const getVisibleReplies = (comment) => {
+        if (!comment.replies) return [];
+        const page = replyPages[comment._id] || 1;
+        const limit = 10; // 10 replies per page
+        return comment.replies.slice(0, page * limit);
+    };
+
+    const hasMoreReplies = (comment) => {
+        if (!comment.replies) return false;
+        const page = replyPages[comment._id] || 1;
+        const limit = 10;
+        return comment.replies.length > page * limit;
     };
 
     if (loading) {
@@ -216,129 +296,203 @@ const CommentBox = () => {
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        {comments.map(comment => (
-                            <div key={comment._id} className="bg-gray-700/30 rounded-lg border border-gray-600 p-4">
-                                {/* Comment Header */}
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="flex items-center gap-3">
-                                        <img
-                                            src={comment.userId?.avatar || DEFAULT_AVATAR}
-                                            alt={comment.userId?.username}
-                                            className="w-8 h-8 rounded-full border border-cyan-500/20"
-                                            onError={e => (e.target.src = DEFAULT_AVATAR)}
-                                        />
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold text-white text-sm">
-                                                    {comment.userId?.username}
+                        {comments.map(comment => {
+                            const visibleReplies = getVisibleReplies(comment);
+                            const showReplies = expandedReplies[comment._id];
+
+                            return (
+                                <div key={comment._id} className="bg-gray-700/30 rounded-lg border border-gray-600 p-4">
+                                    {/* Comment Header */}
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-3">
+                                            <img
+                                                src={comment.userId?.avatar || DEFAULT_AVATAR}
+                                                alt={comment.userId?.username}
+                                                className="w-8 h-8 rounded-full border border-cyan-500/20"
+                                                onError={e => (e.target.src = DEFAULT_AVATAR)}
+                                            />
+                                            <div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-semibold text-white text-sm">
+                                                        {comment.userId?.username}
+                                                    </span>
+                                                    {comment.userId?.role === 'ADMIN' && (
+                                                        <span className="bg-red-500 text-xs px-2 py-1 rounded-full text-white font-bold">
+                                                            ADMIN
+                                                        </span>
+                                                    )}
+                                                    {comment.userId?.role === 'MOD' && (
+                                                        <span className="bg-green-500 text-xs px-2 py-1 rounded-full text-white font-bold">
+                                                            MOD
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <span className="text-gray-400 text-xs">
+                                                    {formatDate(comment.createdAt)}
                                                 </span>
-                                                {comment.userId?.role === 'ADMIN' && (
-                                                    <span className="bg-red-500 text-xs px-2 py-1 rounded-full text-white font-bold">
-                                                        ADMIN
-                                                    </span>
-                                                )}
-                                                {comment.userId?.role === 'MOD' && (
-                                                    <span className="bg-green-500 text-xs px-2 py-1 rounded-full text-white font-bold">
-                                                        MOD
-                                                    </span>
-                                                )}
                                             </div>
-                                            <span className="text-gray-400 text-xs">
-                                                {formatDate(comment.createdAt)}
-                                            </span>
                                         </div>
-                                    </div>
 
-                                    {comment.isPinned && (
-                                        <div className="flex items-center gap-1 text-cyan-400 text-sm">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                                            </svg>
-                                            Pinned
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Comment Content */}
-                                <p className="text-gray-300 text-sm leading-relaxed mb-3">
-                                    {comment.content}
-                                </p>
-
-                                {/* Comment Actions */}
-                                <div className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-4 text-gray-400">
-                                        {/* Reply Button - You can implement this later */}
-                                        <button className="flex items-center gap-1 hover:text-cyan-400 transition-colors">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                                            </svg>
-                                            Reply
-                                        </button>
-
-                                        {comment.repliesCount > 0 && (
-                                            <span className="text-blue-400">
-                                                {comment.repliesCount} {comment.repliesCount === 1 ? 'reply' : 'replies'}
-                                            </span>
+                                        {comment.isPinned && (
+                                            <div className="flex items-center gap-1 text-cyan-400 text-sm">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                </svg>
+                                                Pinned
+                                            </div>
                                         )}
                                     </div>
 
-                                    {/* Owner/Admin Actions - You can implement these later */}
-                                    {user && (user.id === comment.userId?._id || user.role === 'ADMIN' || user.role === 'MOD') && (
-                                        <div className="flex items-center gap-2">
-                                            {user.id === comment.userId?._id && (
-                                                <button className="text-gray-400 hover:text-yellow-400 transition-colors text-xs">
-                                                    Edit
+                                    {/* Comment Content */}
+                                    <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                                        {comment.content}
+                                    </p>
+
+                                    {/* Comment Actions */}
+                                    <div className="flex items-center justify-between text-sm">
+                                        <div className="flex items-center gap-4 text-gray-400">
+                                            {/* Reply Button */}
+                                            {user && (
+                                                <button
+                                                    onClick={() => handleStartReply(comment._id)}
+                                                    className="flex items-center gap-1 hover:text-cyan-400 transition-colors"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                                    </svg>
+                                                    Reply
                                                 </button>
                                             )}
-                                            <button className="text-gray-400 hover:text-red-400 transition-colors text-xs">
-                                                Delete
-                                            </button>
+
+                                            {/* Replies Count with Toggle */}
+                                            {comment.repliesCount > 0 && (
+                                                <button
+                                                    onClick={() => toggleReplies(comment._id)}
+                                                    className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                                    </svg>
+                                                    {comment.repliesCount} {comment.repliesCount === 1 ? 'reply' : 'replies'}
+                                                    {showReplies ? ' (Hide)' : ' (Show)'}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Owner/Admin Actions */}
+                                        {user && (user.id === comment.userId?._id || user.role === 'ADMIN' || user.role === 'MOD') && (
+                                            <div className="flex items-center gap-2">
+                                                {user.id === comment.userId?._id && (
+                                                    <button className="text-gray-400 hover:text-yellow-400 transition-colors text-xs">
+                                                        Edit
+                                                    </button>
+                                                )}
+                                                <button className="text-gray-400 hover:text-red-400 transition-colors text-xs">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Reply Input Form */}
+                                    {replyingTo === comment._id && user && (
+                                        <div className="mt-4 pl-6 border-l-2 border-cyan-500/20">
+                                            <div className="flex items-start gap-3">
+                                                <img
+                                                    src={user.avatar || DEFAULT_AVATAR}
+                                                    alt="Your avatar"
+                                                    className="w-6 h-6 rounded-full border border-cyan-500/20"
+                                                    onError={e => (e.target.src = DEFAULT_AVATAR)}
+                                                />
+                                                <div className="flex-1">
+                                                    <textarea
+                                                        value={replyContent}
+                                                        onChange={(e) => setReplyContent(e.target.value)}
+                                                        placeholder="Write your reply..."
+                                                        className="w-full bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-transparent resize-none text-sm"
+                                                        rows="2"
+                                                        disabled={submittingReply}
+                                                    />
+                                                    <div className="flex items-center justify-between mt-2">
+                                                        <span className={`text-xs ${replyContent.length > 500 ? 'text-red-400' : 'text-gray-400'}`}>
+                                                            {replyContent.length}/500
+                                                        </span>
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                onClick={handleCancelReply}
+                                                                className="px-3 py-1 bg-gray-600 text-gray-300 rounded text-xs font-medium hover:bg-gray-500 transition-all duration-200"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleSubmitReply(comment._id)}
+                                                                disabled={!replyContent.trim() || submittingReply || replyContent.length > 500}
+                                                                className="px-3 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded text-xs font-medium hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            >
+                                                                {submittingReply ? 'Posting...' : 'Post Reply'}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Replies Section */}
+                                    {showReplies && comment.replies && comment.replies.length > 0 && (
+                                        <div className="mt-4 pl-6 border-l-2 border-cyan-500/20 space-y-4">
+                                            {visibleReplies.map(reply => (
+                                                <div key={reply._id} className="bg-gray-600/20 rounded-lg p-3">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <img
+                                                            src={reply.userId?.avatar || DEFAULT_AVATAR}
+                                                            alt={reply.userId?.username}
+                                                            className="w-6 h-6 rounded-full"
+                                                            onError={e => (e.target.src = DEFAULT_AVATAR)}
+                                                        />
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-medium text-white text-xs">
+                                                                    {reply.userId?.username}
+                                                                </span>
+                                                                {reply.userId?.role === 'ADMIN' && (
+                                                                    <span className="bg-red-500 text-xs px-1 py-0.5 rounded-full text-white font-bold">
+                                                                        ADMIN
+                                                                    </span>
+                                                                )}
+                                                                {reply.userId?.role === 'MOD' && (
+                                                                    <span className="bg-green-500 text-xs px-1 py-0.5 rounded-full text-white font-bold">
+                                                                        MOD
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <span className="text-gray-400 text-xs">
+                                                                {formatDate(reply.createdAt)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-gray-300 text-xs leading-relaxed">
+                                                        {reply.content}
+                                                    </p>
+                                                </div>
+                                            ))}
+
+                                            {/* Load More Replies Button */}
+                                            {hasMoreReplies(comment) && (
+                                                <div className="text-center">
+                                                    <button
+                                                        onClick={() => loadMoreReplies(comment._id)}
+                                                        className="px-4 py-2 bg-gray-600/50 text-gray-300 rounded-lg text-xs font-medium hover:bg-gray-500/50 transition-all duration-200"
+                                                    >
+                                                        Load More Replies ({comment.replies.length - visibleReplies.length} more)
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
-
-                                {/* Replies Section */}
-                                {comment.replies && comment.replies.length > 0 && (
-                                    <div className="mt-4 pl-6 border-l-2 border-cyan-500/20 space-y-4">
-                                        {comment.replies.map(reply => (
-                                            <div key={reply._id} className="bg-gray-600/20 rounded-lg p-3">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <img
-                                                        src={reply.userId?.avatar || DEFAULT_AVATAR}
-                                                        alt={reply.userId?.username}
-                                                        className="w-6 h-6 rounded-full"
-                                                        onError={e => (e.target.src = DEFAULT_AVATAR)}
-                                                    />
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-medium text-white text-xs">
-                                                                {reply.userId?.username}
-                                                            </span>
-                                                            {reply.userId?.role === 'ADMIN' && (
-                                                                <span className="bg-red-500 text-xs px-1 py-0.5 rounded-full text-white font-bold">
-                                                                    ADMIN
-                                                                </span>
-                                                            )}
-                                                            {reply.userId?.role === 'MOD' && (
-                                                                <span className="bg-green-500 text-xs px-1 py-0.5 rounded-full text-white font-bold">
-                                                                    MOD
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <span className="text-gray-400 text-xs">
-                                                            {formatDate(reply.createdAt)}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <p className="text-gray-300 text-xs leading-relaxed">
-                                                    {reply.content}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>
