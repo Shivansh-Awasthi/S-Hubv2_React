@@ -177,7 +177,7 @@ const CommentBox = () => {
 
         try {
             setDeletingComment(commentId);
-            console.log("Deleting comment with ID:", commentId); // Debug log
+            console.log("Deleting comment with ID:", commentId);
 
             const token = localStorage.getItem("token");
             const xAuthToken = process.env.VITE_API_TOKEN;
@@ -197,6 +197,35 @@ const CommentBox = () => {
         } catch (err) {
             console.error("Failed to delete comment:", err);
             setError(err.response?.data?.error || 'Failed to delete comment');
+            setDeletingComment(null);
+        }
+    };
+
+    const handleAdminDeleteComment = async (commentId) => {
+        if (!user) return;
+
+        try {
+            setDeletingComment(commentId);
+            console.log("Admin deleting comment with ID:", commentId);
+
+            const token = localStorage.getItem("token");
+            const xAuthToken = process.env.VITE_API_TOKEN;
+
+            const headers = {};
+            if (token) headers.Authorization = `Bearer ${token}`;
+            if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
+
+            await axios.delete(
+                `${process.env.VITE_API_URL}/api/comments/admin/${commentId}`,
+                { headers }
+            );
+
+            setShowMenu(null);
+            setDeletingComment(null);
+            fetchComments();
+        } catch (err) {
+            console.error("Failed to delete comment as admin:", err);
+            setError(err.response?.data?.error || 'Failed to delete comment as admin');
             setDeletingComment(null);
         }
     };
@@ -261,6 +290,18 @@ const CommentBox = () => {
 
     const isCommentOwner = (comment) => {
         return user && comment.userId && user.id === comment.userId._id;
+    };
+
+    const isAdminOrMod = () => {
+        return user && (user.role === 'ADMIN' || user.role === 'MOD');
+    };
+
+    const canDeleteComment = (comment) => {
+        return isCommentOwner(comment) || isAdminOrMod();
+    };
+
+    const canEditComment = (comment) => {
+        return isCommentOwner(comment);
     };
 
     if (loading) {
@@ -397,6 +438,9 @@ const CommentBox = () => {
                             const visibleReplies = getVisibleReplies(comment);
                             const showReplies = expandedReplies[comment._id];
                             const isOwner = isCommentOwner(comment);
+                            const canEdit = canEditComment(comment);
+                            const canDelete = canDeleteComment(comment);
+                            const isAdminMod = isAdminOrMod();
 
                             return (
                                 <div key={comment._id} className="bg-gray-700/30 rounded-lg border border-gray-600 p-4">
@@ -441,8 +485,8 @@ const CommentBox = () => {
                                                 </div>
                                             )}
 
-                                            {/* Three-dot menu for comment owner */}
-                                            {isOwner && (
+                                            {/* Three-dot menu for comment owner or admin/mod */}
+                                            {canDelete && (
                                                 <div className="relative">
                                                     <button
                                                         onClick={(e) => toggleMenu(comment._id, e)}
@@ -459,28 +503,43 @@ const CommentBox = () => {
                                                             className="absolute right-0 top-full mt-1 w-32 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
-                                                            <button
-                                                                onClick={() => handleStartEdit(comment)}
-                                                                className="w-full px-4 py-2 text-sm text-white hover:bg-gray-600 rounded-t-lg flex items-center gap-2"
-                                                            >
-                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                </svg>
-                                                                Edit
-                                                            </button>
+                                                            {/* Edit button - only for comment owner */}
+                                                            {canEdit && (
+                                                                <button
+                                                                    onClick={() => handleStartEdit(comment)}
+                                                                    className="w-full px-4 py-2 text-sm text-white hover:bg-gray-600 rounded-t-lg flex items-center gap-2"
+                                                                >
+                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                    </svg>
+                                                                    Edit
+                                                                </button>
+                                                            )}
+
+                                                            {/* Delete button - for both owner and admin/mod */}
                                                             <button
                                                                 onClick={() => {
-                                                                    if (window.confirm('Are you sure you want to delete this comment?')) {
-                                                                        handleDeleteComment(comment._id);
+                                                                    const message = isOwner
+                                                                        ? 'Are you sure you want to delete your comment?'
+                                                                        : 'Are you sure you want to delete this comment as admin/mod?';
+
+                                                                    if (window.confirm(message)) {
+                                                                        if (isOwner) {
+                                                                            handleDeleteComment(comment._id);
+                                                                        } else {
+                                                                            handleAdminDeleteComment(comment._id);
+                                                                        }
                                                                     }
                                                                 }}
                                                                 disabled={deletingComment === comment._id}
-                                                                className="w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-600 rounded-b-lg flex items-center gap-2 disabled:opacity-50"
+                                                                className={`w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-600 flex items-center gap-2 disabled:opacity-50 ${canEdit ? '' : 'rounded-t-lg'
+                                                                    } ${canEdit ? 'rounded-b-lg' : ''}`}
                                                             >
                                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                 </svg>
                                                                 {deletingComment === comment._id ? 'Deleting...' : 'Delete'}
+                                                                {isAdminMod && !isOwner && ' (Admin)'}
                                                             </button>
                                                         </div>
                                                     )}
