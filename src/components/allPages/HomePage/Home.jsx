@@ -162,8 +162,8 @@ const HomeClient = () => {
                             )}
                             {index === 0 && (
                                 <div className="absolute inset-0 flex flex-col text-white p-8 ml-6 mt-4 md:p-0 md:ml-20 md:mt-28 z-10">
-                                    <h2 className="text-lg font-base mb-4 sm:text-base md:text-lg">Exclusive Games</h2>
-                                    <p className="mb-6 font-semibold sm:text-sm md:text-base overflow-hidden whitespace-nowrap text-ellipsis">To get our Exclusive Mac games Messege on my <a href="https://t.me/n0t_ur_type" className='text-cyan-500' target='_blank' rel="noopener noreferrer">Telegram</a></p>
+                                    <h2 className="text-lg font-base mb-4 sm:text-base md:text-lg"><span className='text-yellow-300'>Exclusive Games</span></h2>
+                                    <p className="mb-6 font-semibold sm:text-sm md:text-base overflow-hidden whitespace-nowrap text-ellipsis">To <span className='text-indigo-300'>Purchase</span> our Exclusive Mac games Messege on this <a href="https://t.me/n0t_ur_type" className='text-cyan-500' target='_blank' rel="noopener noreferrer">Telegram ID</a></p>
                                     <div className='w-fill'>
                                         <a href="https://t.me/n0t_ur_type" target='_blank' rel="noopener noreferrer">
                                             <button className="mx-auto ml-0 px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 sm:px-4 sm:py-2 md:px-6 md:py-3 overflow-hidden whitespace-nowrap text-ellipsis">
@@ -175,7 +175,7 @@ const HomeClient = () => {
                             )}
                             {index === 2 && (
                                 <div className="absolute inset-0 flex flex-col text-white p-8 ml-6 mt-4 md:p-0 md:ml-20 md:mt-28 z-10">
-                                    <h2 className="text-lg font-thin mb-4 sm:text-base md:text-lg">Macbook Games</h2>
+                                    <h2 className="text-lg font-thin mb-4 sm:text-base md:text-lg"><span className='text-orange-300'>MacBook Games</span></h2>
                                     <p className="mb-6 font-semibold sm:text-sm md:text-base overflow-hidden whitespace-nowrap text-ellipsis">Download Your Favourite Games for Free.</p>
                                     <div className='w-fill'>
                                         <Link to="/category/mac/games">
@@ -188,7 +188,7 @@ const HomeClient = () => {
                             )}
                             {index === 1 && (
                                 <div className="absolute inset-0 flex flex-col text-white p-8 ml-6 mt-4 md:p-0 md:ml-20 md:mt-28 z-10">
-                                    <h2 className="text-lg font-thin mb-4 sm:text-base md:text-lg">Game Request</h2>
+                                    <h2 className="text-lg font-thin mb-4 sm:text-base md:text-lg"><span className='text-blue-400'>Game Request</span></h2>
                                     <p className="mb-6 font-semibold sm:text-sm md:text-base overflow-hidden whitespace-nowrap text-ellipsis">Request your favourite games here.</p>
                                     <div className='w-fill'>
                                         <Link to="/request">
