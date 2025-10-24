@@ -149,10 +149,10 @@ const HomeClient = () => {
                             {/* Overlay content */}
                             {index === 3 && (
                                 <div className="absolute inset-0 flex flex-col text-white p-8 ml-6 mt-4 md:p-0 md:ml-20 md:mt-28 z-10 w-full">
-                                    <h2 className="text-lg font-thin mb-4 sm:text-base md:text-lg">SOFTWARE</h2>
-                                    <p className="mb-4 font-semibold sm:text-sm md:text-base overflow-hidden whitespace-nowrap text-ellipsis">Download Free Softwares On Your Mac</p>
+                                    <h2 className="text-lg font-thin mb-4 sm:text-base md:text-lg"> <span className='text-indigo-400'>Slow Downloads</span> || <span className='text-pink-600'>Links Not Opening</span></h2>
+                                    <p className="mb-4 font-semibold sm:text-sm md:text-base overflow-hidden whitespace-nowrap text-ellipsis">Use Proxy/VPN If The Links Were Not Opening  And For Better Speed Use <span className='text-green-300'>FREE DOWNLOAD MANAGER</span></p>
                                     <div className='w-fill'>
-                                        <Link to="/category/mac/softwares">
+                                        <Link target='_blank' to="https://www.freedownloadmanager.org/">
                                             <button className="mx-auto ml-0 px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 sm:px-4 sm:py-2 md:px-6 md:py-3 overflow-hidden whitespace-nowrap text-ellipsis">
                                                 Download Now
                                             </button>
