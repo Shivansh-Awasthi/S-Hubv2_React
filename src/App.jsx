@@ -33,6 +33,8 @@ import UpdateApps from './components/Admin/UpdateApps.jsx';
 import PaidGameAdminPage from './components/Admin/PaidGameAdminPage.jsx';
 import CreateApps from './components/Admin/CreateApps.jsx';
 import GamePage from './components/Utilities/Gamepage.jsx';
+import SpecificUserComments from './components/CommentBox/SpecificUserComments.jsx';
+import CommentBox from './components/CommentBox/CommentBox.jsx';
 
 // lazy load pages for perf
 const Home = lazy(() => import('./components/allPages/HomePage/Home.jsx'));
@@ -83,6 +85,11 @@ function App() {
               <Route path="/category/ps2/iso" element={<Ps2Iso />} />
               <Route path="/category/ps3/iso" element={<Ps3Iso />} />
               <Route path='/download/:platform/:slug/:id' element={<SingleApp />} />
+
+
+              {/* comment box */}
+              <Route path="/my-comments" element={<SpecificUserComments />} />
+              <Route path="/comment" element={<CommentBox />} />
 
 
               {/* registration pages  */}
