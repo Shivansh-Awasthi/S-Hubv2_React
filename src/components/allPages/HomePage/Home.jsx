@@ -12,8 +12,8 @@ import LiveCounter from '../../Utilities/Counter/LiveCounter.jsx';
 const images = [
     'https://i.postimg.cc/QdnS7Cv4/126a32b6498de2e5402aa8363f4b7b5d.jpg',
     'https://i.postimg.cc/9fymd8Xw/img-5817.avif',
-    'https://img.playbook.com/fEFoQgs0r1pXKzOJcJIfIevmy08UHSLlInS1-Fcp8uc/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljL2RkZGUzOTQ1/LTQwNzMtNDMxNy05/N2QyLTk3OTJkNDFi/OTBlNQ',
-    'https://img.playbook.com/X0CxPl24l4RbK0kdRTk7NAtbQVW_5S9PYB05cE4vFZk/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljLzM1MThlMDAx/LTNiYWQtNGQxZS1i/OWQ0LTY1MmM5MWQx/OTU4Yw'
+    'https://i.postimg.cc/cH39FyVN/a76d28c4fc099ef4b6706c84a2c8a881.jpg',
+    'https://i.postimg.cc/1tFCvhLm/2727f1ae31c6a80500466336fa5a2006.jpg'
 ];
 
 const HomeClient = () => {
