@@ -17,6 +17,11 @@ const CommentBox = () => {
     const [submittingReply, setSubmittingReply] = useState(false);
     const [expandedReplies, setExpandedReplies] = useState({});
     const [replyPages, setReplyPages] = useState({});
+    const [editingComment, setEditingComment] = useState(null);
+    const [editContent, setEditContent] = useState('');
+    const [submittingEdit, setSubmittingEdit] = useState(false);
+    const [showMenu, setShowMenu] = useState(null);
+    const [deletingComment, setDeletingComment] = useState(null);
 
     // For testing - hardcoded app ID
     const appId = "6714f917fa2f0dd3a91d2911";
@@ -42,7 +47,6 @@ const CommentBox = () => {
 
             setComments(response.data.comments || []);
 
-            // Initialize reply pages and expanded state
             const initialExpanded = {};
             const initialPages = {};
             response.data.comments?.forEach(comment => {
@@ -91,6 +95,7 @@ const CommentBox = () => {
     const handleStartReply = (commentId) => {
         setReplyingTo(commentId);
         setReplyContent('');
+        setShowMenu(null);
     };
 
     const handleCancelReply = () => {
@@ -118,12 +123,81 @@ const CommentBox = () => {
 
             setReplyingTo(null);
             setReplyContent('');
-            fetchComments(); // Refresh to get updated replies count and new reply
+            fetchComments();
         } catch (err) {
             console.error("Failed to post reply:", err);
             setError(err.response?.data?.error || 'Failed to post reply');
         } finally {
             setSubmittingReply(false);
+        }
+    };
+
+    const handleStartEdit = (comment) => {
+        setEditingComment(comment._id);
+        setEditContent(comment.content);
+        setShowMenu(null);
+    };
+
+    const handleCancelEdit = () => {
+        setEditingComment(null);
+        setEditContent('');
+    };
+
+    const handleSubmitEdit = async (commentId) => {
+        if (!editContent.trim() || !user) return;
+
+        try {
+            setSubmittingEdit(true);
+            const token = localStorage.getItem("token");
+            const xAuthToken = process.env.VITE_API_TOKEN;
+
+            const headers = {};
+            if (token) headers.Authorization = `Bearer ${token}`;
+            if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
+
+            await axios.put(
+                `${process.env.VITE_API_URL}/api/comments/edit/${commentId}`,
+                { content: editContent },
+                { headers }
+            );
+
+            setEditingComment(null);
+            setEditContent('');
+            fetchComments();
+        } catch (err) {
+            console.error("Failed to edit comment:", err);
+            setError(err.response?.data?.error || 'Failed to edit comment');
+        } finally {
+            setSubmittingEdit(false);
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        if (!user) return;
+
+        try {
+            setDeletingComment(commentId);
+            console.log("Deleting comment with ID:", commentId); // Debug log
+
+            const token = localStorage.getItem("token");
+            const xAuthToken = process.env.VITE_API_TOKEN;
+
+            const headers = {};
+            if (token) headers.Authorization = `Bearer ${token}`;
+            if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
+
+            await axios.delete(
+                `${process.env.VITE_API_URL}/api/comments/${commentId}`,
+                { headers }
+            );
+
+            setShowMenu(null);
+            setDeletingComment(null);
+            fetchComments();
+        } catch (err) {
+            console.error("Failed to delete comment:", err);
+            setError(err.response?.data?.error || 'Failed to delete comment');
+            setDeletingComment(null);
         }
     };
 
@@ -141,6 +215,25 @@ const CommentBox = () => {
         }));
     };
 
+    const toggleMenu = (commentId, e) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        setShowMenu(showMenu === commentId ? null : commentId);
+    };
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = () => {
+            setShowMenu(null);
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -155,7 +248,7 @@ const CommentBox = () => {
     const getVisibleReplies = (comment) => {
         if (!comment.replies) return [];
         const page = replyPages[comment._id] || 1;
-        const limit = 10; // 10 replies per page
+        const limit = 10;
         return comment.replies.slice(0, page * limit);
     };
 
@@ -164,6 +257,10 @@ const CommentBox = () => {
         const page = replyPages[comment._id] || 1;
         const limit = 10;
         return comment.replies.length > page * limit;
+    };
+
+    const isCommentOwner = (comment) => {
+        return user && comment.userId && user.id === comment.userId._id;
     };
 
     if (loading) {
@@ -299,6 +396,7 @@ const CommentBox = () => {
                         {comments.map(comment => {
                             const visibleReplies = getVisibleReplies(comment);
                             const showReplies = expandedReplies[comment._id];
+                            const isOwner = isCommentOwner(comment);
 
                             return (
                                 <div key={comment._id} className="bg-gray-700/30 rounded-lg border border-gray-600 p-4">
@@ -333,20 +431,100 @@ const CommentBox = () => {
                                             </div>
                                         </div>
 
-                                        {comment.isPinned && (
-                                            <div className="flex items-center gap-1 text-cyan-400 text-sm">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                                                </svg>
-                                                Pinned
-                                            </div>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {comment.isPinned && (
+                                                <div className="flex items-center gap-1 text-cyan-400 text-sm">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                    </svg>
+                                                    Pinned
+                                                </div>
+                                            )}
+
+                                            {/* Three-dot menu for comment owner */}
+                                            {isOwner && (
+                                                <div className="relative">
+                                                    <button
+                                                        onClick={(e) => toggleMenu(comment._id, e)}
+                                                        className="p-1 text-gray-400 hover:text-white transition-colors rounded hover:bg-gray-600"
+                                                    >
+                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                                        </svg>
+                                                    </button>
+
+                                                    {/* Dropdown Menu */}
+                                                    {showMenu === comment._id && (
+                                                        <div
+                                                            className="absolute right-0 top-full mt-1 w-32 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                            <button
+                                                                onClick={() => handleStartEdit(comment)}
+                                                                className="w-full px-4 py-2 text-sm text-white hover:bg-gray-600 rounded-t-lg flex items-center gap-2"
+                                                            >
+                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                </svg>
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    if (window.confirm('Are you sure you want to delete this comment?')) {
+                                                                        handleDeleteComment(comment._id);
+                                                                    }
+                                                                }}
+                                                                disabled={deletingComment === comment._id}
+                                                                className="w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-600 rounded-b-lg flex items-center gap-2 disabled:opacity-50"
+                                                            >
+                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                                {deletingComment === comment._id ? 'Deleting...' : 'Delete'}
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    {/* Comment Content */}
-                                    <p className="text-gray-300 text-sm leading-relaxed mb-3">
-                                        {comment.content}
-                                    </p>
+                                    {/* Comment Content - Either display or edit form */}
+                                    {editingComment === comment._id ? (
+                                        <div className="mb-3">
+                                            <textarea
+                                                value={editContent}
+                                                onChange={(e) => setEditContent(e.target.value)}
+                                                className="w-full bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-transparent resize-none text-sm"
+                                                rows="3"
+                                                disabled={submittingEdit}
+                                            />
+                                            <div className="flex items-center justify-between mt-2">
+                                                <span className={`text-xs ${editContent.length > 500 ? 'text-red-400' : 'text-gray-400'}`}>
+                                                    {editContent.length}/500
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={handleCancelEdit}
+                                                        className="px-3 py-1 bg-gray-600 text-gray-300 rounded text-xs font-medium hover:bg-gray-500 transition-all duration-200"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleSubmitEdit(comment._id)}
+                                                        disabled={!editContent.trim() || submittingEdit || editContent.length > 500}
+                                                        className="px-3 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded text-xs font-medium hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        {submittingEdit ? 'Saving...' : 'Save'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                                            {comment.content}
+                                        </p>
+                                    )}
 
                                     {/* Comment Actions */}
                                     <div className="flex items-center justify-between text-sm">
@@ -378,20 +556,6 @@ const CommentBox = () => {
                                                 </button>
                                             )}
                                         </div>
-
-                                        {/* Owner/Admin Actions */}
-                                        {user && (user.id === comment.userId?._id || user.role === 'ADMIN' || user.role === 'MOD') && (
-                                            <div className="flex items-center gap-2">
-                                                {user.id === comment.userId?._id && (
-                                                    <button className="text-gray-400 hover:text-yellow-400 transition-colors text-xs">
-                                                        Edit
-                                                    </button>
-                                                )}
-                                                <button className="text-gray-400 hover:text-red-400 transition-colors text-xs">
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Reply Input Form */}
