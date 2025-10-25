@@ -108,7 +108,7 @@ const ReplyNotifications = () => {
         }
 
         // Navigate to the game page with comment ID for scrolling
-        navigate(`/download/mac/${notification.appId.slug}/${notification.appId._id}`, {
+        navigate(`/download/mac/${notification.appId.title.toLowerCase().replace(/\s+/g, '-')}/${notification.appId._id}`, {
             state: {
                 scrollToComment: notification.parentId,
                 highlightComment: notification.parentId

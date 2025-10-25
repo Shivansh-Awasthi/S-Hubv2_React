@@ -114,7 +114,7 @@ const NotificationBell = () => {
         await handleMarkAsRead(notification._id);
 
         // Navigate to the correct game URL structure: /download/mac/game-slug/appId
-        navigate(`/download/mac/${notification.appId.slug}/${notification.appId._id}`, {
+        navigate(`/download/mac/${notification.appId.title.toLowerCase().replace(/\s+/g, '-')}/${notification.appId._id}`, {
             state: {
                 scrollToComment: notification.parentId,
                 highlightComment: notification.parentId

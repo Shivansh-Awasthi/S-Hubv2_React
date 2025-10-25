@@ -128,7 +128,7 @@ const AdminCommentsPage = () => {
     };
 
     const handleGoToComment = (comment) => {
-        navigate(`/download/mac/${comment.appId.slug}/${comment.appId._id}`, {
+        navigate(`/download/mac/${comment.appId.title.toLowerCase().replace(/\s+/g, '-')}/${comment.appId._id}`, {
             state: {
                 scrollToComment: comment._id,
                 highlightComment: comment._id
