@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import GiscusComments from './GiscusComments';
 import GameAnnouncement from './GameAnnouncement';
 import DownloadSection from './DownloadSection';
@@ -13,6 +13,7 @@ const SingleApp = () => {
     // Get parameters from React Router instead of Next.js props
     const { id, platform, title } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [data, setData] = useState(null);
@@ -21,6 +22,31 @@ const SingleApp = () => {
     const [hasAccess, setHasAccess] = useState(null); // Start with null (loading)
     const [userData, setUserData] = useState(null);
     const [isCheckingAccess, setIsCheckingAccess] = useState(true);
+    const [scrollToCommentId, setScrollToCommentId] = useState(null);
+    const [commentScrolled, setCommentScrolled] = useState(false);
+
+    // Handle scroll to comment from navigation state
+    useEffect(() => {
+        if (location.state?.scrollToComment || location.state?.highlightComment) {
+            const commentId = location.state.scrollToComment || location.state.highlightComment;
+            console.log('Scrolling to comment from state:', commentId);
+            setScrollToCommentId(commentId);
+
+            // Clear the state after reading it to prevent repeated scrolling
+            window.history.replaceState({ ...location.state, scrollToComment: null, highlightComment: null }, '');
+        }
+    }, [location.state]);
+
+    // Reset scroll state after scrolling is complete
+    const handleCommentScrolled = () => {
+        console.log('Comment scrolling completed');
+        setCommentScrolled(true);
+        // Reset after a delay to ensure smooth user experience
+        setTimeout(() => {
+            setScrollToCommentId(null);
+            setCommentScrolled(false);
+        }, 1000);
+    };
 
     // Fetch app data client-side
     useEffect(() => {
@@ -706,20 +732,11 @@ const SingleApp = () => {
             </div>
 
             {/* Comment box */}
-            {/* <div className='bg-gradient-to-br from-[#1E1E1E] to-[#121212] border border-purple-600/20 rounded-xl shadow-lg flex flex-col items-center mt-8 mb-4 relative overflow-hidden'>
-
-
-                <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-600 opacity-10 rounded-full blur-xl"></div>
-                <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-600 opacity-10 rounded-full blur-xl"></div>
-
-                <h2 className='pt-6 mb-8 text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 relative z-10'>Comments</h2>
-                <div className='flex justify-center w-full relative z-10'>
-                    <GiscusComments objectId={data?._id || ""} />
-                </div>
-            </div> */}
-
-            <div>
-                <CommentBox />
+            <div className='mt-8 mb-4'>
+                <CommentBox
+                    scrollToCommentId={scrollToCommentId}
+                    onCommentScrolled={handleCommentScrolled}
+                />
             </div>
 
         </div>
