@@ -167,50 +167,74 @@ const NotificationBell = () => {
                         onClick={() => setIsOpen(false)}
                     />
 
-                    {/* Dropdown Content */}
-                    <div className="absolute right-0 top-full mt-2 w-96 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50 backdrop-blur-sm">
-                        {/* Header */}
-                        <div className="flex items-center justify-between p-4 border-b border-gray-700">
-                            <h3 className="text-lg font-semibold text-white">Notifications</h3>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={fetchNotifications}
-                                    disabled={loading}
-                                    className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-700 disabled:opacity-50"
-                                    title="Refresh"
-                                >
-                                    <svg
-                                        className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    {/* Dropdown Content - UPDATED STYLING */}
+                    <div className="absolute top-full right-0 z-50 mt-2 w-96 origin-top-right overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900">
+                        {/* Header with gradient background */}
+                        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 dark:from-indigo-700 dark:to-purple-700">
+                            <div className="flex items-center justify-between">
+                                <h3 className="flex items-center font-semibold text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                                     </svg>
-                                </button>
-                                {notifications.length > 0 && (
+                                    Notifications
+                                    {unreadCount > 0 && (
+                                        <span className="ml-2 rounded-full bg-white px-2 py-0.5 text-xs text-indigo-600">
+                                            {unreadCount > 99 ? '99+' : unreadCount}
+                                        </span>
+                                    )}
+                                </h3>
+                                <div className="flex items-center space-x-3">
                                     <button
-                                        onClick={handleMarkAllAsRead}
+                                        onClick={fetchNotifications}
                                         disabled={loading}
-                                        className="px-3 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg text-sm font-semibold hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 disabled:opacity-50"
+                                        className="text-xs text-indigo-100 hover:text-white focus:outline-none"
+                                        title="Refresh"
                                     >
-                                        {loading ? '...' : 'Read all'}
+                                        <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
                                     </button>
-                                )}
+
+                                    {notifications.length > 0 && (
+                                        <button
+                                            onClick={handleMarkAllAsRead}
+                                            disabled={loading}
+                                            className="flex items-center text-xs text-indigo-100 transition-colors hover:text-white focus:outline-none"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            <span>Read all</span>
+                                            {loading && (
+                                                <svg className="ml-1 h-4 w-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            )}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="mt-1 flex justify-end">
+                                <span className="text-xs text-indigo-200 italic">Updated: Just now</span>
                             </div>
                         </div>
 
-                        {/* Notifications List - Only shows UNREAD notifications */}
-                        <div className="max-h-96 overflow-y-auto">
+                        {/* Notifications List */}
+                        <div className="max-h-96 divide-y divide-gray-100 overflow-y-auto dark:divide-gray-800">
                             {loading ? (
-                                <div className="flex flex-col items-center justify-center py-8 text-gray-400">
-                                    <div className="w-8 h-8 border-2 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin mb-2"></div>
-                                    Loading notifications...
+                                <div className="flex justify-center py-6 text-gray-500 dark:text-gray-400">
+                                    <svg className="mr-3 -ml-1 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span>Loading notifications...</span>
                                 </div>
                             ) : notifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-8 text-gray-400">
                                     <svg className="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                     </svg>
                                     No new notifications
                                 </div>
@@ -218,85 +242,98 @@ const NotificationBell = () => {
                                 notifications.slice(0, 10).map(notification => (
                                     <div
                                         key={notification._id}
-                                        className="p-4 border-b border-gray-700 hover:bg-gray-700/50 cursor-pointer transition-colors group"
+                                        className="group relative transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
                                         onClick={() => handleNotificationClick(notification)}
                                     >
-                                        <div className="flex items-start gap-3">
-                                            {/* Avatar with blue dot for unread */}
-                                            <div className="relative">
-                                                <img
-                                                    src={notification.userId?.avatar || DEFAULT_AVATAR}
-                                                    alt={notification.userId?.username}
-                                                    className="w-10 h-10 rounded-full border-2 border-cyan-500/20 group-hover:border-cyan-500/50 transition-colors"
-                                                    onError={e => (e.target.src = DEFAULT_AVATAR)}
-                                                />
-                                                {/* Blue dot indicator for unread */}
-                                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-500 rounded-full border-2 border-gray-800 animate-pulse"></div>
-                                            </div>
+                                        {/* Blue line indicator for unread */}
+                                        <div className="absolute top-0 bottom-0 left-0 w-1 bg-cyan-500"></div>
 
-                                            {/* Content */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="font-semibold text-white text-sm">
-                                                        {notification.userId?.username}
-                                                    </span>
-                                                    {notification.userId?.role === 'ADMIN' && (
-                                                        <span className="bg-red-500 text-xs px-1.5 py-0.5 rounded-full text-white font-bold">
-                                                            ADMIN
-                                                        </span>
-                                                    )}
-                                                    {notification.userId?.role === 'MOD' && (
-                                                        <span className="bg-green-500 text-xs px-1.5 py-0.5 rounded-full text-white font-bold">
-                                                            MOD
-                                                        </span>
-                                                    )}
+                                        <div className="block px-4 py-3">
+                                            <div className="flex">
+                                                <div className="mr-3 shrink-0">
+                                                    <img
+                                                        src={notification.userId?.avatar || DEFAULT_AVATAR}
+                                                        alt={notification.userId?.username}
+                                                        className="w-10 h-10 rounded-full border-2 border-cyan-500/20 group-hover:border-cyan-500/50 transition-colors"
+                                                        onError={e => (e.target.src = DEFAULT_AVATAR)}
+                                                    />
                                                 </div>
 
-                                                <p className="text-gray-300 text-sm mb-1">
-                                                    replied to your comment in <span className="font-semibold text-cyan-400">{notification.appId?.title}</span>
-                                                </p>
+                                                <div className="min-w-0 flex-1 pr-8">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                                            {notification.userId?.username}
+                                                        </span>
+                                                        {notification.userId?.role === 'ADMIN' && (
+                                                            <span className="bg-red-500 text-xs px-1.5 py-0.5 rounded-full text-white font-bold">
+                                                                ADMIN
+                                                            </span>
+                                                        )}
+                                                        {notification.userId?.role === 'MOD' && (
+                                                            <span className="bg-green-500 text-xs px-1.5 py-0.5 rounded-full text-white font-bold">
+                                                                MOD
+                                                            </span>
+                                                        )}
+                                                    </div>
 
-                                                <p className="text-gray-400 text-xs leading-relaxed mb-2">
-                                                    {truncateContent(notification.content)}
-                                                </p>
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                                        replied to your comment in <span className="font-semibold text-cyan-400">{notification.appId?.title}</span>
+                                                    </p>
 
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-gray-500 text-xs">
-                                                        {formatTimeAgo(notification.createdAt)}
-                                                    </span>
-                                                    <span className="text-cyan-400 text-xs font-medium">
-                                                        View Details
-                                                    </span>
+                                                    <p className="mt-1 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+                                                        {truncateContent(notification.content)}
+                                                    </p>
+
+                                                    <div className="mt-1 flex items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3 w-3 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                        </svg>
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">
+                                                            {formatTimeAgo(notification.createdAt)}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="mt-2">
+                                                        <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300">
+                                                            View Details
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            {/* Mark as Read Button */}
-                                            <button
-                                                onClick={(e) => handleMarkAsRead(notification._id, e)}
-                                                className="p-1 text-gray-400 hover:text-white transition-colors rounded opacity-0 group-hover:opacity-100"
-                                                title="Mark as read"
-                                                disabled={loading}
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </button>
                                         </div>
+
+                                        {/* Mark as Read Button */}
+                                        <button
+                                            onClick={(e) => handleMarkAsRead(notification._id, e)}
+                                            className="absolute top-3 right-3 rounded-full bg-gray-100 p-1.5 text-gray-500 opacity-0 transition-all duration-150 group-hover:opacity-100 hover:text-cyan-500 focus:opacity-100 dark:bg-gray-800 dark:hover:text-cyan-400"
+                                            title="Mark as read"
+                                            disabled={loading}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </button>
                                     </div>
                                 ))
                             )}
                         </div>
 
-                        {/* Footer - Show even if there are notifications */}
-                        <div className="p-4 border-t border-gray-700 text-center">
+                        {/* Footer */}
+                        <div className="flex justify-center border-t border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
                             <button
                                 onClick={() => {
                                     navigate('/notifications');
                                     setIsOpen(false);
                                 }}
-                                className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
+                                className="inline-flex items-center text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
                             >
-                                {notifications.length > 0 ? 'View all notifications →' : 'Go to notifications page →'}
+                                View all notifications
+                                <svg xmlns="http://www.w3.org/2000/svg" className="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
                             </button>
                         </div>
                     </div>
