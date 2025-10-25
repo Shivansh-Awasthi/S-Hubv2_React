@@ -7,6 +7,7 @@ import DescriptionTabs from './DescriptionTabs';
 import LoadingSkeleton from './LoadingSkeleton';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import CommentBox from '../../CommentBox/CommentBox';
 
 const SingleApp = () => {
     // Get parameters from React Router instead of Next.js props
@@ -705,8 +706,9 @@ const SingleApp = () => {
             </div>
 
             {/* Comment box */}
-            <div className='bg-gradient-to-br from-[#1E1E1E] to-[#121212] border border-purple-600/20 rounded-xl shadow-lg flex flex-col items-center mt-8 mb-4 relative overflow-hidden'>
-                {/* Ambient background elements */}
+            {/* <div className='bg-gradient-to-br from-[#1E1E1E] to-[#121212] border border-purple-600/20 rounded-xl shadow-lg flex flex-col items-center mt-8 mb-4 relative overflow-hidden'>
+
+
                 <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-600 opacity-10 rounded-full blur-xl"></div>
                 <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-600 opacity-10 rounded-full blur-xl"></div>
 
@@ -714,7 +716,12 @@ const SingleApp = () => {
                 <div className='flex justify-center w-full relative z-10'>
                     <GiscusComments objectId={data?._id || ""} />
                 </div>
+            </div> */}
+
+            <div>
+                <CommentBox />
             </div>
+
         </div>
     );
 };

@@ -481,7 +481,7 @@ const CommentBox = () => {
                             <img
                                 src={user.avatar || DEFAULT_AVATAR}
                                 alt="Your avatar"
-                                className="w-10 h-10 rounded-full border-2 border-cyan-500/20"
+                                className="mt-4 w-14 h-14 rounded-full border-2 border-pink-700 bg-gray-800 object-cover shadow-lg hover:ring-1 hover:ring-purple-500 transition duration-200"
                                 onError={e => (e.target.src = DEFAULT_AVATAR)}
                             />
                             <div className="flex-1">
@@ -553,8 +553,8 @@ const CommentBox = () => {
                                 <div
                                     key={comment._id}
                                     className={`bg-gray-700/30 rounded-lg border ${comment.isPinned
-                                            ? 'border-cyan-500/50 bg-cyan-500/10'
-                                            : 'border-gray-600'
+                                        ? 'border-cyan-500/50 bg-cyan-500/10'
+                                        : 'border-gray-600'
                                         } p-4 transition-all duration-200`}
                                 >
                                     {/* Comment Header */}
@@ -563,7 +563,7 @@ const CommentBox = () => {
                                             <img
                                                 src={comment.userId?.avatar || DEFAULT_AVATAR}
                                                 alt={comment.userId?.username}
-                                                className="w-8 h-8 rounded-full border border-cyan-500/20"
+                                                className="w-14 h-14 rounded-full border-2 border-indigo-700 bg-gray-800 object-cover shadow-lg hover:ring-1 hover:ring-purple-500 transition duration-200"
                                                 onError={e => (e.target.src = DEFAULT_AVATAR)}
                                             />
                                             <div>
@@ -816,7 +816,7 @@ const CommentBox = () => {
                                                         <img
                                                             src={reply.userId?.avatar || DEFAULT_AVATAR}
                                                             alt={reply.userId?.username}
-                                                            className="w-6 h-6 rounded-full"
+                                                            className="w-12 h-12 rounded-full border-2 border-black bg-gray-800 object-cover shadow-lg hover:ring-1 hover:ring-purple-500 transition duration-200"
                                                             onError={e => (e.target.src = DEFAULT_AVATAR)}
                                                         />
                                                         <div>

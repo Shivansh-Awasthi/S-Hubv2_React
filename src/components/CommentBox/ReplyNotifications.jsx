@@ -286,9 +286,9 @@ const ReplyNotifications = () => {
                                             <img
                                                 src={notification.userId?.avatar || DEFAULT_AVATAR}
                                                 alt={notification.userId?.username}
-                                                className={`w-12 h-12 rounded-full border-2 transition-colors ${isRead
+                                                className={`w-14 h-14 rounded-full border-2 border-yellow-500 bg-gray-800 object-cover shadow-lg hover:ring-1 hover:ring-yellow-600 transition duration-200${isRead
                                                     ? 'border-gray-500/20'
-                                                    : 'border-cyan-500/20 group-hover:border-cyan-500/50'
+                                                    : 'border-cyan-500/20 group-hover:border-yellow-600'
                                                     }`}
                                                 onError={e => (e.target.src = DEFAULT_AVATAR)}
                                             />
