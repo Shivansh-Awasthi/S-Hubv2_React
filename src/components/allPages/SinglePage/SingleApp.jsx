@@ -29,7 +29,6 @@ const SingleApp = () => {
     useEffect(() => {
         if (location.state?.scrollToComment || location.state?.highlightComment) {
             const commentId = location.state.scrollToComment || location.state.highlightComment;
-            console.log('Scrolling to comment from state:', commentId);
             setScrollToCommentId(commentId);
 
             // Clear the state after reading it to prevent repeated scrolling
@@ -39,7 +38,6 @@ const SingleApp = () => {
 
     // Reset scroll state after scrolling is complete
     const handleCommentScrolled = () => {
-        console.log('Comment scrolling completed');
         setCommentScrolled(true);
         // Reset after a delay to ensure smooth user experience
         setTimeout(() => {
