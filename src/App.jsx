@@ -35,6 +35,8 @@ import CreateApps from './components/Admin/CreateApps.jsx';
 import GamePage from './components/Utilities/Gamepage.jsx';
 import SpecificUserComments from './components/CommentBox/SpecificUserComments.jsx';
 import CommentBox from './components/CommentBox/CommentBox.jsx';
+import ReplyNotifications from './components/CommentBox/ReplyNotifications.jsx';
+import NotificationBell from './components/CommentBox/NotificationBell.jsx';
 
 // lazy load pages for perf
 const Home = lazy(() => import('./components/allPages/HomePage/Home.jsx'));
@@ -90,6 +92,8 @@ function App() {
               {/* comment box */}
               <Route path="/my-comments" element={<SpecificUserComments />} />
               <Route path="/comment" element={<CommentBox />} />
+              <Route path="/notifications" element={<ReplyNotifications />} />
+              <Route path="/notification" element={<NotificationBell />} />
 
 
               {/* registration pages  */}

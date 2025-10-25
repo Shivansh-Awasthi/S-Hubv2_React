@@ -23,6 +23,9 @@ const CommentBox = () => {
     const [showMenu, setShowMenu] = useState(null);
     const [deletingComment, setDeletingComment] = useState(null);
     const [pinningComment, setPinningComment] = useState(null);
+    const [blockingUser, setBlockingUser] = useState(null);
+    const [showBlockModal, setShowBlockModal] = useState(null);
+    const [blockReason, setBlockReason] = useState('');
 
     // For testing - hardcoded app ID
     const appId = "6714f917fa2f0dd3a91d2911";
@@ -261,6 +264,53 @@ const CommentBox = () => {
         }
     };
 
+    const handleBlockUser = async (userId, username) => {
+        if (!user) return;
+
+        try {
+            setBlockingUser(userId);
+            console.log("Blocking user with ID:", userId);
+
+            const token = localStorage.getItem("token");
+            const xAuthToken = process.env.VITE_API_TOKEN;
+
+            const headers = {};
+            if (token) headers.Authorization = `Bearer ${token}`;
+            if (xAuthToken) headers["X-Auth-Token"] = xAuthToken;
+
+            await axios.post(
+                `${process.env.VITE_API_URL}/api/comments/block/${userId}`,
+                { reason: blockReason },
+                { headers }
+            );
+
+            setShowBlockModal(null);
+            setBlockReason('');
+            setBlockingUser(null);
+
+            // Show success message
+            alert(`User ${username} has been blocked from commenting.`);
+
+            // Refresh comments to reflect any changes
+            fetchComments();
+        } catch (err) {
+            console.error("Failed to block user:", err);
+            setError(err.response?.data?.error || 'Failed to block user');
+            setBlockingUser(null);
+        }
+    };
+
+    const openBlockModal = (comment) => {
+        setShowBlockModal(comment._id);
+        setBlockReason('');
+        setShowMenu(null);
+    };
+
+    const closeBlockModal = () => {
+        setShowBlockModal(null);
+        setBlockReason('');
+    };
+
     const toggleReplies = (commentId) => {
         setExpandedReplies(prev => ({
             ...prev,
@@ -327,12 +377,33 @@ const CommentBox = () => {
         return user && (user.role === 'ADMIN' || user.role === 'MOD');
     };
 
+    const isAdmin = () => {
+        return user && user.role === 'ADMIN';
+    };
+
     const canDeleteComment = (comment) => {
         return isCommentOwner(comment) || isAdminOrMod();
     };
 
     const canEditComment = (comment) => {
         return isCommentOwner(comment);
+    };
+
+    const canBlockUser = (comment) => {
+        if (!isAdminOrMod()) return false;
+
+        const targetUser = comment.userId;
+
+        // Cannot block yourself
+        if (isCommentOwner(comment)) return false;
+
+        // Mod cannot block Admin
+        if (user.role === 'MOD' && targetUser?.role === 'ADMIN') return false;
+
+        // Mod cannot block other Mods (unless you're Admin)
+        if (user.role === 'MOD' && targetUser?.role === 'MOD') return false;
+
+        return true;
     };
 
     if (loading) {
@@ -476,6 +547,7 @@ const CommentBox = () => {
                             const canEdit = canEditComment(comment);
                             const canDelete = canDeleteComment(comment);
                             const isAdminMod = isAdminOrMod();
+                            const canBlock = canBlockUser(comment);
 
                             return (
                                 <div
@@ -527,7 +599,7 @@ const CommentBox = () => {
                                             )}
 
                                             {/* Three-dot menu for comment owner or admin/mod */}
-                                            {canDelete && (
+                                            {(canDelete || canBlock) && (
                                                 <div className="relative">
                                                     <button
                                                         onClick={(e) => toggleMenu(comment._id, e)}
@@ -541,7 +613,7 @@ const CommentBox = () => {
                                                     {/* Dropdown Menu */}
                                                     {showMenu === comment._id && (
                                                         <div
-                                                            className="absolute right-0 top-full mt-1 w-36 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10"
+                                                            className="absolute right-0 top-full mt-1 w-40 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             {/* Edit button - only for comment owner */}
@@ -575,6 +647,19 @@ const CommentBox = () => {
                                                                             ? 'Unpin'
                                                                             : 'Pin to Top'
                                                                     }
+                                                                </button>
+                                                            )}
+
+                                                            {/* Block User button - only for admin/mod with restrictions */}
+                                                            {canBlock && (
+                                                                <button
+                                                                    onClick={() => openBlockModal(comment)}
+                                                                    className="w-full px-4 py-2 text-sm text-orange-400 hover:bg-gray-600 flex items-center gap-2"
+                                                                >
+                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v5a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                                    </svg>
+                                                                    Block User
                                                                 </button>
                                                             )}
 
@@ -780,6 +865,53 @@ const CommentBox = () => {
                     </div>
                 )}
             </div>
+
+            {/* Block User Modal */}
+            {showBlockModal && (() => {
+                const comment = comments.find(c => c._id === showBlockModal);
+                if (!comment) return null;
+
+                return (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full">
+                            <h3 className="text-xl font-bold text-white mb-2">Block User</h3>
+                            <p className="text-gray-300 mb-4">
+                                Are you sure you want to block <span className="font-semibold text-white">{comment.userId?.username}</span> from commenting?
+                                This will prevent them from posting any comments on any games.
+                            </p>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-300 text-sm mb-2">
+                                    Reason (optional):
+                                </label>
+                                <textarea
+                                    value={blockReason}
+                                    onChange={(e) => setBlockReason(e.target.value)}
+                                    placeholder="Enter reason for blocking..."
+                                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-transparent resize-none"
+                                    rows="3"
+                                />
+                            </div>
+
+                            <div className="flex gap-3 justify-end">
+                                <button
+                                    onClick={closeBlockModal}
+                                    className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg font-medium hover:bg-gray-600 transition-all duration-200"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => handleBlockUser(comment.userId._id, comment.userId.username)}
+                                    disabled={blockingUser === comment.userId._id}
+                                    className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all duration-200 disabled:opacity-50"
+                                >
+                                    {blockingUser === comment.userId._id ? 'Blocking...' : 'Block User'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 };
