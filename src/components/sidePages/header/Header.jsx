@@ -5,6 +5,8 @@ import { RxCross2 } from "react-icons/rx";
 import { CiLock } from "react-icons/ci";
 // import { jwtDecode } from 'jwt-decode';
 import { useAuth, triggerAuthChange } from '../../../contexts/AuthContext.jsx'; // added
+import NotificationBell from '../../CommentBox/NotificationBell.jsx';
+import AdminCommentsOverview from '../../CommentBox/Admin/AdminCommentsOverview.jsx';
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
@@ -111,6 +113,11 @@ const ProfileIcon = () => {
 
     return (
         <div className="relative flex items-center ml-4">
+
+            <div className='mr-4'>
+                <AdminCommentsOverview />
+            </div>
+
             {/* Request Button */}
             <Link to="/request" className="relative inline-block group mr-2" style={{ marginRight: '24px' }}>
                 <div className="relative">
@@ -132,6 +139,10 @@ const ProfileIcon = () => {
                     </div>
                 </div>
             </Link>
+
+            <div className='mr-4'>
+                <NotificationBell />
+            </div>
 
             {/* Profile Icon Button or Login Button */}
             {user ? (
@@ -158,8 +169,8 @@ const ProfileIcon = () => {
                     <Link to="/profile" onClick={() => setShowDropdown(false)}>
                         <span className="block px-6 py-2 text-gray-200 hover:bg-[#232323] cursor-pointer text-base">My profile</span>
                     </Link>
-                    <Link to="/watch-history" onClick={() => setShowDropdown(false)}>
-                        <span className="block px-6 py-2 text-gray-200 hover:bg-[#232323] cursor-pointer text-base">Watch history</span>
+                    <Link to="/my-comments" onClick={() => setShowDropdown(false)}>
+                        <span className="block px-6 py-2 text-gray-200 hover:bg-[#232323] cursor-pointer text-base">My Comments</span>
                     </Link>
                     <Link to="/liked" onClick={() => setShowDropdown(false)}>
                         <span className="block px-6 py-2 text-gray-200 hover:bg-[#232323] cursor-pointer text-base">Liked</span>

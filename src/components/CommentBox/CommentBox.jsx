@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext.jsx';
+import { useParams } from 'react-router-dom';
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
@@ -27,8 +28,13 @@ const CommentBox = () => {
     const [showBlockModal, setShowBlockModal] = useState(null);
     const [blockReason, setBlockReason] = useState('');
 
-    // For testing - hardcoded app ID
-    const appId = "6714f917fa2f0dd3a91d2911";
+    // Extract appId from URL
+    const getAppIdFromUrl = () => {
+        const pathSegments = window.location.pathname.split('/');
+        // URL pattern: /download/mac/game-title/appId
+        return pathSegments[pathSegments.length - 1]; // Last segment is appId
+    };
+    const appId = getAppIdFromUrl();
 
     useEffect(() => {
         fetchComments();
@@ -181,7 +187,6 @@ const CommentBox = () => {
 
         try {
             setDeletingComment(commentId);
-            console.log("Deleting comment with ID:", commentId);
 
             const token = localStorage.getItem("token");
             const xAuthToken = process.env.VITE_API_TOKEN;
@@ -210,7 +215,6 @@ const CommentBox = () => {
 
         try {
             setDeletingComment(commentId);
-            console.log("Admin deleting comment with ID:", commentId);
 
             const token = localStorage.getItem("token");
             const xAuthToken = process.env.VITE_API_TOKEN;
@@ -239,7 +243,6 @@ const CommentBox = () => {
 
         try {
             setPinningComment(commentId);
-            console.log("Toggling pin for comment with ID:", commentId);
 
             const token = localStorage.getItem("token");
             const xAuthToken = process.env.VITE_API_TOKEN;
@@ -269,7 +272,6 @@ const CommentBox = () => {
 
         try {
             setBlockingUser(userId);
-            console.log("Blocking user with ID:", userId);
 
             const token = localStorage.getItem("token");
             const xAuthToken = process.env.VITE_API_TOKEN;
@@ -770,7 +772,7 @@ const CommentBox = () => {
                                                 <img
                                                     src={user.avatar || DEFAULT_AVATAR}
                                                     alt="Your avatar"
-                                                    className="w-6 h-6 rounded-full border border-cyan-500/20"
+                                                    className="mt-1 w-12 h-12 rounded-full border-2 border-black bg-gray-800 object-cover shadow-lg hover:ring-1 hover:ring-purple-500 transition duration-200"
                                                     onError={e => (e.target.src = DEFAULT_AVATAR)}
                                                 />
                                                 <div className="flex-1">
