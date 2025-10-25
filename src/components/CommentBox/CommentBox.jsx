@@ -7,6 +7,7 @@ const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
 const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
     const { user } = useAuth();
+    const { id: urlId } = useParams(); // Get id from URL params for better compatibility
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -28,31 +29,63 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
     const [showBlockModal, setShowBlockModal] = useState(null);
     const [blockReason, setBlockReason] = useState('');
 
-    // Extract appId from URL
-    const getAppIdFromUrl = () => {
+    // Enhanced appId extraction with multiple fallbacks for maximum compatibility
+    const getAppId = () => {
+        // 1. First try: Use the id from URL params (most reliable)
+        if (urlId) return urlId;
+
+        // 2. Second try: Extract from URL path (backward compatibility)
         const pathSegments = window.location.pathname.split('/');
-        // URL pattern: /download/mac/game-title/appId
-        return pathSegments[pathSegments.length - 1]; // Last segment is appId
+        const lastSegment = pathSegments[pathSegments.length - 1];
+
+        // Check if last segment is a valid MongoDB ObjectId format (24 hex chars)
+        if (lastSegment && /^[0-9a-fA-F]{24}$/.test(lastSegment)) {
+            return lastSegment;
+        }
+
+        // 3. Third try: Try the segment before last (for some URL patterns)
+        if (pathSegments.length >= 2) {
+            const secondLastSegment = pathSegments[pathSegments.length - 2];
+            if (secondLastSegment && /^[0-9a-fA-F]{24}$/.test(secondLastSegment)) {
+                return secondLastSegment;
+            }
+        }
+
+        console.warn('Could not extract appId from URL. Current path:', window.location.pathname);
+        return null;
     };
-    const appId = getAppIdFromUrl();
+
+    const appId = getAppId();
 
     useEffect(() => {
-        fetchComments();
-    }, [sortBy]);
+        if (appId) {
+            fetchComments();
+        } else {
+            setError('Could not load comments: Invalid app ID');
+            setLoading(false);
+        }
+    }, [sortBy, appId]);
 
-    // Scroll to comment when scrollToCommentId changes and comments are loaded
+    // Enhanced scroll functionality with multiple attempts
     useEffect(() => {
         if (scrollToCommentId && comments.length > 0) {
-            scrollToComment(scrollToCommentId);
+            console.log('Scroll requested to comment:', scrollToCommentId);
+            attemptScroll(scrollToCommentId, 0);
         }
     }, [scrollToCommentId, comments]);
 
-    const scrollToComment = (commentId) => {
-        if (!commentId) return;
+    const attemptScroll = (commentId, attemptCount = 0) => {
+        if (attemptCount > 3) {
+            console.warn('Failed to scroll to comment after 3 attempts:', commentId);
+            if (onCommentScrolled) onCommentScrolled();
+            return;
+        }
 
         const element = document.getElementById(`comment-${commentId}`);
+
         if (element) {
-            // Wait a bit for the page to settle
+
+            // Small delay to ensure DOM is ready
             setTimeout(() => {
                 element.scrollIntoView({
                     behavior: 'smooth',
@@ -65,17 +98,30 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                 // Remove highlight after 3 seconds
                 setTimeout(() => {
                     element.classList.remove('comment-highlight');
-                }, 3000);
+                }, 5000);
 
                 // Notify parent that scrolling is complete
                 if (onCommentScrolled) {
                     onCommentScrolled();
                 }
-            }, 500);
+            }, 3000);
+        } else {
+
+            // Retry after delay
+            setTimeout(() => {
+                attemptScroll(commentId, attemptCount + 1);
+            }, 700);
         }
     };
 
     const fetchComments = async () => {
+        if (!appId) {
+            console.error('Cannot fetch comments: appId is null');
+            setError('Invalid app ID');
+            setLoading(false);
+            return;
+        }
+
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
@@ -614,7 +660,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                 return (
                                     <div
                                         key={comment._id}
-                                        id={`comment-${comment._id}`}  // ADDED: ID for scrolling
+                                        id={`comment-${comment._id}`}
                                         className={`bg-gray-700/30 rounded-lg border ${comment.isPinned
                                             ? 'border-cyan-500/50 bg-cyan-500/10'
                                             : 'border-gray-600'

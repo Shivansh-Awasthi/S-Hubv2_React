@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
@@ -8,6 +8,7 @@ const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 const AdminCommentsPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,10 +21,37 @@ const AdminCommentsPage = () => {
     const [totalUnread, setTotalUnread] = useState(0);
     const [totalRead, setTotalRead] = useState(0);
 
+    // Scroll state
+    const [scrollToCommentId, setScrollToCommentId] = useState(null);
+    const [commentScrolled, setCommentScrolled] = useState(false);
+
     // Filters
     const [statusFilter, setStatusFilter] = useState('all'); // all, read, unread
     const [sortBy, setSortBy] = useState('newest'); // newest, oldest, mostReplies, pinned
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Handle scroll to comment from navigation state
+    useEffect(() => {
+        if (location.state?.scrollToComment || location.state?.highlightComment) {
+            const commentId = location.state.scrollToComment || location.state.highlightComment;
+
+            setScrollToCommentId(commentId);
+
+            // Clear the state after reading it to prevent repeated scrolling
+            window.history.replaceState({ ...location.state, scrollToComment: null, highlightComment: null }, '');
+        }
+    }, [location.state]);
+
+    // Reset scroll state after scrolling is complete
+    const handleCommentScrolled = () => {
+
+        setCommentScrolled(true);
+        // Reset after a delay to ensure smooth user experience
+        setTimeout(() => {
+            setScrollToCommentId(null);
+            setCommentScrolled(false);
+        }, 1000);
+    };
 
     useEffect(() => {
         if (user && (user.role === 'ADMIN' || user.role === 'MOD')) {
@@ -128,11 +156,29 @@ const AdminCommentsPage = () => {
     };
 
     const handleGoToComment = (comment) => {
-        navigate(`/download/mac/${comment.appId.title.toLowerCase().replace(/\s+/g, '-')}/${comment.appId._id}`, {
+
+        // Ensure we have valid data for navigation
+        if (!comment.appId || !comment.appId._id) {
+            console.error('Invalid app data for comment:', comment);
+            alert('Error: Could not navigate to comment. App data is missing.');
+            return;
+        }
+
+        // Create a safe slug from the title
+        const gameSlug = comment.appId.title
+            ? comment.appId.title.toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9-]/g, '')
+            : 'game';;
+
+        // Navigate to the game page with scroll state - REMOVED replace: true
+        navigate(`/download/mac/${gameSlug}/${comment.appId._id}`, {
             state: {
                 scrollToComment: comment._id,
-                highlightComment: comment._id
+                highlightComment: comment._id,
+                fromAdmin: true
             }
+            // REMOVED: replace: true
         });
     };
 
