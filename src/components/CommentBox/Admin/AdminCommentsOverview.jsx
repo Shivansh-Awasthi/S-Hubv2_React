@@ -135,7 +135,6 @@ const AdminCommentsOverview = () => {
                 className="relative p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
                 title="Recent Comments"
             >
-
                 <SiImessage className="w-8 h-8 text-gray-300" />
 
                 {/* Unread Badge */}
@@ -148,154 +147,193 @@ const AdminCommentsOverview = () => {
 
             {/* Dropdown Panel */}
             {isOpen && (
-                <div className="absolute right-0 top-12 w-96 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50">
-                    {/* Header */}
-                    <div className="p-4 border-b border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                <>
+                    {/* Overlay */}
+                    <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsOpen(false)}
+                    />
+
+                    <div className="absolute top-full right-0 z-50 mt-2 w-96 origin-top-right overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900">
+                        {/* Header with gradient background */}
+                        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 dark:from-indigo-700 dark:to-purple-700">
+                            <div className="flex items-center justify-between">
+                                <h3 className="flex items-center font-semibold text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                     </svg>
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-white text-sm">Recent Comments</h3>
-                                    <p className="text-gray-400 text-xs">
-                                        {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
-                                    </p>
+                                    Recent Comments
+                                    {unreadCount > 0 && (
+                                        <span className="ml-2 rounded-full bg-white px-2 py-0.5 text-xs text-indigo-600">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    )}
+                                </h3>
+                                <div className="flex items-center space-x-3">
+                                    <button
+                                        onClick={fetchLatestComments}
+                                        disabled={refreshing}
+                                        className="text-xs text-indigo-100 hover:text-white focus:outline-none"
+                                        title="Refresh"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        onClick={handleViewAll}
+                                        className="flex items-center text-xs text-indigo-100 transition-colors hover:text-white focus:outline-none"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                        </svg>
+                                        <span>View All</span>
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={fetchLatestComments}
-                                    disabled={refreshing}
-                                    className="p-1.5 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-700 disabled:opacity-50"
-                                    title="Refresh"
-                                >
-                                    <svg
-                                        className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`}
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                    </svg>
-                                </button>
-
-                                <button
-                                    onClick={handleViewAll}
-                                    className="px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg text-xs font-semibold hover:from-cyan-600 hover:to-blue-600 transition-all duration-200"
-                                >
-                                    View All
-                                </button>
+                            <div className="mt-1 flex justify-end">
+                                <span className="text-xs text-indigo-200 italic">
+                                    {unreadCount > 0 ? `${unreadCount} unread comments` : 'All caught up!'}
+                                </span>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Comments List */}
-                    <div className="max-h-96 overflow-y-auto">
-                        {latestComments.length === 0 ? (
-                            <div className="p-6 text-center">
-                                <div className="w-12 h-12 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        {/* Comments List */}
+                        <div className="max-h-96 divide-y divide-gray-100 overflow-y-auto dark:divide-gray-800">
+                            {latestComments.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-8 text-gray-500 dark:text-gray-400">
+                                    <svg className="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
+                                    <p className="text-gray-400 text-sm">No new comments</p>
+                                    <button
+                                        onClick={handleViewAll}
+                                        className="mt-2 inline-flex items-center rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300"
+                                    >
+                                        View All Comments
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <p className="text-gray-400 text-sm">No new comments</p>
-                                <button
-                                    onClick={handleViewAll}
-                                    className="mt-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg text-sm font-semibold hover:from-cyan-600 hover:to-blue-600 transition-all duration-200"
-                                >
-                                    View All Comments
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="divide-y divide-gray-700">
-                                {latestComments.map(comment => (
+                            ) : (
+                                latestComments.map(comment => (
                                     <div
                                         key={comment._id}
-                                        className="p-4 hover:bg-gray-700/30 transition-colors duration-200 group"
+                                        className="group relative transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                                        onClick={() => handleGoToComment(comment)}
                                     >
-                                        <div className="flex items-start gap-3">
-                                            {/* User Avatar */}
-                                            <div className="relative flex-shrink-0">
-                                                <img
-                                                    src={comment.userId?.avatar || DEFAULT_AVATAR}
-                                                    alt={comment.userId?.username}
-                                                    className="w-8 h-8 rounded-full border-2 border-cyan-500/20"
-                                                    onError={e => (e.target.src = DEFAULT_AVATAR)}
-                                                />
-                                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-500 rounded-full border border-gray-800 animate-pulse"></div>
-                                            </div>
+                                        {/* Blue line indicator for unread */}
+                                        <div className="absolute top-0 bottom-0 left-0 w-1 bg-cyan-500"></div>
 
-                                            {/* Comment Content */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="font-medium text-white text-sm">
-                                                        {comment.userId?.username}
-                                                    </span>
-                                                    {comment.userId?.role === 'ADMIN' && (
-                                                        <span className="bg-red-500 text-xs px-1.5 py-0.5 rounded text-white font-bold">
-                                                            ADMIN
-                                                        </span>
-                                                    )}
-                                                    {comment.userId?.role === 'MOD' && (
-                                                        <span className="bg-green-500 text-xs px-1.5 py-0.5 rounded text-white font-bold">
-                                                            MOD
-                                                        </span>
-                                                    )}
-                                                    <span className="text-gray-400 text-xs ml-auto">
-                                                        {formatTimeAgo(comment.createdAt)}
-                                                    </span>
+                                        <div className="block px-4 py-3">
+                                            <div className="flex">
+                                                {/* User Avatar with green background */}
+                                                <div className="shrink-0 mr-3">
+                                                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+                                                        <img
+                                                            src={comment.userId?.avatar || DEFAULT_AVATAR}
+                                                            alt={comment.userId?.username}
+                                                            className="w-8 h-8 rounded-full"
+                                                            onError={e => (e.target.src = DEFAULT_AVATAR)}
+                                                        />
+                                                    </div>
                                                 </div>
 
-                                                <p className="text-gray-300 text-sm mb-2 line-clamp-2">
-                                                    {truncateContent(comment.content, 70)}
-                                                </p>
+                                                {/* Comment Content */}
+                                                <div className="flex-1 min-w-0 pr-8">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                                            {comment.userId?.username}
+                                                        </span>
+                                                        {comment.userId?.role === 'ADMIN' && (
+                                                            <span className="bg-red-500 text-xs px-1.5 py-0.5 rounded-full text-white font-bold">
+                                                                ADMIN
+                                                            </span>
+                                                        )}
+                                                        {comment.userId?.role === 'MOD' && (
+                                                            <span className="bg-green-500 text-xs px-1.5 py-0.5 rounded-full text-white font-bold">
+                                                                MOD
+                                                            </span>
+                                                        )}
+                                                    </div>
 
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-cyan-400 text-xs font-medium">
-                                                        {comment.appId?.title}
-                                                    </span>
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
+                                                        {truncateContent(comment.content, 70)}
+                                                    </p>
 
-                                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                        <button
-                                                            onClick={() => handleGoToComment(comment)}
-                                                            className="px-2 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded text-xs font-semibold hover:from-cyan-600 hover:to-blue-600 transition-all duration-200"
-                                                            title="Go to game and reply"
-                                                        >
-                                                            Reply
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleMarkAsRead(comment._id)}
-                                                            className="px-2 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded text-xs font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-200"
-                                                            title="Mark as read"
-                                                        >
-                                                            Read
-                                                        </button>
+                                                    <div className="mt-1 flex items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-gray-400 dark:text-gray-500 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                        </svg>
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">
+                                                            {formatTimeAgo(comment.createdAt)}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="mt-2 flex items-center justify-between">
+                                                        <span className="text-orange-600 text-sm font-medium">
+                                                            {comment.appId?.title}
+                                                        </span>
+                                                        <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300">
+                                                            View Details
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"></path>
+                                                            </svg>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
 
-                    {/* Footer */}
-                    {latestComments.length > 0 && (
-                        <div className="p-3 border-t border-gray-700 bg-gray-750 rounded-b-xl">
+                                        {/* Action Buttons */}
+                                        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex gap-1">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleGoToComment(comment);
+                                                }}
+                                                className="rounded-full bg-gray-100 p-1.5 text-gray-500 hover:text-cyan-500 focus:opacity-100 dark:bg-gray-800 dark:hover:text-cyan-400"
+                                                title="Go to game and reply"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                                </svg>
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleMarkAsRead(comment._id);
+                                                }}
+                                                className="rounded-full bg-gray-100 p-1.5 text-gray-500 hover:text-green-500 focus:opacity-100 dark:bg-gray-800 dark:hover:text-green-400"
+                                                title="Mark as read"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="flex justify-center border-t border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
                             <button
                                 onClick={handleViewAll}
-                                className="w-full py-2 text-center text-cyan-400 hover:text-cyan-300 text-sm font-semibold transition-colors duration-200"
+                                className="inline-flex items-center text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
                             >
-                                View All Comments →
+                                View all comments
+                                <svg xmlns="http://www.w3.org/2000/svg" className="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
                             </button>
                         </div>
-                    )}
-                </div>
+                    </div>
+                </>
             )}
         </div>
     );

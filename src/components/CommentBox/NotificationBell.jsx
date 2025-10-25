@@ -176,7 +176,7 @@ const NotificationBell = () => {
                                     <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                                     </svg>
-                                    Notifications
+                                    Latest Replies
                                     {unreadCount > 0 && (
                                         <span className="ml-2 rounded-full bg-white px-2 py-0.5 text-xs text-indigo-600">
                                             {unreadCount > 99 ? '99+' : unreadCount}
@@ -250,9 +250,15 @@ const NotificationBell = () => {
                                                 {/* Green Icon */}
                                                 <div className="shrink-0 mr-3">
                                                     <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                        {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                        </svg>
+                                                        </svg> */}
+                                                        <img
+                                                            src={notification.userId?.avatar || DEFAULT_AVATAR}
+                                                            alt={notification.userId?.username}
+                                                            className="w-8 h-8 rounded-full"
+                                                            onError={e => (e.target.src = DEFAULT_AVATAR)}
+                                                        />
                                                     </div>
                                                 </div>
 
@@ -311,7 +317,7 @@ const NotificationBell = () => {
                                 }}
                                 className="inline-flex items-center text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
                             >
-                                View all notifications
+                                All comments
                                 <svg xmlns="http://www.w3.org/2000/svg" className="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
