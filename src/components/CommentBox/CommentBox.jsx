@@ -6,9 +6,12 @@ import { useParams } from 'react-router-dom';
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
 // Rich Text Editor Component
-const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAdminOrMod = false }) => {
+const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAdminOrMod = false, maxLength = 500 }) => {
     const [isFocused, setIsFocused] = useState(false);
     const [textStyle, setTextStyle] = useState('normal');
+    const [showImageInput, setShowImageInput] = useState(false);
+    const [imageUrl, setImageUrl] = useState('');
+    const [imageAlt, setImageAlt] = useState('');
 
     const handleFormat = (format) => {
         const textarea = document.getElementById('rich-text-area');
@@ -61,26 +64,26 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
 
             case 'h1':
                 if (selectedText) {
-                    newText = value.substring(0, start) + `# ${selectedText}` + value.substring(end);
-                    newSelectionStart = start + 2;
-                    newSelectionEnd = end + 2;
+                    newText = value.substring(0, start) + `# ${selectedText}\n` + value.substring(end);
+                    newSelectionStart = start + selectedText.length + 3;
+                    newSelectionEnd = newSelectionStart;
                 } else {
-                    newText = value + '# ';
-                    newSelectionStart = value.length + 2;
-                    newSelectionEnd = value.length + 2;
+                    newText = value + '# \n';
+                    newSelectionStart = value.length + 3;
+                    newSelectionEnd = newSelectionStart;
                 }
                 setTextStyle('normal');
                 break;
 
             case 'h2':
                 if (selectedText) {
-                    newText = value.substring(0, start) + `## ${selectedText}` + value.substring(end);
-                    newSelectionStart = start + 3;
-                    newSelectionEnd = end + 3;
+                    newText = value.substring(0, start) + `## ${selectedText}\n` + value.substring(end);
+                    newSelectionStart = start + selectedText.length + 4;
+                    newSelectionEnd = newSelectionStart;
                 } else {
-                    newText = value + '## ';
-                    newSelectionStart = value.length + 3;
-                    newSelectionEnd = value.length + 3;
+                    newText = value + '## \n';
+                    newSelectionStart = value.length + 4;
+                    newSelectionEnd = newSelectionStart;
                 }
                 setTextStyle('normal');
                 break;
@@ -101,6 +104,18 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
         }, 0);
     };
 
+    const handleInsertImage = () => {
+        if (!imageUrl.trim()) return;
+
+        const markdownImage = `![${imageAlt || 'image'}](${imageUrl})`;
+        const newText = value + (value ? '\n' : '') + markdownImage + '\n';
+
+        onChange(newText);
+        setImageUrl('');
+        setImageAlt('');
+        setShowImageInput(false);
+    };
+
     // Markdown parser to convert markdown to HTML
     const parseMarkdown = (text) => {
         if (!text) return '';
@@ -108,16 +123,18 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
         return text
             // Convert line breaks to <br>
             .replace(/\n/g, '<br>')
-            // Convert # Heading to <h1>
-            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-2">$1</h1>')
-            // Convert ## Heading to <h2>
+            // Convert # Heading to <h1> - must be at start of line
+            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">$1</h1>')
+            // Convert ## Heading to <h2> - must be at start of line
             .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">$1</h2>')
             // Convert **bold** to <strong>
             .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
             // Convert *italic* to <em>
             .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
             // Convert __underline__ to <u>
-            .replace(/__(.*?)__/g, '<u class="underline">$1</u>');
+            .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
+            // Convert ![alt](url) to <img>
+            .replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="my-3"><img src="$2" alt="$1" class="max-w-full h-auto rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm" loading="lazy" onerror="this.style.display=\'none\'"><div class="text-xs text-slate-500 dark:text-slate-400 mt-1 text-center">$1</div></div>');
     };
 
     const previewHTML = parseMarkdown(value);
@@ -128,6 +145,9 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
             handleFormat(style);
         }
     };
+
+    const characterCount = value.length;
+    const isOverLimit = !isAdminOrMod && characterCount > maxLength;
 
     return (
         <div className={`rich-text-editor border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 transition-all duration-200 ${isFocused ? 'ring-2 ring-blue-500 border-blue-500' : ''
@@ -186,12 +206,64 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                     </svg>
                 </button>
 
+                {/* Image Button */}
+                <button
+                    type="button"
+                    onClick={() => setShowImageInput(!showImageInput)}
+                    disabled={disabled}
+                    className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Insert Image"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </button>
+
                 <div className="flex-1"></div>
 
                 <div className="text-xs text-slate-500 dark:text-slate-400 px-2">
-                    Markdown: **bold** *italic* __underline__ # Heading
+                    Markdown: **bold** *italic* __underline__ # Heading ![alt](url)
                 </div>
             </div>
+
+            {/* Image Input Form */}
+            {showImageInput && (
+                <div className="border-b border-slate-200 dark:border-slate-700 p-3 bg-slate-50/50 dark:bg-slate-800/30">
+                    <div className="space-y-2">
+                        <div className="flex gap-2">
+                            <input
+                                type="url"
+                                value={imageUrl}
+                                onChange={(e) => setImageUrl(e.target.value)}
+                                placeholder="Image URL"
+                                className="flex-1 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                            <input
+                                type="text"
+                                value={imageAlt}
+                                onChange={(e) => setImageAlt(e.target.value)}
+                                placeholder="Alt text (optional)"
+                                className="flex-1 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                            <button
+                                onClick={() => setShowImageInput(false)}
+                                className="px-3 py-1.5 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded text-xs font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-all duration-200"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleInsertImage}
+                                disabled={!imageUrl.trim()}
+                                className="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Insert Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Text Input Area */}
             <div className="relative">
@@ -205,19 +277,27 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                     disabled={disabled}
                     rows={rows}
                     className="w-full bg-transparent border-0 px-4 py-3 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-0 resize-none whitespace-pre-wrap"
+                    maxLength={isAdminOrMod ? undefined : maxLength}
                 />
             </div>
 
-            {/* Live Preview */}
-            {value && (
-                <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-b-lg">
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">Preview:</div>
+            {/* Character Count and Live Preview */}
+            <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-b-lg">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Preview:</div>
+                    <div className={`text-xs ${isOverLimit ? 'text-red-500' : 'text-slate-500'}`}>
+                        {characterCount}
+                        {!isAdminOrMod && ` / ${maxLength}`}
+                        {isAdminOrMod && ' characters (no limit)'}
+                    </div>
+                </div>
+                {value && (
                     <div
                         className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 dark:prose-invert prose-headings:mt-4 prose-headings:mb-2 prose-p:leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: previewHTML }}
                     />
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };
@@ -230,16 +310,18 @@ const FormattedContent = ({ content, className = "" }) => {
         return text
             // Convert line breaks to <br>
             .replace(/\n/g, '<br>')
-            // Convert # Heading to <h1>
-            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-2 pb-1 border-b border-slate-200 dark:border-slate-600">$1</h1>')
-            // Convert ## Heading to <h2>
+            // Convert # Heading to <h1> - must be at start of line
+            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">$1</h1>')
+            // Convert ## Heading to <h2> - must be at start of line
             .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">$1</h2>')
             // Convert **bold** to <strong>
             .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
             // Convert *italic* to <em>
             .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
             // Convert __underline__ to <u>
-            .replace(/__(.*?)__/g, '<u class="underline">$1</u>');
+            .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
+            // Convert ![alt](url) to <img>
+            .replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="my-3"><img src="$2" alt="$1" class="max-w-full h-auto rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm" loading="lazy" onerror="this.style.display=\'none\'"><div class="text-xs text-slate-500 dark:text-slate-400 mt-1 text-center">$1</div></div>');
     };
 
     const htmlContent = parseMarkdown(content);
@@ -384,6 +466,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
         e.preventDefault();
         if (!newComment.trim() || !user) return;
 
+        // Check character limit for non-admin users
+        if (!isAdminOrMod() && newComment.length > 500) {
+            setError('Comment exceeds 500 character limit');
+            return;
+        }
+
         try {
             setSubmitting(true);
             const token = localStorage.getItem("token");
@@ -400,6 +488,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
             );
 
             setNewComment('');
+            setError(null);
             fetchComments();
         } catch (err) {
             console.error("Failed to post comment:", err);
@@ -423,6 +512,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
     const handleSubmitReply = async (commentId) => {
         if (!replyContent.trim() || !user) return;
 
+        // Check character limit for non-admin users
+        if (!isAdminOrMod() && replyContent.length > 500) {
+            setError('Reply exceeds 500 character limit');
+            return;
+        }
+
         try {
             setSubmittingReply(true);
             const token = localStorage.getItem("token");
@@ -440,6 +535,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
 
             setReplyingTo(null);
             setReplyContent('');
+            setError(null);
             fetchComments();
         } catch (err) {
             console.error("Failed to post reply:", err);
@@ -463,6 +559,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
     const handleSubmitEdit = async (commentId) => {
         if (!editContent.trim() || !user) return;
 
+        // Check character limit for non-admin users
+        if (!isAdminOrMod() && editContent.length > 500) {
+            setError('Comment exceeds 500 character limit');
+            return;
+        }
+
         try {
             setSubmittingEdit(true);
             const token = localStorage.getItem("token");
@@ -480,6 +582,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
 
             setEditingComment(null);
             setEditContent('');
+            setError(null);
             fetchComments();
         } catch (err) {
             console.error("Failed to edit comment:", err);
@@ -740,15 +843,15 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
         .rich-text-editor .prose h1 {
             font-size: 1.5em;
             font-weight: bold;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
+            margin-top: 1em;
+            margin-bottom: 0.75em;
             color: inherit;
         }
 
         .rich-text-editor .prose h2 {
             font-size: 1.25em;
             font-weight: 600;
-            margin-top: 0.5em;
+            margin-top: 0.75em;
             margin-bottom: 0.5em;
             color: inherit;
         }
@@ -1028,11 +1131,14 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                 disabled={submittingEdit}
                                                                 rows={3}
                                                                 isAdminOrMod={isAdminMod}
+                                                                maxLength={500}
                                                             />
                                                             <div className="flex items-center justify-between mt-2">
-                                                                <span className={`text-xs ${editContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
-                                                                    {editContent.length}/500
-                                                                </span>
+                                                                <div className={`text-xs ${!isAdminMod && editContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
+                                                                    {editContent.length}
+                                                                    {!isAdminMod && ` / 500`}
+                                                                    {isAdminMod && ' characters (no limit)'}
+                                                                </div>
                                                                 <div className="flex items-center gap-2">
                                                                     <button
                                                                         onClick={handleCancelEdit}
@@ -1042,7 +1148,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                     </button>
                                                                     <button
                                                                         onClick={() => handleSubmitEdit(comment._id)}
-                                                                        disabled={!editContent.trim() || submittingEdit || editContent.length > 500}
+                                                                        disabled={!editContent.trim() || submittingEdit || (!isAdminMod && editContent.length > 500)}
                                                                         className="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                     >
                                                                         {submittingEdit ? 'Saving...' : 'Save'}
@@ -1112,11 +1218,14 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                 disabled={submittingReply}
                                                                                 rows={2}
                                                                                 isAdminOrMod={isAdminMod}
+                                                                                maxLength={500}
                                                                             />
                                                                             <div className="flex items-center justify-between mt-2">
-                                                                                <span className={`text-xs ${replyContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
-                                                                                    {replyContent.length}/500
-                                                                                </span>
+                                                                                <div className={`text-xs ${!isAdminMod && replyContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
+                                                                                    {replyContent.length}
+                                                                                    {!isAdminMod && ` / 500`}
+                                                                                    {isAdminMod && ' characters (no limit)'}
+                                                                                </div>
                                                                                 <div className="flex items-center gap-2">
                                                                                     <button
                                                                                         onClick={handleCancelReply}
@@ -1126,7 +1235,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                     </button>
                                                                                     <button
                                                                                         onClick={() => handleSubmitReply(comment._id)}
-                                                                                        disabled={!replyContent.trim() || submittingReply || replyContent.length > 500}
+                                                                                        disabled={!replyContent.trim() || submittingReply || (!isAdminMod && replyContent.length > 500)}
                                                                                         className="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                                     >
                                                                                         {submittingReply ? 'Posting...' : 'Post Reply'}
@@ -1242,7 +1351,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Join the discussion</h3>
                                         <p className="text-sm text-slate-500 dark:text-slate-400">
                                             Share your thoughts with rich text formatting
-                                            {isAdminOrMod() && " - Admin features enabled"}
+                                            {isAdminOrMod() && " - Unlimited characters for admin/mod"}
                                         </p>
                                     </div>
                                 </div>
@@ -1261,12 +1370,8 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                             disabled={submitting}
                                             rows={4}
                                             isAdminOrMod={isAdminOrMod()}
+                                            maxLength={500}
                                         />
-                                        <div className="flex items-center justify-between mt-2">
-                                            <span className={`text-xs ${newComment.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
-                                                {newComment.length}/500
-                                            </span>
-                                        </div>
                                     </div>
 
                                     <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
@@ -1275,7 +1380,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                         </p>
                                         <button
                                             type="submit"
-                                            disabled={!newComment.trim() || submitting || newComment.length > 500}
+                                            disabled={!newComment.trim() || submitting || (!isAdminOrMod() && newComment.length > 500)}
                                             className="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {submitting ? (
