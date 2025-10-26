@@ -6,8 +6,9 @@ import { useParams } from 'react-router-dom';
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
 // Rich Text Editor Component
-const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4 }) => {
+const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAdminOrMod = false }) => {
     const [isFocused, setIsFocused] = useState(false);
+    const [textStyle, setTextStyle] = useState('normal');
 
     const handleFormat = (format) => {
         const textarea = document.getElementById('rich-text-area');
@@ -58,6 +59,32 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4 }) =>
                 }
                 break;
 
+            case 'h1':
+                if (selectedText) {
+                    newText = value.substring(0, start) + `# ${selectedText}` + value.substring(end);
+                    newSelectionStart = start + 2;
+                    newSelectionEnd = end + 2;
+                } else {
+                    newText = value + '# ';
+                    newSelectionStart = value.length + 2;
+                    newSelectionEnd = value.length + 2;
+                }
+                setTextStyle('normal');
+                break;
+
+            case 'h2':
+                if (selectedText) {
+                    newText = value.substring(0, start) + `## ${selectedText}` + value.substring(end);
+                    newSelectionStart = start + 3;
+                    newSelectionEnd = end + 3;
+                } else {
+                    newText = value + '## ';
+                    newSelectionStart = value.length + 3;
+                    newSelectionEnd = value.length + 3;
+                }
+                setTextStyle('normal');
+                break;
+
             default:
                 return;
         }
@@ -79,23 +106,50 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4 }) =>
         if (!text) return '';
 
         return text
-            // Convert **bold** to <strong>
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            // Convert *italic* to <em>
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            // Convert __underline__ to <u>
-            .replace(/__(.*?)__/g, '<u>$1</u>')
             // Convert line breaks to <br>
-            .replace(/\n/g, '<br>');
+            .replace(/\n/g, '<br>')
+            // Convert # Heading to <h1>
+            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-2">$1</h1>')
+            // Convert ## Heading to <h2>
+            .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">$1</h2>')
+            // Convert **bold** to <strong>
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+            // Convert *italic* to <em>
+            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+            // Convert __underline__ to <u>
+            .replace(/__(.*?)__/g, '<u class="underline">$1</u>');
     };
 
     const previewHTML = parseMarkdown(value);
+
+    const handleTextStyleChange = (style) => {
+        setTextStyle(style);
+        if (style === 'h1' || style === 'h2') {
+            handleFormat(style);
+        }
+    };
 
     return (
         <div className={`rich-text-editor border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 transition-all duration-200 ${isFocused ? 'ring-2 ring-blue-500 border-blue-500' : ''
             }`}>
             {/* Formatting Toolbar */}
             <div className="flex items-center gap-1 p-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 rounded-t-lg">
+                {/* Text Style Dropdown for Admin/Mod */}
+                {isAdminOrMod && (
+                    <div className="flex items-center gap-2 mr-2">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Style:</span>
+                        <select
+                            value={textStyle}
+                            onChange={(e) => handleTextStyleChange(e.target.value)}
+                            className="bg-white dark:bg-slate-600 border border-slate-300 dark:border-slate-500 rounded px-2 py-1 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        >
+                            <option value="normal">Normal</option>
+                            <option value="h1">Heading 1</option>
+                            <option value="h2">Heading 2</option>
+                        </select>
+                    </div>
+                )}
+
                 <button
                     type="button"
                     onClick={() => handleFormat('bold')}
@@ -135,7 +189,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4 }) =>
                 <div className="flex-1"></div>
 
                 <div className="text-xs text-slate-500 dark:text-slate-400 px-2">
-                    Markdown: **bold** *italic* __underline__
+                    Markdown: **bold** *italic* __underline__ # Heading
                 </div>
             </div>
 
@@ -150,7 +204,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4 }) =>
                     placeholder={placeholder}
                     disabled={disabled}
                     rows={rows}
-                    className="w-full bg-transparent border-0 px-4 py-3 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-0 resize-none"
+                    className="w-full bg-transparent border-0 px-4 py-3 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-0 resize-none whitespace-pre-wrap"
                 />
             </div>
 
@@ -159,7 +213,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4 }) =>
                 <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-b-lg">
                     <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">Preview:</div>
                     <div
-                        className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 dark:prose-invert"
+                        className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 dark:prose-invert prose-headings:mt-4 prose-headings:mb-2 prose-p:leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: previewHTML }}
                     />
                 </div>
@@ -174,17 +228,25 @@ const FormattedContent = ({ content, className = "" }) => {
         if (!text) return '';
 
         return text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/__(.*?)__/g, '<u>$1</u>')
-            .replace(/\n/g, '<br>');
+            // Convert line breaks to <br>
+            .replace(/\n/g, '<br>')
+            // Convert # Heading to <h1>
+            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-2 pb-1 border-b border-slate-200 dark:border-slate-600">$1</h1>')
+            // Convert ## Heading to <h2>
+            .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">$1</h2>')
+            // Convert **bold** to <strong>
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+            // Convert *italic* to <em>
+            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+            // Convert __underline__ to <u>
+            .replace(/__(.*?)__/g, '<u class="underline">$1</u>');
     };
 
     const htmlContent = parseMarkdown(content);
 
     return (
         <div
-            className={`prose prose-sm max-w-none text-slate-800 dark:text-slate-200 dark:prose-invert leading-relaxed ${className}`}
+            className={`prose prose-sm max-w-none text-slate-800 dark:text-slate-200 dark:prose-invert leading-relaxed prose-headings:mt-4 prose-headings:mb-2 prose-p:leading-relaxed ${className}`}
             dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
     );
@@ -674,6 +736,22 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
             text-decoration: underline;
             color: inherit;
         }
+
+        .rich-text-editor .prose h1 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            color: inherit;
+        }
+
+        .rich-text-editor .prose h2 {
+            font-size: 1.25em;
+            font-weight: 600;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            color: inherit;
+        }
     `;
 
     if (loading) {
@@ -949,6 +1027,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                 placeholder="Edit your comment..."
                                                                 disabled={submittingEdit}
                                                                 rows={3}
+                                                                isAdminOrMod={isAdminMod}
                                                             />
                                                             <div className="flex items-center justify-between mt-2">
                                                                 <span className={`text-xs ${editContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
@@ -1032,6 +1111,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                 placeholder="Write your reply..."
                                                                                 disabled={submittingReply}
                                                                                 rows={2}
+                                                                                isAdminOrMod={isAdminMod}
                                                                             />
                                                                             <div className="flex items-center justify-between mt-2">
                                                                                 <span className={`text-xs ${replyContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
@@ -1160,7 +1240,10 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Join the discussion</h3>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">Share your thoughts with rich text formatting</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                                            Share your thoughts with rich text formatting
+                                            {isAdminOrMod() && " - Admin features enabled"}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -1177,6 +1260,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                             placeholder="Share your thoughts about this game... Use the toolbar above to format your text."
                                             disabled={submitting}
                                             rows={4}
+                                            isAdminOrMod={isAdminOrMod()}
                                         />
                                         <div className="flex items-center justify-between mt-2">
                                             <span className={`text-xs ${newComment.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
