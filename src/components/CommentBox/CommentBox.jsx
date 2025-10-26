@@ -5,6 +5,191 @@ import { useParams } from 'react-router-dom';
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
+// Rich Text Editor Component
+const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4 }) => {
+    const [isFocused, setIsFocused] = useState(false);
+
+    const handleFormat = (format) => {
+        const textarea = document.getElementById('rich-text-area');
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = value.substring(start, end);
+
+        let newText = '';
+        let newSelectionStart = start;
+        let newSelectionEnd = end;
+
+        switch (format) {
+            case 'bold':
+                if (selectedText) {
+                    newText = value.substring(0, start) + `**${selectedText}**` + value.substring(end);
+                    newSelectionStart = start + 2;
+                    newSelectionEnd = end + 2;
+                } else {
+                    newText = value + '****';
+                    newSelectionStart = value.length + 2;
+                    newSelectionEnd = value.length + 2;
+                }
+                break;
+
+            case 'italic':
+                if (selectedText) {
+                    newText = value.substring(0, start) + `*${selectedText}*` + value.substring(end);
+                    newSelectionStart = start + 1;
+                    newSelectionEnd = end + 1;
+                } else {
+                    newText = value + '**';
+                    newSelectionStart = value.length + 1;
+                    newSelectionEnd = value.length + 1;
+                }
+                break;
+
+            case 'underline':
+                if (selectedText) {
+                    newText = value.substring(0, start) + `__${selectedText}__` + value.substring(end);
+                    newSelectionStart = start + 2;
+                    newSelectionEnd = end + 2;
+                } else {
+                    newText = value + '____';
+                    newSelectionStart = value.length + 2;
+                    newSelectionEnd = value.length + 2;
+                }
+                break;
+
+            default:
+                return;
+        }
+
+        onChange(newText);
+
+        // Restore cursor position after state update
+        setTimeout(() => {
+            const updatedTextarea = document.getElementById('rich-text-area');
+            if (updatedTextarea) {
+                updatedTextarea.focus();
+                updatedTextarea.setSelectionRange(newSelectionStart, newSelectionEnd);
+            }
+        }, 0);
+    };
+
+    // Markdown parser to convert markdown to HTML
+    const parseMarkdown = (text) => {
+        if (!text) return '';
+
+        return text
+            // Convert **bold** to <strong>
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            // Convert *italic* to <em>
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            // Convert __underline__ to <u>
+            .replace(/__(.*?)__/g, '<u>$1</u>')
+            // Convert line breaks to <br>
+            .replace(/\n/g, '<br>');
+    };
+
+    const previewHTML = parseMarkdown(value);
+
+    return (
+        <div className={`rich-text-editor border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 transition-all duration-200 ${isFocused ? 'ring-2 ring-blue-500 border-blue-500' : ''
+            }`}>
+            {/* Formatting Toolbar */}
+            <div className="flex items-center gap-1 p-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 rounded-t-lg">
+                <button
+                    type="button"
+                    onClick={() => handleFormat('bold')}
+                    disabled={disabled}
+                    className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Bold (Ctrl+B)"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6h16M3 12h16m-7 6h7" />
+                    </svg>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => handleFormat('italic')}
+                    disabled={disabled}
+                    className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Italic (Ctrl+I)"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                    </svg>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => handleFormat('underline')}
+                    disabled={disabled}
+                    className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Underline (Ctrl+U)"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4a7 7 0 1014 0V3M4 21h16" />
+                    </svg>
+                </button>
+
+                <div className="flex-1"></div>
+
+                <div className="text-xs text-slate-500 dark:text-slate-400 px-2">
+                    Markdown: **bold** *italic* __underline__
+                </div>
+            </div>
+
+            {/* Text Input Area */}
+            <div className="relative">
+                <textarea
+                    id="rich-text-area"
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                    rows={rows}
+                    className="w-full bg-transparent border-0 px-4 py-3 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-0 resize-none"
+                />
+            </div>
+
+            {/* Live Preview */}
+            {value && (
+                <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-b-lg">
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">Preview:</div>
+                    <div
+                        className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 dark:prose-invert"
+                        dangerouslySetInnerHTML={{ __html: previewHTML }}
+                    />
+                </div>
+            )}
+        </div>
+    );
+};
+
+// Component to render formatted content
+const FormattedContent = ({ content, className = "" }) => {
+    const parseMarkdown = (text) => {
+        if (!text) return '';
+
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/__(.*?)__/g, '<u>$1</u>')
+            .replace(/\n/g, '<br>');
+    };
+
+    const htmlContent = parseMarkdown(content);
+
+    return (
+        <div
+            className={`prose prose-sm max-w-none text-slate-800 dark:text-slate-200 dark:prose-invert leading-relaxed ${className}`}
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+        />
+    );
+};
+
 const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
     const { user } = useAuth();
     const { id: urlId } = useParams();
@@ -474,6 +659,21 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                 box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
             }
         }
+
+        .rich-text-editor .prose strong {
+            font-weight: 600;
+            color: inherit;
+        }
+
+        .rich-text-editor .prose em {
+            font-style: italic;
+            color: inherit;
+        }
+
+        .rich-text-editor .prose u {
+            text-decoration: underline;
+            color: inherit;
+        }
     `;
 
     if (loading) {
@@ -743,12 +943,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                     {/* Comment Content */}
                                                     {editingComment === comment._id ? (
                                                         <div className="mb-4">
-                                                            <textarea
+                                                            <RichTextEditor
                                                                 value={editContent}
-                                                                onChange={(e) => setEditContent(e.target.value)}
-                                                                className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                                                                rows="3"
+                                                                onChange={setEditContent}
+                                                                placeholder="Edit your comment..."
                                                                 disabled={submittingEdit}
+                                                                rows={3}
                                                             />
                                                             <div className="flex items-center justify-between mt-2">
                                                                 <span className={`text-xs ${editContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
@@ -772,8 +972,8 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                        <div className="prose prose-sm max-w-none text-slate-800 dark:text-slate-200 dark:prose-invert leading-relaxed mb-4">
-                                                            <p>{comment.content}</p>
+                                                        <div className="mb-4">
+                                                            <FormattedContent content={comment.content} />
                                                         </div>
                                                     )}
 
@@ -826,13 +1026,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                             />
                                                                         </div>
                                                                         <div className="flex-1 min-w-0">
-                                                                            <textarea
+                                                                            <RichTextEditor
                                                                                 value={replyContent}
-                                                                                onChange={(e) => setReplyContent(e.target.value)}
+                                                                                onChange={setReplyContent}
                                                                                 placeholder="Write your reply..."
-                                                                                className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                                                                                rows="2"
                                                                                 disabled={submittingReply}
+                                                                                rows={2}
                                                                             />
                                                                             <div className="flex items-center justify-between mt-2">
                                                                                 <span className={`text-xs ${replyContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
@@ -861,7 +1060,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                         </div>
                                                     )}
 
-                                                    {/* Replies Section - UPDATED DESIGN */}
+                                                    {/* Replies Section */}
                                                     {showReplies && comment.replies && comment.replies.length > 0 && (
                                                         <div className="mt-4 ml-14 relative">
                                                             {/* Main timeline for replies container */}
@@ -915,13 +1114,8 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                         </div>
 
                                                                                         <div className="mb-3">
-                                                                                            <div className="prose prose-sm max-w-none text-slate-800 dark:text-slate-200 dark:prose-invert leading-relaxed prose-slate dark:prose-slate prose-headings:text-slate-900 dark:prose-headings:text-slate-100 prose-p:text-slate-700 dark:prose-p:text-slate-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:text-slate-900 dark:prose-code:text-slate-100 prose-code:bg-slate-100 dark:prose-code:bg-slate-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
-                                                                                                <p>{reply.content}</p>
-                                                                                            </div>
+                                                                                            <FormattedContent content={reply.content} />
                                                                                         </div>
-
-                                                                                        {/* Reply Actions */}
-
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -966,7 +1160,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Join the discussion</h3>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">Share your thoughts</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">Share your thoughts with rich text formatting</p>
                                     </div>
                                 </div>
                             </div>
@@ -977,13 +1171,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                                             Your comment <span className="text-red-500">*</span>
                                         </label>
-                                        <textarea
+                                        <RichTextEditor
                                             value={newComment}
-                                            onChange={(e) => setNewComment(e.target.value)}
-                                            placeholder="Share your thoughts about this game..."
-                                            className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                            rows="4"
+                                            onChange={setNewComment}
+                                            placeholder="Share your thoughts about this game... Use the toolbar above to format your text."
                                             disabled={submitting}
+                                            rows={4}
                                         />
                                         <div className="flex items-center justify-between mt-2">
                                             <span className={`text-xs ${newComment.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
