@@ -30,6 +30,40 @@ const AdminCommentsPage = () => {
     const [sortBy, setSortBy] = useState('newest'); // newest, oldest, mostReplies, pinned
     const [searchTerm, setSearchTerm] = useState('');
 
+    // Check if content is an image URL
+    const isImageContent = (content) => {
+        if (!content) return false;
+
+        // Common image URL patterns
+        const imagePatterns = [
+            /https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)/i,
+            /https?:\/\/i\.postimg\.cc/i,
+            /https?:\/\/imgur\.com/i,
+            /https?:\/\/i\.imgur\.com/i,
+            /https?:\/\/cdn\.discordapp\.com\/attachments/i,
+            /https?:\/\/storage\.googleapis\.com/i,
+            /https?:\/\/firebasestorage\.googleapis\.com/i
+        ];
+
+        return imagePatterns.some(pattern => pattern.test(content));
+    };
+
+    // Render content with image detection
+    const renderCommentContent = (content) => {
+        if (isImageContent(content)) {
+            return (
+                <div className="flex items-center text-blue-400 dark:text-blue-300 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>send an attachment</span>
+                </div>
+            );
+        }
+
+        return truncateContent(content, 150);
+    };
+
     // Handle scroll to comment from navigation state
     useEffect(() => {
         if (location.state?.scrollToComment || location.state?.highlightComment) {
@@ -474,10 +508,20 @@ const AdminCommentsPage = () => {
                                             )}
                                         </div>
 
-                                        <p className={`text-base mb-3 ${comment.adminRead ? 'text-gray-400' : 'text-gray-300'
+                                        <div className={`text-base mb-3 ${comment.adminRead ? 'text-gray-400' :
+                                            isImageContent(comment.content) ? 'text-blue-400' : 'text-gray-300'
                                             }`}>
-                                            {truncateContent(comment.content)}
-                                        </p>
+                                            {isImageContent(comment.content) ? (
+                                                <div className="flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <span className="font-medium">send an attachment</span>
+                                                </div>
+                                            ) : (
+                                                truncateContent(comment.content)
+                                            )}
+                                        </div>
 
                                         <div className="flex items-center gap-4 text-sm mb-3">
                                             <span className={`${comment.adminRead ? 'text-gray-500' : 'text-gray-400'

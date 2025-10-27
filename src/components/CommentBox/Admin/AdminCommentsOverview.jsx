@@ -19,6 +19,40 @@ const AdminCommentsOverview = () => {
     // Move the condition check after all hooks
     const isAdminOrMod = user && (user.role === 'ADMIN' || user.role === 'MOD');
 
+    // Check if content is an image URL
+    const isImageContent = (content) => {
+        if (!content) return false;
+
+        // Common image URL patterns
+        const imagePatterns = [
+            /https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)/i,
+            /https?:\/\/i\.postimg\.cc/i,
+            /https?:\/\/imgur\.com/i,
+            /https?:\/\/i\.imgur\.com/i,
+            /https?:\/\/cdn\.discordapp\.com\/attachments/i,
+            /https?:\/\/storage\.googleapis\.com/i,
+            /https?:\/\/firebasestorage\.googleapis\.com/i
+        ];
+
+        return imagePatterns.some(pattern => pattern.test(content));
+    };
+
+    // Render content with image detection
+    const renderCommentContent = (content) => {
+        if (isImageContent(content)) {
+            return (
+                <div className="flex items-center text-blue-400 dark:text-blue-300 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>send an attachment</span>
+                </div>
+            );
+        }
+
+        return truncateContent(content, 70);
+    };
+
     const fetchLatestComments = async () => {
         if (!isAdminOrMod) return;
 
@@ -260,9 +294,12 @@ const AdminCommentsOverview = () => {
                                                         )}
                                                     </div>
 
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
-                                                        {truncateContent(comment.content, 70)}
-                                                    </p>
+                                                    <div className={`text-sm mt-1 ${isImageContent(comment.content)
+                                                            ? 'text-blue-400 dark:text-blue-300 font-medium'
+                                                            : 'text-gray-500 dark:text-gray-400'
+                                                        } line-clamp-2`}>
+                                                        {renderCommentContent(comment.content)}
+                                                    </div>
 
                                                     <div className="mt-1 flex items-center">
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-gray-400 dark:text-gray-500 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
