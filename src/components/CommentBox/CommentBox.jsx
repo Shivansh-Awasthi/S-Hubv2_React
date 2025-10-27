@@ -676,7 +676,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
         if (!replyContent.trim() || !user) return;
 
         // Check character limit for non-admin users
-        if (!isAdminOrMod() && replyContent.length > 500) {
+        if (!isAdminOrMod() && replyContent.length > 2000) {
             setError('Reply exceeds 500 character limit');
             return;
         }
@@ -723,7 +723,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
         if (!editContent.trim() || !user) return;
 
         // Check character limit for non-admin users
-        if (!isAdminOrMod() && editContent.length > 500) {
+        if (!isAdminOrMod() && editContent.length > 2000) {
             setError('Comment exceeds 500 character limit');
             return;
         }
