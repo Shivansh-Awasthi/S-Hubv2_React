@@ -159,7 +159,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                         <select
                             value={textStyle}
                             onChange={(e) => handleTextStyleChange(e.target.value)}
-                            className="bg-white dark:bg-slate-600 border border-slate-300 dark:border-slate-500 rounded px-2 py-1 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="bg-white dark:bg-slate-600 border border-slate-300 dark:border-slate-500 rounded px-2 py-1 text-sm text-white dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         >
                             <option value="normal">Normal</option>
                             <option value="h1">Heading 1</option>
@@ -175,7 +175,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                     className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Bold (Ctrl+B)"
                 >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6h16M3 12h16m-7 6h7" />
                     </svg>
                 </button>
@@ -187,7 +187,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                     className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Italic (Ctrl+I)"
                 >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
                     </svg>
                 </button>
@@ -199,7 +199,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                     className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Underline (Ctrl+U)"
                 >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4a7 7 0 1014 0V3M4 21h16" />
                     </svg>
                 </button>
@@ -212,16 +212,12 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                     className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Insert Image"
                 >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </button>
 
                 <div className="flex-1"></div>
-
-                <div className="text-xs text-slate-500 dark:text-slate-400 px-2">
-                    Markdown: **bold** *italic* __underline__ # Heading ![](url)
-                </div>
             </div>
 
             {/* Image Input Form */}
@@ -1529,7 +1525,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                         <RichTextEditor
                                             value={newComment}
                                             onChange={setNewComment}
-                                            placeholder="Share your thoughts about this game... Use the toolbar above to format your text."
+                                            placeholder="Your message here.."
                                             disabled={submitting}
                                             rows={4}
                                             isAdminOrMod={isAdminOrMod()}
