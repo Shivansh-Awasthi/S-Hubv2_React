@@ -63,26 +63,80 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
 
             case 'h1':
                 if (selectedText) {
-                    newText = value.substring(0, start) + `# ${selectedText}\n` + value.substring(end);
-                    newSelectionStart = start + selectedText.length + 3;
+                    // For heading 1, replace the current line with heading
+                    const lines = value.split('\n');
+                    let currentLineIndex = 0;
+                    let currentPos = 0;
+
+                    for (let i = 0; i < lines.length; i++) {
+                        if (start >= currentPos && start <= currentPos + lines[i].length) {
+                            currentLineIndex = i;
+                            break;
+                        }
+                        currentPos += lines[i].length + 1; // +1 for newline
+                    }
+
+                    lines[currentLineIndex] = `# ${selectedText}`;
+                    newText = lines.join('\n');
+                    newSelectionStart = currentPos + 2 + selectedText.length;
                     newSelectionEnd = newSelectionStart;
                 } else {
-                    newText = value + '# \n';
-                    newSelectionStart = value.length + 3;
-                    newSelectionEnd = newSelectionStart;
+                    // If no text selected, insert heading on new line
+                    const currentLineStart = value.lastIndexOf('\n', start) + 1;
+                    const currentLineEnd = value.indexOf('\n', start);
+                    const currentLine = value.substring(currentLineStart, currentLineEnd === -1 ? value.length : currentLineEnd);
+
+                    if (currentLine.trim() === '') {
+                        // Empty line, just add heading
+                        newText = value.substring(0, currentLineStart) + `# ` + value.substring(currentLineStart);
+                        newSelectionStart = currentLineStart + 2;
+                        newSelectionEnd = newSelectionStart;
+                    } else {
+                        // Replace current line with heading
+                        newText = value.substring(0, currentLineStart) + `# ${currentLine}` + value.substring(currentLineEnd === -1 ? value.length : currentLineEnd);
+                        newSelectionStart = currentLineStart + 2 + currentLine.length;
+                        newSelectionEnd = newSelectionStart;
+                    }
                 }
                 setTextStyle('normal');
                 break;
 
             case 'h2':
                 if (selectedText) {
-                    newText = value.substring(0, start) + `## ${selectedText}\n` + value.substring(end);
-                    newSelectionStart = start + selectedText.length + 4;
+                    // For heading 2, replace the current line with heading
+                    const lines = value.split('\n');
+                    let currentLineIndex = 0;
+                    let currentPos = 0;
+
+                    for (let i = 0; i < lines.length; i++) {
+                        if (start >= currentPos && start <= currentPos + lines[i].length) {
+                            currentLineIndex = i;
+                            break;
+                        }
+                        currentPos += lines[i].length + 1; // +1 for newline
+                    }
+
+                    lines[currentLineIndex] = `## ${selectedText}`;
+                    newText = lines.join('\n');
+                    newSelectionStart = currentPos + 3 + selectedText.length;
                     newSelectionEnd = newSelectionStart;
                 } else {
-                    newText = value + '## \n';
-                    newSelectionStart = value.length + 4;
-                    newSelectionEnd = newSelectionStart;
+                    // If no text selected, insert heading on new line
+                    const currentLineStart = value.lastIndexOf('\n', start) + 1;
+                    const currentLineEnd = value.indexOf('\n', start);
+                    const currentLine = value.substring(currentLineStart, currentLineEnd === -1 ? value.length : currentLineEnd);
+
+                    if (currentLine.trim() === '') {
+                        // Empty line, just add heading
+                        newText = value.substring(0, currentLineStart) + `## ` + value.substring(currentLineStart);
+                        newSelectionStart = currentLineStart + 3;
+                        newSelectionEnd = newSelectionStart;
+                    } else {
+                        // Replace current line with heading
+                        newText = value.substring(0, currentLineStart) + `## ${currentLine}` + value.substring(currentLineEnd === -1 ? value.length : currentLineEnd);
+                        newSelectionStart = currentLineStart + 3 + currentLine.length;
+                        newSelectionEnd = newSelectionStart;
+                    }
                 }
                 setTextStyle('normal');
                 break;
@@ -118,21 +172,60 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
     const parseMarkdown = (text) => {
         if (!text) return '';
 
-        return text
-            // Convert line breaks to <br>
-            .replace(/\n/g, '<br>')
-            // Convert # Heading to <h1> - must be at start of line
-            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">$1</h1>')
-            // Convert ## Heading to <h2> - must be at start of line
-            .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">$1</h2>')
-            // Convert **bold** to <strong>
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-            // Convert *italic* to <em>
-            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-            // Convert __underline__ to <u>
-            .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
-            // Convert ![](url) to <img> with expand functionality
-            .replace(/!\[\]\((.*?)\)/g, '<div class="my-2 relative inline-block"><img src="$1" alt="User uploaded image" class="max-w-[200px] max-h-[150px] cursor-zoom-in rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm object-cover" loading="lazy" onerror="this.style.display=\'none\'"><div class="absolute bottom-2 right-2 bg-black/50 hover:bg-black/70 rounded-full p-1 transition-all duration-200"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3-3H7"></path></svg></div></div>');
+        // Split by lines and process each line
+        const lines = text.split('\n');
+        let inParagraph = false;
+        let html = '';
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+
+            if (line.startsWith('# ')) {
+                // Close previous paragraph if open
+                if (inParagraph) {
+                    html += '</p>';
+                    inParagraph = false;
+                }
+                html += `<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">${line.substring(2)}</h1>`;
+            } else if (line.startsWith('## ')) {
+                // Close previous paragraph if open
+                if (inParagraph) {
+                    html += '</p>';
+                    inParagraph = false;
+                }
+                html += `<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">${line.substring(3)}</h2>`;
+            } else if (line === '') {
+                // Empty line, close paragraph
+                if (inParagraph) {
+                    html += '</p>';
+                    inParagraph = false;
+                }
+            } else {
+                // Regular text line
+                if (!inParagraph) {
+                    html += '<p class="mb-2">';
+                    inParagraph = true;
+                } else {
+                    html += '<br>';
+                }
+
+                // Process inline formatting
+                let processedLine = line
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                    .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
+                    .replace(/!\[\]\((.*?)\)/g, '<div class="my-2 relative inline-block"><img src="$1" alt="User uploaded image" class="max-w-[200px] max-h-[150px] cursor-zoom-in rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm object-cover" loading="lazy" onerror="this.style.display=\'none\'"><div class="absolute bottom-2 right-2 bg-black/50 hover:bg-black/70 rounded-full p-1 transition-all duration-200"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3-3H7"></path></svg></div></div>');
+
+                html += processedLine;
+            }
+        }
+
+        // Close final paragraph if still open
+        if (inParagraph) {
+            html += '</p>';
+        }
+
+        return html;
     };
 
     const previewHTML = parseMarkdown(value);
@@ -296,21 +389,60 @@ const FormattedContent = ({ content, className = "" }) => {
     const parseMarkdown = (text) => {
         if (!text) return '';
 
-        return text
-            // Convert line breaks to <br>
+        // Split by lines and process each line
+        const lines = text.split('\n');
+        let inParagraph = false;
+        let html = '';
 
-            // Convert # Heading to <h1> - must be at start of line
-            .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">$1</h1>')
-            // Convert ## Heading to <h2> - must be at start of line
-            .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">$1</h2>')
-            // Convert **bold** to <strong>
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-            // Convert *italic* to <em>
-            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-            // Convert __underline__ to <u>
-            .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
-            // Convert ![](url) to <img> with expand functionality
-            .replace(/!\[\]\((.*?)\)/g, '<div class="my-2 relative inline-block"><img src="$1" alt="User uploaded image" class="max-w-[200px] max-h-[150px] rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm object-cover mr-4" loading="lazy" onerror="this.style.display=\'none\'" data-src="$1"><div class="absolute bottom-1 right-4 rounded-full p-1 transition-all duration-200 cursor-pointer" onclick="window.reactExpandImage && window.reactExpandImage(\'$1\')"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3-3H7"></path></svg></div></div>');
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+
+            if (line.startsWith('# ')) {
+                // Close previous paragraph if open
+                if (inParagraph) {
+                    html += '</p>';
+                    inParagraph = false;
+                }
+                html += `<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">${line.substring(2)}</h1>`;
+            } else if (line.startsWith('## ')) {
+                // Close previous paragraph if open
+                if (inParagraph) {
+                    html += '</p>';
+                    inParagraph = false;
+                }
+                html += `<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mt-3 mb-2">${line.substring(3)}</h2>`;
+            } else if (line === '') {
+                // Empty line, close paragraph
+                if (inParagraph) {
+                    html += '</p>';
+                    inParagraph = false;
+                }
+            } else {
+                // Regular text line
+                if (!inParagraph) {
+                    html += '<p class="mb-2 leading-relaxed">';
+                    inParagraph = true;
+                } else {
+                    html += '<br>';
+                }
+
+                // Process inline formatting
+                let processedLine = line
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                    .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
+                    .replace(/!\[\]\((.*?)\)/g, '<div class="my-2 relative inline-block"><img src="$1" alt="User uploaded image" class="max-w-[200px] max-h-[150px] rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm object-cover mr-4" loading="lazy" onerror="this.style.display=\'none\'" data-src="$1"><div class="absolute bottom-1 right-4 rounded-full p-1 transition-all duration-200 cursor-pointer" onclick="window.reactExpandImage && window.reactExpandImage(\'$1\')"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3-3H7"></path></svg></div></div>');
+
+                html += processedLine;
+            }
+        }
+
+        // Close final paragraph if still open
+        if (inParagraph) {
+            html += '</p>';
+        }
+
+        return html;
     };
 
     // Set up global function for image expansion
@@ -364,6 +496,7 @@ const FormattedContent = ({ content, className = "" }) => {
     );
 };
 
+// Rest of the CommentBox component remains exactly the same...
 const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
     const { user } = useAuth();
     const { id: urlId } = useParams();
