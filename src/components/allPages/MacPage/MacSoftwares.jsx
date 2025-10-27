@@ -298,7 +298,7 @@ function MacSoftwares() {
                 <title>Download MAC Softwares for Free | ToxicGames</title>
                 <meta
                     name="description"
-                    content="Explore and download all the best Mac softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for Mac."
+                    content="Explore and download all the best Mac softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed, and more for Mac."
                 />
                 <link rel="canonical" href="https://toxicgames.in/category/mac/softwares" />
                 {/* Open Graph / Link preview */}

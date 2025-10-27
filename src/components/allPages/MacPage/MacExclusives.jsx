@@ -623,7 +623,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                 <title>Purchase our MAC Exclusives Games | ToxicGames</title>
                 <meta
                     name="description"
-                    content="Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for Mac."
+                    content="Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games,  Pre-Installed, and more for Mac."
                 />
                 <link rel="canonical" href="https://toxicgames.in/category/mac/games" />
                 {/* Open Graph / Link preview */}
