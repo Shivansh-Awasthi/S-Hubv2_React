@@ -4,6 +4,7 @@ import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
+import { Helmet } from 'react-helmet-async';
 
 export default function PcSoftwares() {
     // React Router hooks instead of window.location
@@ -292,176 +293,196 @@ export default function PcSoftwares() {
 
     // Main render
     return (
-        <div className="container mx-auto p-2 relative">
-            {/* Heading and filter/clear buttons layout */}
-            <div className="cover mb-12 relative">
-                <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
-                    {/* Centered heading */}
-                    <div className="w-full sm:w-auto flex justify-center">
-                        <div className="relative inline-block text-center">
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-10 blur-xl -z-10"></div>
-                            <h1 className="font-bold text-4xl mb-3 relative">
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                                    PC Softwares{' '}
-                                    <span className="font-medium text-blue-400">{totalItems}</span>
-                                </span>
-                                <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full"></span>
-                            </h1>
+        <div>
+
+            <Helmet>
+                <title>Download PC Softwares for Free | ToxicGames</title>
+                <meta
+                    name="description"
+                    content="Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC."
+                />
+                <link rel="canonical" href="https://toxicgames.in/category/pc/softwares" />
+
+                {/* Open Graph / Link preview */}
+                <meta property="og:title" content={`Download PC Softwares for Free | ToxicGames`} />
+                <meta property="og:description" content={`Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC.`} />
+                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+                <meta property="og:url" content={`https://toxicgames.in/category/pc/softwares`} />
+                <meta property="og:type" content="website" />
+
+            </Helmet>
+
+            <div className="container mx-auto p-2 relative">
+                {/* Heading and filter/clear buttons layout */}
+                <div className="cover mb-12 relative">
+                    <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
+                        {/* Centered heading */}
+                        <div className="w-full sm:w-auto flex justify-center">
+                            <div className="relative inline-block text-center">
+                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-10 blur-xl -z-10"></div>
+                                <h1 className="font-bold text-4xl mb-3 relative">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                                        PC Softwares{' '}
+                                        <span className="font-medium text-blue-400">{totalItems}</span>
+                                    </span>
+                                    <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full"></span>
+                                </h1>
+                            </div>
+                        </div>
+                        {/* Filter and clear buttons */}
+                        <div className="flex flex-row items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
+                            <FilterBar onOpenFilters={() => setFilterModalOpen(true)} filtersActiveCount={getActiveFilterCount()} />
+                            {isFilterActive() && (
+                                <button
+                                    onClick={handleClearFilters}
+                                    className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
+                                >
+                                    <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <span className="relative flex items-center gap-2 font-medium">
+                                        Clear Filters
+                                    </span>
+                                </button>
+                            )}
                         </div>
                     </div>
-                    {/* Filter and clear buttons */}
-                    <div className="flex flex-row items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
-                        <FilterBar onOpenFilters={() => setFilterModalOpen(true)} filtersActiveCount={getActiveFilterCount()} />
+                </div>
+                <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />
+
+                {/* Background decorative elements */}
+                <div className="absolute top-0 right-0 w-72 h-72 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 opacity-5 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute top-1/3 left-1/4 w-48 h-48 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
+
+                {/* Decorative grid lines */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
+
+                {isLoading ? (
+                    <CategorySkeleton itemCount={12} />
+                ) : error ? (
+                    <div className="text-center text-red-500">
+                        {error}
                         {isFilterActive() && (
-                            <button
-                                onClick={handleClearFilters}
-                                className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
-                            >
-                                <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <span className="relative flex items-center gap-2 font-medium">
-                                    Clear Filters
-                                </span>
-                            </button>
+                            <div className="mt-4">
+                                <button
+                                    onClick={handleClearFilters}
+                                    className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
+                                >
+                                    <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <span className="relative flex items-center gap-2 font-medium">
+                                        Clear Filters
+                                    </span>
+                                </button>
+                            </div>
                         )}
                     </div>
-                </div>
-            </div>
-            <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />
+                ) : data.length === 0 ? (
+                    <div className="text-center py-10 text-gray-400">
+                        No PC softwares found.
+                        {isFilterActive() && (
+                            <div className="mt-4">
+                                <button
+                                    onClick={handleClearFilters}
+                                    className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
+                                >
+                                    <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <span className="relative flex items-center gap-2 font-medium">
+                                        Clear Filters
+                                    </span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 relative">
+                        {/* Grid accent elements */}
+                        <div className="absolute -top-6 -left-6 w-12 h-12 border-t-2 border-l-2 border-purple-500/30 rounded-tl-lg"></div>
+                        <div className="absolute -bottom-6 -right-6 w-12 h-12 border-b-2 border-r-2 border-blue-500/30 rounded-br-lg"></div>
 
-            {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 opacity-5 rounded-full blur-3xl -z-10"></div>
-            <div className="absolute top-1/3 left-1/4 w-48 h-48 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
-
-            {/* Decorative grid lines */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
-
-            {isLoading ? (
-                <CategorySkeleton itemCount={12} />
-            ) : error ? (
-                <div className="text-center text-red-500">
-                    {error}
-                    {isFilterActive() && (
-                        <div className="mt-4">
-                            <button
-                                onClick={handleClearFilters}
-                                className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
+                        {data.map((ele) => (
+                            <a
+                                key={ele._id}
+                                href={`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}`}
+                                className="group flex flex-col rounded-xl h-52 overflow-hidden transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl border border-purple-600/20 relative"
                             >
-                                <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <span className="relative flex items-center gap-2 font-medium">
-                                    Clear Filters
-                                </span>
-                            </button>
-                        </div>
-                    )}
-                </div>
-            ) : data.length === 0 ? (
-                <div className="text-center py-10 text-gray-400">
-                    No PC softwares found.
-                    {isFilterActive() && (
-                        <div className="mt-4">
-                            <button
-                                onClick={handleClearFilters}
-                                className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
-                            >
-                                <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <span className="relative flex items-center gap-2 font-medium">
-                                    Clear Filters
-                                </span>
-                            </button>
-                        </div>
-                    )}
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 relative">
-                    {/* Grid accent elements */}
-                    <div className="absolute -top-6 -left-6 w-12 h-12 border-t-2 border-l-2 border-purple-500/30 rounded-tl-lg"></div>
-                    <div className="absolute -bottom-6 -right-6 w-12 h-12 border-b-2 border-r-2 border-blue-500/30 rounded-br-lg"></div>
+                                {/* Ambient background elements - always visible */}
+                                <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-600 opacity-10 rounded-full blur-xl"></div>
+                                <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-600 opacity-10 rounded-full blur-xl"></div>
 
-                    {data.map((ele) => (
-                        <a
-                            key={ele._id}
-                            href={`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}`}
-                            className="group flex flex-col rounded-xl h-52 overflow-hidden transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl border border-purple-600/20 relative"
-                        >
-                            {/* Ambient background elements - always visible */}
-                            <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-600 opacity-10 rounded-full blur-xl"></div>
-                            <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-600 opacity-10 rounded-full blur-xl"></div>
-
-                            <div className="flex flex-col justify-center items-center h-36 bg-gradient-to-br from-[#1E1E1E] to-[#121212] pt-4 relative">
-                                {/* App icon with enhanced styling */}
-                                <div className="relative">
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
-                                    <img
-                                        src={ele.thumbnail[0]}
-                                        alt={ele.title}
-                                        className="relative rounded-lg w-16 h-16 transition-transform duration-700 ease-in-out transform group-hover:scale-110 border border-purple-500/20 z-10"
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = '/default-game.png';
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Software platform badge */}
-                                <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md z-20 border border-purple-600/20">
-                                    <div className="text-[10px] font-medium text-blue-400 flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                                            <rect width="14" height="8" x="5" y="2" rx="2" />
-                                            <rect width="20" height="8" x="2" y="14" rx="2" />
-                                            <path d="M6 18h2" />
-                                            <path d="M12 18h6" />
-                                        </svg>
-                                        PC App
+                                <div className="flex flex-col justify-center items-center h-36 bg-gradient-to-br from-[#1E1E1E] to-[#121212] pt-4 relative">
+                                    {/* App icon with enhanced styling */}
+                                    <div className="relative">
+                                        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
+                                        <img
+                                            src={ele.thumbnail[0]}
+                                            alt={ele.title}
+                                            className="relative rounded-lg w-16 h-16 transition-transform duration-700 ease-in-out transform group-hover:scale-110 border border-purple-500/20 z-10"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = '/default-game.png';
+                                            }}
+                                        />
                                     </div>
-                                </div>
 
-                                {/* NEW badge for software within 2 days */}
-                                {isGameNew(ele.createdAt) && (
-                                    <div className="absolute top-2 right-2 z-20">
-                                        <div className="relative">
-                                            {/* Glowing background */}
-                                            <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full blur-sm opacity-75"></div>
-                                            {/* Badge content */}
-                                            <div className="relative bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] font-bold px-2 py-1 rounded-full border border-green-400/50 shadow-lg">
-                                                <div className="flex items-center">
-                                                    <svg className="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                    </svg>
-                                                    NEW
+                                    {/* Software platform badge */}
+                                    <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md z-20 border border-purple-600/20">
+                                        <div className="text-[10px] font-medium text-blue-400 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                                                <rect width="14" height="8" x="5" y="2" rx="2" />
+                                                <rect width="20" height="8" x="2" y="14" rx="2" />
+                                                <path d="M6 18h2" />
+                                                <path d="M12 18h6" />
+                                            </svg>
+                                            PC App
+                                        </div>
+                                    </div>
+
+                                    {/* NEW badge for software within 2 days */}
+                                    {isGameNew(ele.createdAt) && (
+                                        <div className="absolute top-2 right-2 z-20">
+                                            <div className="relative">
+                                                {/* Glowing background */}
+                                                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full blur-sm opacity-75"></div>
+                                                {/* Badge content */}
+                                                <div className="relative bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] font-bold px-2 py-1 rounded-full border border-green-400/50 shadow-lg">
+                                                    <div className="flex items-center">
+                                                        <svg className="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                        </svg>
+                                                        NEW
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
-                            {/* Title and description */}
-                            <div className="flex-1 flex flex-col justify-between p-4">
-                                <h2 className="font-semibold text-lg text-gray-900 dark:text-white mb-1 truncate">
-                                    {ele.title}
-                                </h2>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2">
-                                    {ele.shortDesc}
-                                </p>
-                                <div className="flex items-center justify-center mt-auto">
-                                    <span className="text-xs text-gray-400 dark:text-gray-500">
-                                        {ele.size}
-                                    </span>
+                                    )}
                                 </div>
-                            </div>
-                        </a>
-                    ))}
-                </div>
-            )}
+                                {/* Title and description */}
+                                <div className="flex-1 flex flex-col justify-between p-4">
+                                    <h2 className="font-semibold text-lg text-gray-900 dark:text-white mb-1 truncate">
+                                        {ele.title}
+                                    </h2>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2">
+                                        {ele.shortDesc}
+                                    </p>
+                                    <div className="flex items-center justify-center mt-auto">
+                                        <span className="text-xs text-gray-400 dark:text-gray-500">
+                                            {ele.size}
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+                )}
 
-            {/* Pagination */}
-            <div className="mt-10 flex justify-center">
-                <EnhancedPagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    isLoading={isLoading}
-                />
+                {/* Pagination */}
+                <div className="mt-10 flex justify-center">
+                    <EnhancedPagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        isLoading={isLoading}
+                    />
+                </div>
             </div>
         </div>
     );

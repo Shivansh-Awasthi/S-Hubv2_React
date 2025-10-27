@@ -5,6 +5,7 @@ import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
+import { Helmet } from 'react-helmet-async';
 
 function PpssppIso() {
     // Use React Router hooks instead of window.location
