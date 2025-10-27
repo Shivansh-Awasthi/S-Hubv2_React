@@ -6,6 +6,7 @@ import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import CategorySkeleton from '../../skeletons/CategorySkeleton.jsx';
+import { Helmet } from 'react-helmet-async';
 
 // Utility function to create URL-friendly slugs
 function createSlug(text) {
