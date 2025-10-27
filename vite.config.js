@@ -12,8 +12,13 @@ export default defineConfig(({ mode }) => {
       'process.env': JSON.stringify(env), // Makes process.env available in your app
     },
     plugins: [react(),
-    removeConsole(),
+    removeConsole(), // custom function to remove console statements
     ],
+
+    //hides console in production build
+    esbuild: {
+      drop: ['console', 'debugger'],
+    },
 
     // ✅ Add this section:
     preview: {
