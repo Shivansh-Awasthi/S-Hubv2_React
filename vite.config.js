@@ -11,7 +11,9 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env': JSON.stringify(env), // Makes process.env available in your app
     },
-    plugins: [react()],
+    plugins: [react(),
+    removeConsole(),
+    ],
 
     // ✅ Add this section:
     preview: {
