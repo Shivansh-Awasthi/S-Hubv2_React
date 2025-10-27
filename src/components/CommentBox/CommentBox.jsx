@@ -1311,55 +1311,167 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                             <div className="bg-slate-50/50 dark:bg-slate-800/20 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                                                                 <div className="p-4">
                                                                     <div className="space-y-4">
-                                                                        {visibleReplies.map(reply => (
-                                                                            <div key={reply._id} className="relative py-4 transition-all duration-200 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-                                                                                {/* Individual reply timeline elements */}
-                                                                                <div className="absolute -left-4 top-0 bottom-0 w-px bg-slate-300 dark:bg-slate-600"></div>
-                                                                                <div className="absolute -left-4 top-6 w-3 h-px bg-slate-300 dark:bg-slate-600"></div>
-                                                                                <div className="absolute -left-5 top-5 w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full"></div>
+                                                                        {visibleReplies.map(reply => {
+                                                                            const isReplyOwner = isCommentOwner(reply);
+                                                                            const canEditReply = canEditComment(reply);
+                                                                            const canDeleteReply = canDeleteComment(reply);
+                                                                            const canBlockReply = canBlockUser(reply);
 
-                                                                                <div className="flex space-x-3">
-                                                                                    <div className="flex-shrink-0">
-                                                                                        <img
-                                                                                            src={reply.userId?.avatar || DEFAULT_AVATAR}
-                                                                                            alt={reply.userId?.username}
-                                                                                            className="w-8 h-8 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-600 group-hover:ring-blue-400 dark:group-hover:ring-blue-500 transition-all duration-200"
-                                                                                            onError={e => (e.target.src = DEFAULT_AVATAR)}
-                                                                                        />
-                                                                                    </div>
+                                                                            return (
+                                                                                <div key={reply._id} className="relative py-4 transition-all duration-200 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                                                                                    {/* Individual reply timeline elements */}
+                                                                                    <div className="absolute -left-4 top-0 bottom-0 w-px bg-slate-300 dark:bg-slate-600"></div>
+                                                                                    <div className="absolute -left-4 top-6 w-3 h-px bg-slate-300 dark:bg-slate-600"></div>
+                                                                                    <div className="absolute -left-5 top-5 w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full"></div>
 
-                                                                                    <div className="flex-1 min-w-0">
-                                                                                        <div className="flex items-start justify-between mb-2">
-                                                                                            <div className="flex items-center space-x-3 min-w-0">
-                                                                                                <div className="flex items-center space-x-2 min-w-0">
-                                                                                                    <h5 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
-                                                                                                        {reply.userId?.username}
-                                                                                                    </h5>
-                                                                                                    {reply.userId?.role === 'ADMIN' && (
-                                                                                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">ADMIN</span>
-                                                                                                    )}
-                                                                                                    {reply.userId?.role === 'MOD' && (
-                                                                                                        <span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">MOD</span>
-                                                                                                    )}
-                                                                                                    {reply.userId?.role === 'PREMIUM' && (
-                                                                                                        <span class="inline-flex items-center justify-center w-6 h-6 me-2 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-500"><svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path fill="currentColor" d="m18.774 8.245-.892-.893a1.5 1.5 0 0 1-.437-1.052V5.036a2.484 2.484 0 0 0-2.48-2.48H13.7a1.5 1.5 0 0 1-1.052-.438l-.893-.892a2.484 2.484 0 0 0-3.51 0l-.893.892a1.5 1.5 0 0 1-1.052.437H5.036a2.484 2.484 0 0 0-2.48 2.481V6.3a1.5 1.5 0 0 1-.438 1.052l-.892.893a2.484 2.484 0 0 0 0 3.51l.892.893a1.5 1.5 0 0 1 .437 1.052v1.264a2.484 2.484 0 0 0 2.481 2.481H6.3a1.5 1.5 0 0 1 1.052.437l.893.892a2.484 2.484 0 0 0 3.51 0l.893-.892a1.5 1.5 0 0 1 1.052-.437h1.264a2.484 2.484 0 0 0 2.481-2.48V13.7a1.5 1.5 0 0 1 .437-1.052l.892-.893a2.484 2.484 0 0 0 0-3.51Z"></path><path fill="#fff" d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z"></path></svg><span class="sr-only">Icon description</span></span>
-                                                                                                    )}
-                                                                                                </div>
-                                                                                                <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 space-x-2">
-                                                                                                    <time className="hover:text-slate-700 dark:hover:text-slate-300 cursor-help transition-colors whitespace-nowrap">
-                                                                                                        {formatDate(reply.createdAt)}
-                                                                                                    </time>
-                                                                                                </div>
-                                                                                            </div>
+                                                                                    <div className="flex space-x-3">
+                                                                                        <div className="flex-shrink-0">
+                                                                                            <img
+                                                                                                src={reply.userId?.avatar || DEFAULT_AVATAR}
+                                                                                                alt={reply.userId?.username}
+                                                                                                className="w-8 h-8 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-600 group-hover:ring-blue-400 dark:group-hover:ring-blue-500 transition-all duration-200"
+                                                                                                onError={e => (e.target.src = DEFAULT_AVATAR)}
+                                                                                            />
                                                                                         </div>
 
-                                                                                        <div className="mb-3">
-                                                                                            <FormattedContent content={reply.content} />
+                                                                                        <div className="flex-1 min-w-0">
+                                                                                            <div className="flex items-start justify-between mb-2">
+                                                                                                <div className="flex items-center space-x-3 min-w-0">
+                                                                                                    <div className="flex items-center space-x-2 min-w-0">
+                                                                                                        <h5 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                                                                                                            {reply.userId?.username}
+                                                                                                        </h5>
+                                                                                                        {reply.userId?.role === 'ADMIN' && (
+                                                                                                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">ADMIN</span>
+                                                                                                        )}
+                                                                                                        {reply.userId?.role === 'MOD' && (
+                                                                                                            <span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">MOD</span>
+                                                                                                        )}
+                                                                                                        {reply.userId?.role === 'PREMIUM' && (
+                                                                                                            <span class="inline-flex items-center justify-center w-6 h-6 me-2 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-500"><svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path fill="currentColor" d="m18.774 8.245-.892-.893a1.5 1.5 0 0 1-.437-1.052V5.036a2.484 2.484 0 0 0-2.48-2.48H13.7a1.5 1.5 0 0 1-1.052-.438l-.893-.892a2.484 2.484 0 0 0-3.51 0l-.893.892a1.5 1.5 0 0 1-1.052.437H5.036a2.484 2.484 0 0 0-2.48 2.481V6.3a1.5 1.5 0 0 1-.438 1.052l-.892.893a2.484 2.484 0 0 0 0 3.51l.892.893a1.5 1.5 0 0 1 .437 1.052v1.264a2.484 2.484 0 0 0 2.481 2.481H6.3a1.5 1.5 0 0 1 1.052.437l.893.892a2.484 2.484 0 0 0 3.51 0l.893-.892a1.5 1.5 0 0 1 1.052-.437h1.264a2.484 2.484 0 0 0 2.481-2.48V13.7a1.5 1.5 0 0 1 .437-1.052l.892-.893a2.484 2.484 0 0 0 0-3.51Z"></path><path fill="#fff" d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z"></path></svg><span class="sr-only">Icon description</span></span>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 space-x-2">
+                                                                                                        <time className="hover:text-slate-700 dark:hover:text-slate-300 cursor-help transition-colors whitespace-nowrap">
+                                                                                                            {formatDate(reply.createdAt)}
+                                                                                                        </time>
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                                {/* Three-dot menu for reply */}
+                                                                                                {(canDeleteReply || canBlockReply) && (
+                                                                                                    <div className="relative">
+                                                                                                        <button
+                                                                                                            onClick={(e) => toggleMenu(reply._id, e)}
+                                                                                                            className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+                                                                                                        >
+                                                                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                                                                                            </svg>
+                                                                                                        </button>
+
+                                                                                                        {showMenu === reply._id && (
+                                                                                                            <div
+                                                                                                                className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-10"
+                                                                                                                onClick={(e) => e.stopPropagation()}
+                                                                                                            >
+                                                                                                                {canEditReply && (
+                                                                                                                    <button
+                                                                                                                        onClick={() => handleStartEdit(reply)}
+                                                                                                                        className="w-full px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-t-lg flex items-center gap-2"
+                                                                                                                    >
+                                                                                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                                                                        </svg>
+                                                                                                                        Edit
+                                                                                                                    </button>
+                                                                                                                )}
+
+                                                                                                                {canBlockReply && (
+                                                                                                                    <button
+                                                                                                                        onClick={() => openBlockModal(reply)}
+                                                                                                                        className="w-full px-4 py-2 text-sm text-orange-600 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
+                                                                                                                    >
+                                                                                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v5a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                                                                                        </svg>
+                                                                                                                        Block User
+                                                                                                                    </button>
+                                                                                                                )}
+
+                                                                                                                <button
+                                                                                                                    onClick={() => {
+                                                                                                                        const message = isReplyOwner
+                                                                                                                            ? 'Are you sure you want to delete your reply?'
+                                                                                                                            : 'Are you sure you want to delete this reply as admin/mod?';
+                                                                                                                        if (window.confirm(message)) {
+                                                                                                                            if (isReplyOwner) {
+                                                                                                                                handleDeleteComment(reply._id);
+                                                                                                                            } else {
+                                                                                                                                handleAdminDeleteComment(reply._id);
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }}
+                                                                                                                    disabled={deletingComment === reply._id}
+                                                                                                                    className="w-full px-4 py-2 text-sm text-red-600 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-b-lg flex items-center gap-2 disabled:opacity-50"
+                                                                                                                >
+                                                                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                                                    </svg>
+                                                                                                                    {deletingComment === reply._id ? 'Deleting...' : 'Delete'}
+                                                                                                                    {isAdminMod && !isReplyOwner && ' (Admin)'}
+                                                                                                                </button>
+                                                                                                            </div>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                )}
+                                                                                            </div>
+
+                                                                                            {/* Reply Content */}
+                                                                                            {editingComment === reply._id ? (
+                                                                                                <div className="mb-4">
+                                                                                                    <RichTextEditor
+                                                                                                        value={editContent}
+                                                                                                        onChange={setEditContent}
+                                                                                                        placeholder="Edit your reply..."
+                                                                                                        disabled={submittingEdit}
+                                                                                                        rows={2}
+                                                                                                        isAdminOrMod={isAdminMod}
+                                                                                                        maxLength={500}
+                                                                                                    />
+                                                                                                    <div className="flex items-center justify-between mt-2">
+                                                                                                        <div className={`text-xs ${!isAdminMod && editContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
+                                                                                                            {editContent.length}
+                                                                                                            {!isAdminMod && ` / 500`}
+                                                                                                            {isAdminMod && ' characters (no limit)'}
+                                                                                                        </div>
+                                                                                                        <div className="flex items-center gap-2">
+                                                                                                            <button
+                                                                                                                onClick={handleCancelEdit}
+                                                                                                                className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded text-sm font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition-all duration-200"
+                                                                                                            >
+                                                                                                                Cancel
+                                                                                                            </button>
+                                                                                                            <button
+                                                                                                                onClick={() => handleSubmitEdit(reply._id)}
+                                                                                                                disabled={!editContent.trim() || submittingEdit || (!isAdminMod && editContent.length > 500)}
+                                                                                                                className="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                                                            >
+                                                                                                                {submittingEdit ? 'Saving...' : 'Save'}
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            ) : (
+                                                                                                <div className="mb-3">
+                                                                                                    <FormattedContent content={reply.content} />
+                                                                                                </div>
+                                                                                            )}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
-                                                                        ))}
+                                                                            );
+                                                                        })}
                                                                     </div>
 
                                                                     {/* Load More Replies Button */}
@@ -1470,7 +1582,8 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
 
                 {/* Block User Modal */}
                 {showBlockModal && (() => {
-                    const comment = comments.find(c => c._id === showBlockModal);
+                    const comment = comments.find(c => c._id === showBlockModal) ||
+                        comments.flatMap(c => c.replies || []).find(r => r._id === showBlockModal);
                     if (!comment) return null;
 
                     return (
