@@ -30,6 +30,24 @@ const NotificationBell = () => {
             ));
     };
 
+    // Check if content is an image URL
+    const isImageContent = (content) => {
+        if (!content) return false;
+
+        // Common image URL patterns
+        const imagePatterns = [
+            /https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)/i,
+            /https?:\/\/i\.postimg\.cc/i,
+            /https?:\/\/imgur\.com/i,
+            /https?:\/\/i\.imgur\.com/i,
+            /https?:\/\/cdn\.discordapp\.com\/attachments/i,
+            /https?:\/\/storage\.googleapis\.com/i,
+            /https?:\/\/firebasestorage\.googleapis\.com/i
+        ];
+
+        return imagePatterns.some(pattern => pattern.test(content));
+    };
+
     const fetchNotifications = async () => {
         if (!user) return;
 
@@ -138,6 +156,22 @@ const NotificationBell = () => {
         if (!content) return '';
         if (content.length <= maxLength) return content;
         return content.substring(0, maxLength) + '...';
+    };
+
+    // Render content with image detection
+    const renderNotificationContent = (content) => {
+        if (isImageContent(content)) {
+            return (
+                <div className="flex items-center text-blue-500 dark:text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="font-medium">send an attachment</span>
+                </div>
+            );
+        }
+
+        return truncateContent(content);
     };
 
     if (!user) return null;
@@ -250,9 +284,6 @@ const NotificationBell = () => {
                                                 {/* Green Icon */}
                                                 <div className="shrink-0 mr-3">
                                                     <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
-                                                        {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                        </svg> */}
                                                         <img
                                                             src={notification.userId?.avatar || DEFAULT_AVATAR}
                                                             alt={notification.userId?.username}
@@ -267,8 +298,11 @@ const NotificationBell = () => {
                                                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                                                         {notification.userId?.username} replied to your comment in <span className="text-pink-600">{notification.appId?.title}</span>
                                                     </p>
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
-                                                        {truncateContent(notification.content)}
+                                                    <p className={`text-sm mt-1 ${isImageContent(notification.content)
+                                                            ? 'text-blue-500 dark:text-blue-400 font-medium'
+                                                            : 'text-gray-500 dark:text-gray-400'
+                                                        } line-clamp-2`}>
+                                                        {renderNotificationContent(notification.content)}
                                                     </p>
 
                                                     <div className="mt-1 flex items-center">
