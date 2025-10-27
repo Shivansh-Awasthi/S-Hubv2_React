@@ -420,7 +420,7 @@ const FormattedContent = ({ content, className = "" }) => {
             } else {
                 // Regular text line
                 if (!inParagraph) {
-                    html += '<p class="mb-2 leading-relaxed">';
+                    html += '<p class="mb-2 leading-relaxed w-full">';
                     inParagraph = true;
                 } else {
                     html += '<br>';
@@ -461,7 +461,7 @@ const FormattedContent = ({ content, className = "" }) => {
     return (
         <>
             <div
-                className={`prose prose-sm max-w-none text-slate-800 dark:text-slate-200 dark:prose-invert leading-relaxed prose-headings:mt-4 prose-headings:mb-2 prose-p:leading-relaxed ${className}`}
+                className={`prose prose-sm max-w-none text-slate-800 dark:text-slate-200 dark:prose-invert leading-relaxed prose-headings:mt-4 prose-headings:mb-2 prose-p:leading-relaxed flex flex-wrap gap-2 ${className}`}
                 dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
 
