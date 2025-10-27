@@ -302,7 +302,7 @@ const FormattedContent = ({ content, className = "" }) => {
 
         return text
             // Convert line breaks to <br>
-            .replace(/\n/g, '<br>')
+
             // Convert # Heading to <h1> - must be at start of line
             .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">$1</h1>')
             // Convert ## Heading to <h2> - must be at start of line
@@ -1047,17 +1047,27 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                     <div className="flex items-start justify-between mb-2">
                                                         <div className="flex items-center space-x-3 min-w-0">
                                                             <div className="flex items-center space-x-2 min-w-0">
-                                                                <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-sm truncate">
+
+                                                                <h4 className="font-semibold text-slate-900 dark:text-slate-100  truncate">
                                                                     {comment.userId?.username}
                                                                 </h4>
                                                                 {comment.userId?.role === 'ADMIN' && (
-                                                                    <span className="bg-red-500 text-xs px-2 py-1 rounded-full text-white font-bold">
+                                                                    <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">
                                                                         ADMIN
                                                                     </span>
                                                                 )}
                                                                 {comment.userId?.role === 'MOD' && (
-                                                                    <span className="bg-green-500 text-xs px-2 py-1 rounded-full text-white font-bold">
+                                                                    <span className="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">
                                                                         MOD
+                                                                    </span>
+                                                                )}
+                                                                {comment.userId?.role === 'PREMIUM' && (
+                                                                    <span class="inline-flex items-center justify-center w-6 h-6 me-2 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-500">
+                                                                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                                            <path fill="currentColor" d="m18.774 8.245-.892-.893a1.5 1.5 0 0 1-.437-1.052V5.036a2.484 2.484 0 0 0-2.48-2.48H13.7a1.5 1.5 0 0 1-1.052-.438l-.893-.892a2.484 2.484 0 0 0-3.51 0l-.893.892a1.5 1.5 0 0 1-1.052.437H5.036a2.484 2.484 0 0 0-2.48 2.481V6.3a1.5 1.5 0 0 1-.438 1.052l-.892.893a2.484 2.484 0 0 0 0 3.51l.892.893a1.5 1.5 0 0 1 .437 1.052v1.264a2.484 2.484 0 0 0 2.481 2.481H6.3a1.5 1.5 0 0 1 1.052.437l.893.892a2.484 2.484 0 0 0 3.51 0l.893-.892a1.5 1.5 0 0 1 1.052-.437h1.264a2.484 2.484 0 0 0 2.481-2.48V13.7a1.5 1.5 0 0 1 .437-1.052l.892-.893a2.484 2.484 0 0 0 0-3.51Z" />
+                                                                            <path fill="#fff" d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z" />
+                                                                        </svg>
+                                                                        <span class="sr-only">Icon description</span>
                                                                     </span>
                                                                 )}
                                                                 {comment.isPinned && (
@@ -1322,18 +1332,17 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                         <div className="flex items-start justify-between mb-2">
                                                                                             <div className="flex items-center space-x-3 min-w-0">
                                                                                                 <div className="flex items-center space-x-2 min-w-0">
-                                                                                                    <h5 className="font-semibold text-slate-900 dark:text-slate-100 text-sm truncate">
+                                                                                                    <h5 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
                                                                                                         {reply.userId?.username}
                                                                                                     </h5>
                                                                                                     {reply.userId?.role === 'ADMIN' && (
-                                                                                                        <span className="bg-red-500 text-xs px-1 py-0.5 rounded-full text-white font-bold">
-                                                                                                            ADMIN
-                                                                                                        </span>
+                                                                                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">ADMIN</span>
                                                                                                     )}
                                                                                                     {reply.userId?.role === 'MOD' && (
-                                                                                                        <span className="bg-green-500 text-xs px-1 py-0.5 rounded-full text-white font-bold">
-                                                                                                            MOD
-                                                                                                        </span>
+                                                                                                        <span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">MOD</span>
+                                                                                                    )}
+                                                                                                    {reply.userId?.role === 'PREMIUM' && (
+                                                                                                        <span class="inline-flex items-center justify-center w-6 h-6 me-2 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-500"><svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path fill="currentColor" d="m18.774 8.245-.892-.893a1.5 1.5 0 0 1-.437-1.052V5.036a2.484 2.484 0 0 0-2.48-2.48H13.7a1.5 1.5 0 0 1-1.052-.438l-.893-.892a2.484 2.484 0 0 0-3.51 0l-.893.892a1.5 1.5 0 0 1-1.052.437H5.036a2.484 2.484 0 0 0-2.48 2.481V6.3a1.5 1.5 0 0 1-.438 1.052l-.892.893a2.484 2.484 0 0 0 0 3.51l.892.893a1.5 1.5 0 0 1 .437 1.052v1.264a2.484 2.484 0 0 0 2.481 2.481H6.3a1.5 1.5 0 0 1 1.052.437l.893.892a2.484 2.484 0 0 0 3.51 0l.893-.892a1.5 1.5 0 0 1 1.052-.437h1.264a2.484 2.484 0 0 0 2.481-2.48V13.7a1.5 1.5 0 0 1 .437-1.052l.892-.893a2.484 2.484 0 0 0 0-3.51Z"></path><path fill="#fff" d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z"></path></svg><span class="sr-only">Icon description</span></span>
                                                                                                     )}
                                                                                                 </div>
                                                                                                 <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 space-x-2">
