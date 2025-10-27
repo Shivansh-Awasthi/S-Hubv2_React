@@ -10,6 +10,40 @@ const SpecificUserComments = () => {
     const [error, setError] = useState(null);
     const [redirectCountdown, setRedirectCountdown] = useState(7);
 
+    // Check if content is an image URL
+    const isImageContent = (content) => {
+        if (!content) return false;
+
+        // Common image URL patterns
+        const imagePatterns = [
+            /https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)/i,
+            /https?:\/\/i\.postimg\.cc/i,
+            /https?:\/\/imgur\.com/i,
+            /https?:\/\/i\.imgur\.com/i,
+            /https?:\/\/cdn\.discordapp\.com\/attachments/i,
+            /https?:\/\/storage\.googleapis\.com/i,
+            /https?:\/\/firebasestorage\.googleapis\.com/i
+        ];
+
+        return imagePatterns.some(pattern => pattern.test(content));
+    };
+
+    // Render content with image detection
+    const renderCommentContent = (content) => {
+        if (isImageContent(content)) {
+            return (
+                <div className="flex items-center text-blue-400 dark:text-blue-300 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>send an attachment</span>
+                </div>
+            );
+        }
+
+        return content;
+    };
+
     useEffect(() => {
         const fetchUserComments = async () => {
             if (!user) {
@@ -299,9 +333,21 @@ const SpecificUserComments = () => {
                                             </div>
 
                                             {/* Comment Text */}
-                                            <p className="text-gray-300 text-base mb-4 leading-relaxed">
-                                                {comment.content}
-                                            </p>
+                                            <div className={`text-base mb-4 leading-relaxed ${isImageContent(comment.content)
+                                                    ? 'text-blue-400 font-medium'
+                                                    : 'text-gray-300'
+                                                }`}>
+                                                {isImageContent(comment.content) ? (
+                                                    <div className="flex items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <span>send an attachment</span>
+                                                    </div>
+                                                ) : (
+                                                    comment.content
+                                                )}
+                                            </div>
 
                                             {/* Metadata */}
                                             <div className="flex items-center justify-between text-sm">
