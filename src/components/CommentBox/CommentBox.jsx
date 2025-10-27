@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=U&background=random";
 
 // Rich Text Editor Component
-const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAdminOrMod = false, maxLength = 500 }) => {
+const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAdminOrMod = false, maxLength = 2000 }) => {
     const [isFocused, setIsFocused] = useState(false);
     const [textStyle, setTextStyle] = useState('normal');
     const [showImageInput, setShowImageInput] = useState(false);
@@ -497,7 +497,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
         if (!newComment.trim() || !user) return;
 
         // Check character limit for non-admin users
-        if (!isAdminOrMod() && newComment.length > 500) {
+        if (!isAdminOrMod() && newComment.length > 2000) {
             setError('Comment exceeds 500 character limit');
             return;
         }
@@ -1179,12 +1179,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                 disabled={submittingEdit}
                                                                 rows={3}
                                                                 isAdminOrMod={isAdminMod}
-                                                                maxLength={500}
+                                                                maxLength={2000}
                                                             />
                                                             <div className="flex items-center justify-between mt-2">
-                                                                <div className={`text-xs ${!isAdminMod && editContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
+                                                                <div className={`text-xs ${!isAdminMod && editContent.length > 2000 ? 'text-red-500' : 'text-slate-500'}`}>
                                                                     {editContent.length}
-                                                                    {!isAdminMod && ` / 500`}
+                                                                    {!isAdminMod && ` / 2000`}
                                                                     {isAdminMod && ' characters (no limit)'}
                                                                 </div>
                                                                 <div className="flex items-center gap-2">
@@ -1196,7 +1196,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                     </button>
                                                                     <button
                                                                         onClick={() => handleSubmitEdit(comment._id)}
-                                                                        disabled={!editContent.trim() || submittingEdit || (!isAdminMod && editContent.length > 500)}
+                                                                        disabled={!editContent.trim() || submittingEdit || (!isAdminMod && editContent.length > 2000)}
                                                                         className="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                     >
                                                                         {submittingEdit ? 'Saving...' : 'Save'}
@@ -1266,12 +1266,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                 disabled={submittingReply}
                                                                                 rows={2}
                                                                                 isAdminOrMod={isAdminMod}
-                                                                                maxLength={500}
+                                                                                maxLength={2000}
                                                                             />
                                                                             <div className="flex items-center justify-between mt-2">
-                                                                                <div className={`text-xs ${!isAdminMod && replyContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
+                                                                                <div className={`text-xs ${!isAdminMod && replyContent.length > 2000 ? 'text-red-500' : 'text-slate-500'}`}>
                                                                                     {replyContent.length}
-                                                                                    {!isAdminMod && ` / 500`}
+                                                                                    {!isAdminMod && ` / 2000`}
                                                                                     {isAdminMod && ' characters (no limit)'}
                                                                                 </div>
                                                                                 <div className="flex items-center gap-2">
@@ -1283,7 +1283,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                     </button>
                                                                                     <button
                                                                                         onClick={() => handleSubmitReply(comment._id)}
-                                                                                        disabled={!replyContent.trim() || submittingReply || (!isAdminMod && replyContent.length > 500)}
+                                                                                        disabled={!replyContent.trim() || submittingReply || (!isAdminMod && replyContent.length > 2000)}
                                                                                         className="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                                     >
                                                                                         {submittingReply ? 'Posting...' : 'Post Reply'}
@@ -1433,12 +1433,12 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                                         disabled={submittingEdit}
                                                                                                         rows={2}
                                                                                                         isAdminOrMod={isAdminMod}
-                                                                                                        maxLength={500}
+                                                                                                        maxLength={2000}
                                                                                                     />
                                                                                                     <div className="flex items-center justify-between mt-2">
-                                                                                                        <div className={`text-xs ${!isAdminMod && editContent.length > 500 ? 'text-red-500' : 'text-slate-500'}`}>
+                                                                                                        <div className={`text-xs ${!isAdminMod && editContent.length > 2000 ? 'text-red-500' : 'text-slate-500'}`}>
                                                                                                             {editContent.length}
-                                                                                                            {!isAdminMod && ` / 500`}
+                                                                                                            {!isAdminMod && ` / 2000`}
                                                                                                             {isAdminMod && ' characters (no limit)'}
                                                                                                         </div>
                                                                                                         <div className="flex items-center gap-2">
@@ -1450,7 +1450,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                                             </button>
                                                                                                             <button
                                                                                                                 onClick={() => handleSubmitEdit(reply._id)}
-                                                                                                                disabled={!editContent.trim() || submittingEdit || (!isAdminMod && editContent.length > 500)}
+                                                                                                                disabled={!editContent.trim() || submittingEdit || (!isAdminMod && editContent.length > 2000)}
                                                                                                                 className="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                                                             >
                                                                                                                 {submittingEdit ? 'Saving...' : 'Save'}
@@ -1529,7 +1529,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                             disabled={submitting}
                                             rows={4}
                                             isAdminOrMod={isAdminOrMod()}
-                                            maxLength={500}
+                                            maxLength={2000}
                                         />
                                     </div>
 
@@ -1539,7 +1539,7 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                         </p>
                                         <button
                                             type="submit"
-                                            disabled={!newComment.trim() || submitting || (!isAdminOrMod() && newComment.length > 500)}
+                                            disabled={!newComment.trim() || submitting || (!isAdminOrMod() && newComment.length > 2000)}
                                             className="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {submitting ? (
