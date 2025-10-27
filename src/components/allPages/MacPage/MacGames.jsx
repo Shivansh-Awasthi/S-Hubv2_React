@@ -7,6 +7,7 @@ import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 import RandomGame from '../../sidePages/RandomGames/RandomGame';
+import { Helmet } from 'react-helmet-async';
 
 
 // Slugify function (simplified version)
@@ -438,96 +439,117 @@ export default function MacGames() {
 
     // Main render
     return (
-        <div className="container mx-auto p-2 relative">
-            <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />
 
-            {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 opacity-5 rounded-full blur-3xl -z-10"></div>
-            <div className="absolute top-1/3 left-1/4 w-48 h-48 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
+        <div>
 
-            {/* Decorative grid lines */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
+            <Helmet>
+                <title>Download MAC Games for Free | ToxicGames</title>
+                <meta
+                    name="description"
+                    content="Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for Mac."
+                />
+                <link rel="canonical" href="https://toxicgames.in/category/mac/games" />
+                {/* Open Graph / Link preview */}
+                <meta property="og:title" content={`Download Mac Softwares for Free | ToxicGames`} />
+                <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
+                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+                <meta property="og:url" content={`https://toxicgames.in/category/mac/games`} />
+                <meta property="og:type" content="website" />
 
-            {/* Header with enhanced styling */}
-            <div className="cover mb-12 relative">
-                <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
-                    {/* Center: Heading (always centered) */}
-                    <div className="w-full sm:w-auto flex justify-center">
-                        <div className="relative inline-block text-center">
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-10 blur-xl -z-10"></div>
-                            <h1 className="font-bold text-4xl mb-3 relative">
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                                    Mac Games{' '}
-                                    <span className="font-medium text-blue-400">{totalApps}</span>
-                                </span>
-                                <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full"></span>
-                            </h1>
+            </Helmet>
+
+            <div className="container mx-auto p-2 relative">
+                <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />
+
+                {/* Background decorative elements */}
+                <div className="absolute top-0 right-0 w-72 h-72 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 opacity-5 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute top-1/3 left-1/4 w-48 h-48 bg-purple-600 opacity-5 rounded-full blur-3xl -z-10"></div>
+
+                {/* Decorative grid lines */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTMwIDMwaDMwVjBoLTMwdjMwek0wIDMwaDMwdjMwSDB2LTMweiIgZmlsbD0iIzJkMmQyZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] bg-center opacity-40 -z-10"></div>
+
+                {/* Header with enhanced styling */}
+                <div className="cover mb-12 relative">
+                    <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
+                        {/* Center: Heading (always centered) */}
+                        <div className="w-full sm:w-auto flex justify-center">
+                            <div className="relative inline-block text-center">
+                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-10 blur-xl -z-10"></div>
+                                <h1 className="font-bold text-4xl mb-3 relative">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                                        Mac Games{' '}
+                                        <span className="font-medium text-blue-400">{totalApps}</span>
+                                    </span>
+                                    <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full"></span>
+                                </h1>
+                            </div>
+                        </div>
+                        {/* Left: Filter and Clear buttons (desktop left, mobile centered below heading) */}
+                        <div className="flex flex-row items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
+                            <FilterBar onOpenFilters={() => setFilterModalOpen(true)} filtersActiveCount={getActiveFilterCount()} />
+                            {isFilterActive() && (
+                                <button
+                                    onClick={handleClearFilters}
+                                    className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
+                                >
+                                    <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <span className="relative flex items-center gap-2 font-medium">
+                                        Clear Filters
+                                    </span>
+                                </button>
+                            )}
                         </div>
                     </div>
-                    {/* Left: Filter and Clear buttons (desktop left, mobile centered below heading) */}
-                    <div className="flex flex-row items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
-                        <FilterBar onOpenFilters={() => setFilterModalOpen(true)} filtersActiveCount={getActiveFilterCount()} />
-                        {isFilterActive() && (
-                            <button
-                                onClick={handleClearFilters}
-                                className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
-                            >
-                                <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <span className="relative flex items-center gap-2 font-medium">
-                                    Clear Filters
-                                </span>
-                            </button>
+                </div>
+
+                {isLoading ? (
+                    <CategorySkeleton itemCount={12} />
+                ) : error ? (
+                    <p className="text-red-500 text-center py-12">{error}</p>
+                ) : data.length === 0 ? (
+                    <p className="text-center text-gray-500 py-12">No games found.</p>
+                ) : (
+                    <>
+                        <div className="relative">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 transition-opacity duration-300 ease-in-out relative">
+                                {/* Grid accent elements */}
+                                <div className="absolute -top-6 -left-6 w-12 h-12 border-t-2 border-l-2 border-purple-500/30 rounded-tl-lg"></div>
+                                <div className="absolute -bottom-6 -right-6 w-12 h-12 border-b-2 border-r-2 border-blue-500/30 rounded-br-lg"></div>
+                                {data.map((game) => (
+                                    <GameCard
+                                        key={game?._id || `game-${Math.random().toString(36).substring(2, 9)}`}
+                                        game={game}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="mt-12 relative">
+                                {/* Pagination decorative elements */}
+                                <div className="absolute left-1/4 -top-8 w-24 h-24 bg-purple-600 opacity-5 rounded-full blur-2xl -z-10"></div>
+                                <div className="absolute right-1/4 -top-8 w-24 h-24 bg-blue-600 opacity-5 rounded-full blur-2xl -z-10"></div>
+                                <div className="relative z-10">
+                                    <EnhancedPagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                        isLoading={isLoading}
+                                    />
+                                </div>
+                                {/* Decorative line */}
+                                <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/20 to-transparent -z-10"></div>
+                            </div>
                         )}
-                    </div>
+                    </>
+                )}
+
+                {/* Random game button - always visible at the bottom right */}
+                <div className="fixed bottom-4 right-4 z-20">
+                    <RandomGame />
                 </div>
             </div>
 
-            {isLoading ? (
-                <CategorySkeleton itemCount={12} />
-            ) : error ? (
-                <p className="text-red-500 text-center py-12">{error}</p>
-            ) : data.length === 0 ? (
-                <p className="text-center text-gray-500 py-12">No games found.</p>
-            ) : (
-                <>
-                    <div className="relative">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 transition-opacity duration-300 ease-in-out relative">
-                            {/* Grid accent elements */}
-                            <div className="absolute -top-6 -left-6 w-12 h-12 border-t-2 border-l-2 border-purple-500/30 rounded-tl-lg"></div>
-                            <div className="absolute -bottom-6 -right-6 w-12 h-12 border-b-2 border-r-2 border-blue-500/30 rounded-br-lg"></div>
-                            {data.map((game) => (
-                                <GameCard
-                                    key={game?._id || `game-${Math.random().toString(36).substring(2, 9)}`}
-                                    game={game}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    {totalPages > 1 && (
-                        <div className="mt-12 relative">
-                            {/* Pagination decorative elements */}
-                            <div className="absolute left-1/4 -top-8 w-24 h-24 bg-purple-600 opacity-5 rounded-full blur-2xl -z-10"></div>
-                            <div className="absolute right-1/4 -top-8 w-24 h-24 bg-blue-600 opacity-5 rounded-full blur-2xl -z-10"></div>
-                            <div className="relative z-10">
-                                <EnhancedPagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                    isLoading={isLoading}
-                                />
-                            </div>
-                            {/* Decorative line */}
-                            <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/20 to-transparent -z-10"></div>
-                        </div>
-                    )}
-                </>
-            )}
-
-            {/* Random game button - always visible at the bottom right */}
-            <div className="fixed bottom-4 right-4 z-20">
-                <RandomGame />
-            </div>
         </div>
     );
 }

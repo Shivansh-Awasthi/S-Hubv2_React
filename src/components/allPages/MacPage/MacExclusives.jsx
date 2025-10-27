@@ -617,139 +617,158 @@ function MacExclusives({ serverData, initialPage = 1 }) {
 
     // Main render
     return (
-        <div className="container mx-auto p-2 pb-24">
-            {/* show skeleton when loading */}
-            {isLoading ? (
-                <CategorySkeleton itemCount={12} />
-            ) : (
-                <>
-                    {/* Filter Bar - always visible at the top */}
-                    <div className="mb-6 flex justify-end items-center gap-3">
-                        <FilterBar onOpenFilters={() => setFilterModalOpen(true)} activeFilterCount={getActiveFilterCount()} />
-                        {isFilterActive() && (
-                            <button
-                                onClick={handleClearFilters}
-                                className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
-                            >
-                                <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <span className="relative flex items-center gap-2 font-medium">
-                                    Clear Filters
-                                </span>
-                            </button>
-                        )}
-                    </div>
-                    <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />
 
-                    {/* Premium Header with enhanced styling */}
-                    <div className="cover mb-16 text-center relative">
-                        {/* Background glow effects */}
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-10 blur-xl -z-10"></div>
-                        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-purple-600/20 rounded-full blur-xl -z-10"></div>
-                        <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-blue-600/20 rounded-full blur-xl -z-10"></div>
+        <div>
+            <Helmet>
+                <title>Purchase our MAC Exclusives Games | ToxicGames</title>
+                <meta
+                    name="description"
+                    content="Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for Mac."
+                />
+                <link rel="canonical" href="https://toxicgames.in/category/mac/games" />
+                {/* Open Graph / Link preview */}
+                <meta property="og:title" content={`Purchase our MAC Exclusives Games | ToxicGames`} />
+                <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
+                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+                <meta property="og:url" content={`https://toxicgames.in/category/mac/games`} />
+                <meta property="og:type" content="website" />
 
-                        {/* Premium badge - responsive for small screens */}
-                        <div className="inline-block mb-4 sm:mb-6">
-                            <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 rounded-full shadow-lg flex items-center">
-                                <FaStar className="mr-1" size={10} />
-                                PREMIUM COLLECTION
-                            </div>
+            </Helmet>
+
+            <div className="container mx-auto p-2 pb-24">
+                {/* show skeleton when loading */}
+                {isLoading ? (
+                    <CategorySkeleton itemCount={12} />
+                ) : (
+                    <>
+                        {/* Filter Bar - always visible at the top */}
+                        <div className="mb-6 flex justify-end items-center gap-3">
+                            <FilterBar onOpenFilters={() => setFilterModalOpen(true)} activeFilterCount={getActiveFilterCount()} />
+                            {isFilterActive() && (
+                                <button
+                                    onClick={handleClearFilters}
+                                    className="group relative px-4 py-2 rounded-xl bg-white dark:bg-gray-900 text-red-500 border border-red-200/50 dark:border-red-700/50 hover:border-red-500/50 dark:hover:border-red-500/50 shadow-sm hover:shadow transition-all duration-300"
+                                >
+                                    <div className="absolute inset-0 rounded-xl bg-red-500/5 dark:bg-red-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <span className="relative flex items-center gap-2 font-medium">
+                                        Clear Filters
+                                    </span>
+                                </button>
+                            )}
                         </div>
-                        <br />
-                        {/* Main heading with glass effect - responsive for small screens */}
-                        <div className="inline-block relative mb-6 max-w-full">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25 animate-gradient-x"></div>
-                            <div className="relative px-4 sm:px-7 py-4 bg-black/50 rounded-lg leading-none flex flex-col sm:flex-row items-center">
-                                <FaCrown className="text-amber-500 mb-2 sm:mb-0 sm:mr-3" size={24} />
-                                <div className="text-center sm:text-left">
-                                    <div className="font-bold text-lg sm:text-2xl md:text-3xl lg:text-4xl">
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                                            Mac Exclusive Games{' '}
-                                            <span className="font-medium text-blue-400">{total}</span>
-                                        </span>
+                        <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />
+
+                        {/* Premium Header with enhanced styling */}
+                        <div className="cover mb-16 text-center relative">
+                            {/* Background glow effects */}
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-10 blur-xl -z-10"></div>
+                            <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-purple-600/20 rounded-full blur-xl -z-10"></div>
+                            <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-blue-600/20 rounded-full blur-xl -z-10"></div>
+
+                            {/* Premium badge - responsive for small screens */}
+                            <div className="inline-block mb-4 sm:mb-6">
+                                <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 rounded-full shadow-lg flex items-center">
+                                    <FaStar className="mr-1" size={10} />
+                                    PREMIUM COLLECTION
+                                </div>
+                            </div>
+                            <br />
+                            {/* Main heading with glass effect - responsive for small screens */}
+                            <div className="inline-block relative mb-6 max-w-full">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25 animate-gradient-x"></div>
+                                <div className="relative px-4 sm:px-7 py-4 bg-black/50 rounded-lg leading-none flex flex-col sm:flex-row items-center">
+                                    <FaCrown className="text-amber-500 mb-2 sm:mb-0 sm:mr-3" size={24} />
+                                    <div className="text-center sm:text-left">
+                                        <div className="font-bold text-lg sm:text-2xl md:text-3xl lg:text-4xl">
+                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                                                Mac Exclusive Games{' '}
+                                                <span className="font-medium text-blue-400">{total}</span>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+
+                            {/* Description text - responsive for small screens */}
+                            <p className="text-gray-400 max-w-2xl mx-auto mb-6 text-sm sm:text-base md:text-lg px-4 sm:px-0">
+                                Exclusive premium Mac games available only to our members. Experience the best gaming titles with enhanced graphics and performance.
+                            </p>
+
+                            {/* Contact buttons container */}
+                            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+                                {/* Telegram button */}
+                                <a
+                                    href="https://t.me/n0t_ur_type"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-full shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 animate-pulse-glow"
+                                >
+                                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2zm2.8 14.4c.12 0 .234-.05.318-.134.084-.084.134-.198.134-.318 0-.12-.05-.234-.134-.318-.084-.084-.198-.134-.318-.134H9.2c-.12 0-.234.05-.318.134-.084.084-.134.198-.134.318 0 .12.05.234.134.318.084.084.198.134.318.134h5.6zm-2.8-8.4c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 4.8c-.993 0-1.8-.807-1.8-1.8s.807-1.8 1.8-1.8 1.8.807 1.8 1.8-.807 1.8-1.8 1.8z" />
+                                    </svg>
+                                    Buy via Telegram
+                                </a>
+
+                                {/* Become a Member button */}
+                                <a
+                                    href="/membership"
+                                    className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-full shadow-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-300"
+                                >
+                                    <FaCoffee className="mr-2" />
+                                    Become a Member
+                                </a>
+                            </div>
+
+                            {/* Feature badges - responsive for small screens */}
+                            <div className="flex flex-wrap justify-center gap-3">
+                                <div className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg border border-purple-500/30 text-xs sm:text-sm text-gray-300 flex items-center">
+                                    <FaStar className="text-amber-500 mr-1 sm:mr-2" size={14} />
+                                    Premium Quality
+                                </div>
+                                <div className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg border border-purple-500/30 text-xs sm:text-sm text-gray-300 flex items-center">
+                                    <FaApple className="text-blue-400 mr-1 sm:mr-2" size={14} />
+                                    Mac Exclusive
+                                </div>
+                                <div className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg border border-purple-500/30 text-xs sm:text-sm text-gray-300 flex items-center">
+                                    <FaDownload className="text-green-400 mr-1 sm:mr-2" size={14} />
+                                    Easy Download
+                                </div>
+                            </div>
+
+                            {/* Decorative line */}
+                            <div className="absolute -bottom-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
                         </div>
 
-
-                        {/* Description text - responsive for small screens */}
-                        <p className="text-gray-400 max-w-2xl mx-auto mb-6 text-sm sm:text-base md:text-lg px-4 sm:px-0">
-                            Exclusive premium Mac games available only to our members. Experience the best gaming titles with enhanced graphics and performance.
-                        </p>
-
-                        {/* Contact buttons container */}
-                        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-                            {/* Telegram button */}
-                            <a
-                                href="https://t.me/n0t_ur_type"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-full shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 animate-pulse-glow"
-                            >
-                                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2zm2.8 14.4c.12 0 .234-.05.318-.134.084-.084.134-.198.134-.318 0-.12-.05-.234-.134-.318-.084-.084-.198-.134-.318-.134H9.2c-.12 0-.234.05-.318.134-.084.084-.134.198-.134.318 0 .12.05.234.134.318.084.084.198.134.318.134h5.6zm-2.8-8.4c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 4.8c-.993 0-1.8-.807-1.8-1.8s.807-1.8 1.8-1.8 1.8.807 1.8 1.8-.807 1.8-1.8 1.8z" />
-                                </svg>
-                                Buy via Telegram
-                            </a>
-
-                            {/* Become a Member button */}
-                            <a
-                                href="/membership"
-                                className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-full shadow-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-300"
-                            >
-                                <FaCoffee className="mr-2" />
-                                Become a Member
-                            </a>
+                        {/* Game grid - responsive and adaptive */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {data.length > 0 ? (
+                                data.map(game => (
+                                    <GameCard key={game._id} game={game} />
+                                ))
+                            ) : (
+                                <div className="col-span-full text-center py-16">
+                                    <p className="text-gray-400">
+                                        No games found. Try adjusting your filters or check back later.
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Feature badges - responsive for small screens */}
-                        <div className="flex flex-wrap justify-center gap-3">
-                            <div className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg border border-purple-500/30 text-xs sm:text-sm text-gray-300 flex items-center">
-                                <FaStar className="text-amber-500 mr-1 sm:mr-2" size={14} />
-                                Premium Quality
-                            </div>
-                            <div className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg border border-purple-500/30 text-xs sm:text-sm text-gray-300 flex items-center">
-                                <FaApple className="text-blue-400 mr-1 sm:mr-2" size={14} />
-                                Mac Exclusive
-                            </div>
-                            <div className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg border border-purple-500/30 text-xs sm:text-sm text-gray-300 flex items-center">
-                                <FaDownload className="text-green-400 mr-1 sm:mr-2" size={14} />
-                                Easy Download
-                            </div>
-                        </div>
-
-                        {/* Decorative line */}
-                        <div className="absolute -bottom-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
-                    </div>
-
-                    {/* Game grid - responsive and adaptive */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {data.length > 0 ? (
-                            data.map(game => (
-                                <GameCard key={game._id} game={game} />
-                            ))
-                        ) : (
-                            <div className="col-span-full text-center py-16">
-                                <p className="text-gray-400">
-                                    No games found. Try adjusting your filters or check back later.
-                                </p>
+                        {/* Pagination - enhanced with smooth scrolling and improved UX */}
+                        {totalPages > 1 && (
+                            <div className="mt-8">
+                                <EnhancedPagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onPageChange={handlePageChange}
+                                    isLoading={isLoading}
+                                />
                             </div>
                         )}
-                    </div>
-
-                    {/* Pagination - enhanced with smooth scrolling and improved UX */}
-                    {totalPages > 1 && (
-                        <div className="mt-8">
-                            <EnhancedPagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
-                                isLoading={isLoading}
-                            />
-                        </div>
-                    )}
-                </>
-            )}
+                    </>
+                )}
+            </div>
         </div>
     );
 }
