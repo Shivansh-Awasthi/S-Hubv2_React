@@ -26,6 +26,17 @@ const SingleApp = () => {
     const [scrollToCommentId, setScrollToCommentId] = useState(null);
     const [commentScrolled, setCommentScrolled] = useState(false);
 
+
+    const slugify = (text = '') => {
+        return text
+            .toString()
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, '-');
+    };
+
     // Handle scroll to comment from navigation state
     useEffect(() => {
         if (location.state?.scrollToComment || location.state?.highlightComment) {
@@ -314,10 +325,11 @@ const SingleApp = () => {
                     property="og:description"
                     content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Available now at ToxicGames.`}`}
                 />
-                <meta property="og:image" content={data?.coverImg || data?.thumbnail?.[0] || "https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png"} />
+                <meta property="og:image" content={data?.coverImg || data?.thumbnail?.[1] || data?.thumbnail?.[0] || "https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png"} />
                 <meta property="og:url" content={`https://toxicgames.in/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
                 <meta property="og:type" content="website" />
                 <meta property="og:site_name" content="ToxicGames" />
+
 
                 {/* Additional SEO */}
                 <meta name="robots" content="index, follow" />
