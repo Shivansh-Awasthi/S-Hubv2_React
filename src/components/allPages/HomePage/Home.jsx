@@ -8,6 +8,7 @@ import HomeSkeleton from '../../skeletons/HomeSkeleton';
 import axios from 'axios';
 import LiveCounter from '../../Utilities/Counter/LiveCounter.jsx';
 import { div } from 'framer-motion/client';
+import { Helmet } from 'react-helmet-async';
 
 
 const images = [
