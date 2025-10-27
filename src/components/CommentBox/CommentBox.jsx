@@ -203,7 +203,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
             } else {
                 // Regular text line
                 if (!inParagraph) {
-                    html += '<p class="mb-2">';
+                    html += '<p class="mb-2 w-full">';
                     inParagraph = true;
                 } else {
                     html += '<br>';
@@ -373,7 +373,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                 </div>
                 {value && (
                     <div
-                        className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 dark:prose-invert prose-headings:mt-4 prose-headings:mb-2 prose-p:leading-relaxed"
+                        className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 dark:prose-invert prose-headings:mt-4 prose-headings:mb-2 prose-p:leading-relaxed flex flex-wrap gap-2"
                         dangerouslySetInnerHTML={{ __html: previewHTML }}
                     />
                 )}
