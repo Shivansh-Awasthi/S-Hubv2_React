@@ -180,14 +180,15 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
 
-            if (line.startsWith('# ')) {
+            // Only process headings if user is admin/mod
+            if (isAdminOrMod && line.startsWith('# ')) {
                 // Close previous paragraph if open
                 if (inParagraph) {
                     html += '</p>';
                     inParagraph = false;
                 }
                 html += `<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">${line.substring(2)}</h1>`;
-            } else if (line.startsWith('## ')) {
+            } else if (isAdminOrMod && line.startsWith('## ')) {
                 // Close previous paragraph if open
                 if (inParagraph) {
                     html += '</p>';
@@ -209,8 +210,19 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
                     html += '<br>';
                 }
 
-                // Process inline formatting
-                let processedLine = line
+                // For non-admin users in preview, escape # at start of line
+                let processedLine = line;
+                if (!isAdminOrMod) {
+                    // If line starts with # but we're not processing as heading, ensure # is visible
+                    if (line.startsWith('# ')) {
+                        processedLine = '#' + processedLine.substring(1);
+                    } else if (line.startsWith('## ')) {
+                        processedLine = '##' + processedLine.substring(2);
+                    }
+                }
+
+                // Process inline formatting (available for all users)
+                processedLine = processedLine
                     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
                     .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
@@ -383,7 +395,7 @@ const RichTextEditor = ({ value, onChange, placeholder, disabled, rows = 4, isAd
 };
 
 // Component to render formatted content with image expand functionality
-const FormattedContent = ({ content, className = "" }) => {
+const FormattedContent = ({ content, className = "", userRole = null }) => {
     const [expandedImage, setExpandedImage] = useState(null);
 
     const parseMarkdown = (text) => {
@@ -397,14 +409,17 @@ const FormattedContent = ({ content, className = "" }) => {
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
 
-            if (line.startsWith('# ')) {
+            // Only process headings if user is admin/mod
+            const isAdminOrMod = userRole === 'ADMIN' || userRole === 'MOD';
+
+            if (isAdminOrMod && line.startsWith('# ')) {
                 // Close previous paragraph if open
                 if (inParagraph) {
                     html += '</p>';
                     inParagraph = false;
                 }
                 html += `<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-4 mb-3 pb-2 border-b border-slate-200 dark:border-slate-600">${line.substring(2)}</h1>`;
-            } else if (line.startsWith('## ')) {
+            } else if (isAdminOrMod && line.startsWith('## ')) {
                 // Close previous paragraph if open
                 if (inParagraph) {
                     html += '</p>';
@@ -426,8 +441,19 @@ const FormattedContent = ({ content, className = "" }) => {
                     html += '<br>';
                 }
 
-                // Process inline formatting
-                let processedLine = line
+                // For non-admin users, escape # at start of line to prevent heading behavior
+                let processedLine = line;
+                if (!isAdminOrMod) {
+                    // If line starts with # but we're not processing as heading, ensure # is visible
+                    if (line.startsWith('# ')) {
+                        processedLine = '#' + processedLine.substring(1);
+                    } else if (line.startsWith('## ')) {
+                        processedLine = '##' + processedLine.substring(2);
+                    }
+                }
+
+                // Process inline formatting (available for all users)
+                processedLine = processedLine
                     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
                     .replace(/__(.*?)__/g, '<u class="underline">$1</u>')
@@ -1339,7 +1365,10 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                         </div>
                                                     ) : (
                                                         <div className="mb-4">
-                                                            <FormattedContent content={comment.content} />
+                                                            <FormattedContent
+                                                                content={comment.content}
+                                                                userRole={comment.userId?.role}
+                                                            />
                                                         </div>
                                                     )}
 
@@ -1593,7 +1622,10 @@ const CommentBox = ({ scrollToCommentId, onCommentScrolled }) => {
                                                                                                 </div>
                                                                                             ) : (
                                                                                                 <div className="mb-3">
-                                                                                                    <FormattedContent content={reply.content} />
+                                                                                                    <FormattedContent
+                                                                                                        content={reply.content}
+                                                                                                        userRole={reply.userId?.role}
+                                                                                                    />
                                                                                                 </div>
                                                                                             )}
                                                                                         </div>
