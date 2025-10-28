@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
-import { HelmetProvider } from 'react-helmet-async'
 
 
 // Disable all console methods (dev + prod)
@@ -18,10 +17,8 @@ createRoot(document.getElementById('root')).render(
 
 
   <StrictMode>
-    <HelmetProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </HelmetProvider>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </StrictMode>,
 )
