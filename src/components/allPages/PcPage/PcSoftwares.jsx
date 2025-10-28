@@ -4,7 +4,6 @@ import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
-import { Helmet } from 'react-helmet-async';
 
 export default function PcSoftwares() {
     // React Router hooks instead of window.location
@@ -295,22 +294,21 @@ export default function PcSoftwares() {
     return (
         <div>
 
-            <Helmet>
-                <title>Download PC Softwares for Free | ToxicGames</title>
-                <meta
-                    name="description"
-                    content="Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC."
-                />
-                <link rel="canonical" href="https://toxicgames.in/category/pc/softwares" />
 
-                {/* Open Graph / Link preview */}
-                <meta property="og:title" content={`Download PC Softwares for Free | ToxicGames`} />
-                <meta property="og:description" content={`Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC.`} />
-                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-                <meta property="og:url" content={`https://toxicgames.in/category/pc/softwares`} />
-                <meta property="og:type" content="website" />
+            <title>Download PC Softwares for Free | ToxicGames</title>
+            <meta
+                name="description"
+                content="Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC."
+            />
+            <link rel="canonical" href="https://toxicgames.in/category/pc/softwares" />
 
-            </Helmet>
+            {/* Open Graph / Link preview */}
+            <meta property="og:title" content={`Download PC Softwares for Free | ToxicGames`} />
+            <meta property="og:description" content={`Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC.`} />
+            <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+            <meta property="og:url" content={`https://toxicgames.in/category/pc/softwares`} />
+            <meta property="og:type" content="website" />
+
 
             <div className="container mx-auto p-2 relative">
                 {/* Heading and filter/clear buttons layout */}

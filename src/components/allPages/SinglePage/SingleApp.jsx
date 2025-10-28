@@ -8,7 +8,6 @@ import LoadingSkeleton from './LoadingSkeleton';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import CommentBox from '../../CommentBox/CommentBox';
-import { Helmet } from 'react-helmet-async';
 
 const SingleApp = () => {
     // Get parameters from React Router instead of Next.js props
@@ -307,58 +306,58 @@ const SingleApp = () => {
 
         <div>
 
-            <Helmet>
-                <title>Download {data?.title} for {data?.platform} Free | ToxicGames</title>
-                <meta
-                    name="description"
-                    content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Get ${data?.title} and enjoy this ${data?.platform} game at ToxicGames.`}`}
-                />
-                <meta
-                    name="keywords"
-                    content={`${data?.title}, ${data?.platform} games, free download, ToxicGames, ${data?.category?.name || ''}, ${data?.architecture || ''}`}
-                />
-                <link rel="canonical" href={`https://toxicgames.in/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
 
-                {/* Open Graph / Social Media */}
-                <meta property="og:title" content={`Download ${data?.title} for ${data?.platform} Free | ToxicGames`} />
-                <meta
-                    property="og:description"
-                    content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Available now at ToxicGames.`}`}
-                />
-                <meta property="og:image" content={data?.coverImg || data?.thumbnail?.[1] || data?.thumbnail?.[0] || "https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png"} />
-                <meta property="og:url" content={`https://toxicgames.in/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
-                <meta property="og:type" content="website" />
-                <meta property="og:site_name" content="ToxicGames" />
+            <title>Download {data?.title} for {data?.platform} Free | ToxicGames</title>
+            <meta
+                name="description"
+                content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Get ${data?.title} and enjoy this ${data?.platform} game at ToxicGames.`}`}
+            />
+            <meta
+                name="keywords"
+                content={`${data?.title}, ${data?.platform} games, free download, ToxicGames, ${data?.category?.name || ''}, ${data?.architecture || ''}`}
+            />
+            <link rel="canonical" href={`https://toxicgames.in/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
+
+            {/* Open Graph / Social Media */}
+            <meta property="og:title" content={`Download ${data?.title} for ${data?.platform} Free | ToxicGames`} />
+            <meta
+                property="og:description"
+                content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Available now at ToxicGames.`}`}
+            />
+            <meta property="og:image" content={data?.coverImg || data?.thumbnail?.[1] || data?.thumbnail?.[0] || "https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png"} />
+            <meta property="og:url" content={`https://toxicgames.in/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
+            <meta property="og:type" content="website" />
+            <meta property="og:site_name" content="ToxicGames" />
 
 
-                {/* Additional SEO */}
-                <meta name="robots" content="index, follow" />
-                <meta name="author" content="ToxicGames" />
+            {/* Additional SEO */}
+            <meta name="robots" content="index, follow" />
+            <meta name="author" content="ToxicGames" />
 
-                {/* Structured Data / Schema.org */}
-                <script type="application/ld+json">
-                    {JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "SoftwareApplication",
-                        "name": data?.title,
-                        "operatingSystem": data?.platform,
-                        "applicationCategory": "GameApplication",
-                        "downloadUrl": data?.downloadLink?.[0] || "",
-                        "fileSize": data?.size,
-                        "datePublished": data?.createdAt,
-                        "dateModified": data?.updatedAt,
-                        "author": {
-                            "@type": "Organization",
-                            "name": "ToxicGames"
-                        },
-                        "offers": {
-                            "@type": "Offer",
-                            "price": "0",
-                            "priceCurrency": "USD"
-                        }
-                    })}
-                </script>
-            </Helmet>
+            {/* Structured Data / Schema.org */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "SoftwareApplication",
+                    "name": data?.title,
+                    "operatingSystem": data?.platform,
+                    "applicationCategory": "GameApplication",
+                    "downloadUrl": data?.downloadLink?.[0] || "",
+                    "fileSize": data?.size,
+                    "datePublished": data?.createdAt,
+                    "dateModified": data?.updatedAt,
+                    "author": {
+                        "@type": "Organization",
+                        "name": "ToxicGames"
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                })}
+            </script>
+
 
             <div style={{ position: 'relative' }}>
                 {/* Admin Edit Floating Button */}

@@ -7,7 +7,7 @@ import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 import RandomGame from '../../sidePages/RandomGames/RandomGame';
-import { Helmet } from 'react-helmet-async';
+
 
 
 // Slugify function (simplified version)
@@ -442,21 +442,21 @@ export default function MacGames() {
 
         <div>
 
-            <Helmet>
-                <title>Download MAC Games for Free | ToxicGames</title>
-                <meta
-                    name="description"
-                    content="Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games,  Pre-Installed, and more for Mac."
-                />
-                <link rel="canonical" href="https://toxicgames.in/category/mac/games" />
-                {/* Open Graph / Link preview */}
-                <meta property="og:title" content={`Download Mac Softwares for Free | ToxicGames`} />
-                <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
-                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-                <meta property="og:url" content={`https://toxicgames.in/category/mac/games`} />
-                <meta property="og:type" content="website" />
 
-            </Helmet>
+            <title>Download MAC Games for Free | ToxicGames</title>
+            <meta
+                name="description"
+                content="Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games,  Pre-Installed, and more for Mac."
+            />
+            <link rel="canonical" href="https://toxicgames.in/category/mac/games" />
+            {/* Open Graph / Link preview */}
+            <meta property="og:title" content={`Download Mac Softwares for Free | ToxicGames`} />
+            <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
+            <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+            <meta property="og:url" content={`https://toxicgames.in/category/mac/games`} />
+            <meta property="og:type" content="website" />
+
+
 
             <div className="container mx-auto p-2 relative">
                 <FilterModal open={filterModalOpen} onClose={() => setFilterModalOpen(false)} onApply={handleApplyFilters} initialFilters={filters} />

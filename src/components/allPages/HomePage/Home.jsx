@@ -8,7 +8,7 @@ import HomeSkeleton from '../../skeletons/HomeSkeleton';
 import axios from 'axios';
 import LiveCounter from '../../Utilities/Counter/LiveCounter.jsx';
 import { div } from 'framer-motion/client';
-import { Helmet } from 'react-helmet-async';
+
 
 
 const images = [
@@ -118,21 +118,21 @@ const HomeClient = () => {
 
         <div>
 
-            <Helmet>
-                <title>Download Free Games and Softwares for Mac, PC & More | ToxicGames</title>
-                <meta
-                    name="description"
-                    content="Discover and download a wide range of free games, cracked software, and mods for Mac, PC, and more at ToxicGames. Enjoy your favorite games easily!"
-                />
-                <link rel="canonical" href="https://toxicgames.in/" />
-                {/* Open Graph / Link preview */}
-                <meta property="og:title" content={`Download Free Games and Softwares for Mac, PC & More | ToxicGames`} />
-                <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
-                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-                <meta property="og:url" content={`https://toxicgames.in/`} />
-                <meta property="og:type" content="website" />
 
-            </Helmet>
+            <title>Download Free Games and Softwares for Mac, PC & More | ToxicGames</title>
+            <meta
+                name="description"
+                content="Discover and download a wide range of free games, cracked software, and mods for Mac, PC, and more at ToxicGames. Enjoy your favorite games easily!"
+            />
+            <link rel="canonical" href="https://toxicgames.in/" />
+            {/* Open Graph / Link preview */}
+            <meta property="og:title" content={`Download Free Games and Softwares for Mac, PC & More | ToxicGames`} />
+            <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
+            <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+            <meta property="og:url" content={`https://toxicgames.in/`} />
+            <meta property="og:type" content="website" />
+
+
 
             <div className="relative">
                 {/* Background decorative elements */}

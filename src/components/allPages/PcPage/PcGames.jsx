@@ -5,7 +5,6 @@ import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import RandomGame from '../../sidePages/RandomGames/RandomGame';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
-import { Helmet } from 'react-helmet-async';
 
 function PcGames() {
     // React Router hooks instead of window.location
@@ -332,22 +331,22 @@ function PcGames() {
     return (
         <div>
 
-            <Helmet>
-                <title>Download Pre-Installed PC Games for Free | ToxicGames</title>
-                <meta
-                    name="description"
-                    content="Explore and download all the best PC games for free from ToxicGames. Full games, Pre-Installed , and more for PC."
-                />
-                <link rel="canonical" href="https://toxicgames.in/category/pc/games" />
 
-                {/* Open Graph / Link preview */}
-                <meta property="og:title" content={`Download PC Games Free | ToxicGames`} />
-                <meta property="og:description" content={`Explore and download all the best PC games for free from ToxicGames. Full games, Pre-Installed, and more for PC.`} />
-                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-                <meta property="og:url" content={`https://toxicgames.in/category/pc/games`} />
-                <meta property="og:type" content="website" />
+            <title>Download Pre-Installed PC Games for Free | ToxicGames</title>
+            <meta
+                name="description"
+                content="Explore and download all the best PC games for free from ToxicGames. Full games, Pre-Installed , and more for PC."
+            />
+            <link rel="canonical" href="https://toxicgames.in/category/pc/games" />
 
-            </Helmet>
+            {/* Open Graph / Link preview */}
+            <meta property="og:title" content={`Download PC Games Free | ToxicGames`} />
+            <meta property="og:description" content={`Explore and download all the best PC games for free from ToxicGames. Full games, Pre-Installed, and more for PC.`} />
+            <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+            <meta property="og:url" content={`https://toxicgames.in/category/pc/games`} />
+            <meta property="og:type" content="website" />
+
+
 
             <div className="container mx-auto p-2 relative">
                 {/* Heading and filter/clear buttons layout */}

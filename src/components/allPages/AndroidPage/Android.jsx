@@ -5,7 +5,6 @@ import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
-import { Helmet } from 'react-helmet-async';
 
 function Android() {
     // React Router hooks instead of window.location
@@ -315,21 +314,20 @@ function Android() {
     return (
 
         <div>
-            <Helmet>
-                <title>Download Android Games for Free | ToxicGames</title>
-                <meta
-                    name="description"
-                    content="Explore and download all the best Android games for free from ToxicGames. Full Softwares, games, Pre-Installed, and more for Android."
-                />
-                <link rel="canonical" href="https://toxicgames.in/category/android/games" />
-                {/* Open Graph / Link preview */}
-                <meta property="og:title" content={`Download Android Games for Free | ToxicGames`} />
-                <meta property="og:description" content={`Explore and download all the best Android games for free from ToxicGames. Full Softwares, games, and more for Android.`} />
-                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-                <meta property="og:url" content={`https://toxicgames.in/category/android/games`} />
-                <meta property="og:type" content="website" />
 
-            </Helmet>
+            <title>Download Android Games for Free | ToxicGames</title>
+            <meta
+                name="description"
+                content="Explore and download all the best Android games for free from ToxicGames. Full Softwares, games, Pre-Installed, and more for Android."
+            />
+            <link rel="canonical" href="https://toxicgames.in/category/android/games" />
+            {/* Open Graph / Link preview */}
+            <meta property="og:title" content={`Download Android Games for Free | ToxicGames`} />
+            <meta property="og:description" content={`Explore and download all the best Android games for free from ToxicGames. Full Softwares, games, and more for Android.`} />
+            <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+            <meta property="og:url" content={`https://toxicgames.in/category/android/games`} />
+            <meta property="og:type" content="website" />
+
 
 
             <div className="container mx-auto p-2 relative">

@@ -5,7 +5,6 @@ import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
-import { Helmet } from 'react-helmet-async';
 import { div } from 'framer-motion/client';
 
 function Ps3Iso() {
@@ -305,22 +304,21 @@ function Ps3Iso() {
         <div>
 
             {/* SEO things */}
-            <Helmet>
-                <title>Download PS3 Games Free | ToxicGames</title>
-                <meta
-                    name="description"
-                    content="Explore and download all the best PS3 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 3."
-                />
-                <link rel="canonical" href="https://toxicgames.in/category/ps3/iso" />
 
-                {/* Open Graph / Link preview */}
-                <meta property="og:title" content={`Download PS3 Games Free | ToxicGames`} />
-                <meta property="og:description" content={`Explore and download all the best PS3 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 3.`} />
-                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-                <meta property="og:url" content={`https://toxicgames.in/category/ps3/iso`} />
-                <meta property="og:type" content="website" />
+            <title>Download PS3 Games Free | ToxicGames</title>
+            <meta
+                name="description"
+                content="Explore and download all the best PS3 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 3."
+            />
+            <link rel="canonical" href="https://toxicgames.in/category/ps3/iso" />
 
-            </Helmet>
+            {/* Open Graph / Link preview */}
+            <meta property="og:title" content={`Download PS3 Games Free | ToxicGames`} />
+            <meta property="og:description" content={`Explore and download all the best PS3 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 3.`} />
+            <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+            <meta property="og:url" content={`https://toxicgames.in/category/ps3/iso`} />
+            <meta property="og:type" content="website" />
+
 
             <div className="container mx-auto p-2 relative">
 

@@ -5,7 +5,7 @@ import CategorySkeleton from '../../skeletons/CategorySkeleton';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
-import { Helmet } from 'react-helmet-async';
+
 
 function Ps2Iso() {
     // Use React Router hooks instead of window.location
@@ -305,21 +305,21 @@ function Ps2Iso() {
 
             {/* SEO things */}
 
-            <Helmet>
-                <title>Download PS2 Games Free | ToxicGames</title>
-                <meta
-                    name="description"
-                    content="Explore and download all the best PS2 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 2."
-                />
-                <link rel="canonical" href="https://toxicgames.in/category/ps2/iso" />
 
-                {/* Open Graph / Link preview */}
-                <meta property="og:title" content={`Download PS2 Games Free | ToxicGames`} />
-                <meta property="og:description" content={`Explore and download all the best PS2 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 2.`} />
-                <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-                <meta property="og:url" content={`https://toxicgames.in/category/ps2/iso`} />
-                <meta property="og:type" content="website" />
-            </Helmet>
+            <title>Download PS2 Games Free | ToxicGames</title>
+            <meta
+                name="description"
+                content="Explore and download all the best PS2 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 2."
+            />
+            <link rel="canonical" href="https://toxicgames.in/category/ps2/iso" />
+
+            {/* Open Graph / Link preview */}
+            <meta property="og:title" content={`Download PS2 Games Free | ToxicGames`} />
+            <meta property="og:description" content={`Explore and download all the best PS2 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 2.`} />
+            <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
+            <meta property="og:url" content={`https://toxicgames.in/category/ps2/iso`} />
+            <meta property="og:type" content="website" />
+
 
             <div className="container mx-auto p-2 relative">
                 {/* Heading and filter/clear buttons layout */}
@@ -496,7 +496,7 @@ function Ps2Iso() {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 
