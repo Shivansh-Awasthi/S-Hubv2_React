@@ -24,8 +24,6 @@ const createSlug = (text = '') => {
         || 'untitled';
 };
 
-
-
 const getPlatformColorClass = (platform) => {
     const platformColors = {
         mac: 'text-blue-400',
@@ -321,6 +319,7 @@ const Header = () => {
         setShowResults(false);
     };
 
+
     return (
         <div className="w-full">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full gap-2">
@@ -366,18 +365,25 @@ const Header = () => {
                                         <ul className="divide-y divide-gray-700/30 relative z-10">
                                             {searchResults.apps.map((app) => {
                                                 const isPurchased = purchasedGames.includes(app._id);
-                                                const isUnlocked = isAdmin || !app.isPaid || isPurchased;
+                                                // Updated unlock logic to include copyrighted games
+                                                const isUnlocked = isAdmin ||
+                                                    (!app.isPaid && !app.copyrighted) ||
+                                                    (app.isPaid && isPurchased) ||
+                                                    (app.copyrighted && user);
                                                 const isLocked = !isUnlocked;
+
+                                                // Create appropriate URL based on game type and auth status
+                                                const downloadUrl = `/download/${createSlug(app.platform)}/${createSlug(app.title)}/${app._id}`;
 
                                                 return (
                                                     <li
                                                         key={app._id}
-                                                        className={`py-2 px-4 hover:bg-black/20 transition-all duration-200 relative ${isLocked ? 'opacity-30 pointer-events-none' : ''}`}
+                                                        className={`py-2 px-4 hover:bg-black/20 transition-all duration-200 relative ${isLocked ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
                                                     >
                                                         <Link
-                                                            to={isLocked ? '#' : `/download/${createSlug(app.platform)}/${createSlug(app.title)}/${app._id}`}
-                                                            className="flex items-center"
-                                                            onClick={() => setShowResults(false)}
+                                                            to={downloadUrl}
+                                                            className={`flex items-center ${isLocked ? 'pointer-events-none' : ''}`}
+                                                            onClick={(e) => handleSearchResultClick(app, e)}
                                                         >
                                                             <div className="relative flex-shrink-0">
                                                                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
@@ -390,18 +396,32 @@ const Header = () => {
                                                                     }}
                                                                 />
                                                             </div>
-                                                            <div className="ml-3">
+                                                            <div className="ml-3 flex-1">
                                                                 <p className={`font-medium truncate ${getPlatformColorClass(app.platform)}`}>
                                                                     {app.title}
                                                                 </p>
-                                                                <p className="text-xs text-gray-400">{app.platform}</p>
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-xs text-gray-400">{app.platform}</p>
+                                                                    {/* Copyright/Premium indicator */}
+                                                                    {(app.copyrighted || app.isPaid) && (
+                                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${app.copyrighted ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
+                                                                            }`}>
+                                                                            {app.copyrighted ? 'Copyright' : 'Premium'}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </Link>
 
-                                                        {/* Lock Icon for Locked Games */}
+                                                        {/* Lock Icon and Message for Locked Games */}
                                                         {isLocked && (
-                                                            <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center z-10 opacity-100">
-                                                                <CiLock className="text-white font-bold text-2xl" />
+                                                            <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center z-10 bg-black/50 rounded">
+                                                                <div className="text-center">
+                                                                    <CiLock className="text-white font-bold text-xl mx-auto mb-1" />
+                                                                    <span className="text-white text-xs block">
+                                                                        {app.copyrighted ? "Copyright Claim" : "Premium Game"}
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         )}
                                                     </li>

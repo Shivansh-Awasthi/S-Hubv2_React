@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { CiLock } from 'react-icons/ci';
 import SearchSkeleton from './../../skeletons/SeatchResultSkeleton.jsx';
-import { useAuth } from '../../../contexts/AuthContext.jsx'; // ADD THIS IMPORT
+import { useAuth } from '../../../contexts/AuthContext.jsx';
 
 // Function to format dates consistently
 const formatDate = (dateString) => {
@@ -22,6 +22,7 @@ const createSlug = (text) => {
 const SearchResults = () => {
     // Use React Router's useLocation to get current URL
     const location = useLocation();
+    const navigate = useNavigate();
 
     // USE THE SAME AUTH CONTEXT AS HEADER
     const { user } = useAuth();
@@ -124,6 +125,39 @@ const SearchResults = () => {
         return platformColors[platform?.toLowerCase()] || 'text-gray-300';
     };
 
+    // Handle search result click for copyrighted/paid games
+    // const handleSearchResultClick = (ele, e) => {
+    //     // If copyrighted and not authenticated, redirect to login
+    //     if (ele.copyrighted && !user) {
+    //         e.preventDefault();
+    //         // Redirect to login with return URL
+    //         navigate('/login', {
+    //             state: {
+    //                 from: location.pathname + location.search,
+    //                 message: 'You need to be logged in to access copyrighted games'
+    //             }
+    //         });
+    //         return;
+    //     }
+
+    //     // If copyrighted and authenticated, use copyrighted protected route
+    //     if (ele.copyrighted && user) {
+    //         e.preventDefault();
+    //         navigate(`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}/copyrighted`);
+    //         return;
+    //     }
+
+    //     // If paid and authenticated, use paid protected route
+    //     if (ele.isPaid && user) {
+    //         e.preventDefault();
+    //         navigate(`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}/protected`);
+    //         return;
+    //     }
+
+    //     // For free games or unauthenticated users (except copyrighted), use normal route
+    //     // Let the default link behavior handle it
+    // };
+
     return (
         <div>
             <div className='cover mb-6'>
@@ -165,91 +199,83 @@ const SearchResults = () => {
                     <div className="flow-root relative z-10">
                         <ul role="list" className="divide-y divide-gray-700/30">
                             {data.map((ele) => {
-                                // USE THE SAME LOGIC AS HEADER
+                                // UPDATED UNLOCK LOGIC TO INCLUDE COPYRIGHTED GAMES
                                 const purchasedGames = user?.purchasedGames || [];
                                 const isPurchased = purchasedGames.includes(ele._id);
                                 const isAdmin = user?.role === 'ADMIN' || user?.role === 'MOD' || user?.role === 'PREMIUM';
-                                const isUnlocked = isAdmin || !ele.isPaid || isPurchased;
+                                const isUnlocked = isAdmin ||
+                                    (!ele.isPaid && !ele.copyrighted) ||
+                                    (ele.isPaid && isPurchased) ||
+                                    (ele.copyrighted && user);
                                 const isLocked = !isUnlocked;
+
+                                // Create appropriate URL based on game type and auth status
+                                let downloadUrl = `/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}`;
 
                                 return (
                                     <li
                                         key={ele._id}
-                                        className={`py-2 sm:py-2 p-8 relative hover:bg-black/20 transition-all duration-200 ${isLocked ? 'opacity-30 pointer-events-none' : ''}`}
+                                        className={`py-2 sm:py-2 p-8 relative hover:bg-black/20 transition-all duration-200 ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                     >
-                                        {isLocked ? (
-                                            // Locked item - no link, just static content
-                                            <div className="flex items-center justify-between w-full cursor-not-allowed">
-                                                <div className="relative flex-shrink-0">
-                                                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
-                                                    <img
-                                                        className="relative w-12 h-12 rounded-lg object-cover border border-purple-500/20"
-                                                        src={ele.thumbnail[0]}
-                                                        alt={ele.title}
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-0 ms-4">
-                                                    <p className={`font-medium truncate ${getPlatformColorClass(ele.platform)}`}>
-                                                        {ele.title}
-                                                    </p>
-                                                    <p className="text-sm truncate flex items-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`mr-1 ${getPlatformColorClass(ele.platform)}`}>
-                                                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
-                                                            <path d="M12 18h.01" />
-                                                        </svg>
-                                                        <span className={`${getPlatformColorClass(ele.platform)} font-medium`}>
-                                                            {ele.platform}
-                                                        </span>
-                                                    </p>
-                                                </div>
-                                                <div className="flex-1 flex justify-center text-sm font-semibold text-gray-400 hidden sm:block">
-                                                    {ele.size}
-                                                </div>
-                                                <div className="text-right text-sm text-gray-400 hidden md:block">
-                                                    {formatDate(ele.updatedAt)}
-                                                </div>
+                                        <Link
+                                            to={downloadUrl}
+                                            className={`flex items-center justify-between w-full ${isLocked ? 'pointer-events-none' : ''}`}
+                                            onClick={(e) => handleSearchResultClick(ele, e)}
+                                        >
+                                            <div className="relative flex-shrink-0">
+                                                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
+                                                <img
+                                                    className="relative w-12 h-12 rounded-lg object-cover border border-purple-500/20 transition-all duration-300 hover:scale-105"
+                                                    src={ele.thumbnail[0]}
+                                                    alt={ele.title}
+                                                />
                                             </div>
-                                        ) : (
-                                            // Unlocked item - with link
-                                            <Link
-                                                to={`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}`}
-                                                className="flex items-center justify-between w-full"
-                                            >
-                                                <div className="relative flex-shrink-0">
-                                                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-25"></div>
-                                                    <img
-                                                        className="relative w-12 h-12 rounded-lg object-cover border border-purple-500/20 transition-all duration-300 hover:scale-105"
-                                                        src={ele.thumbnail[0]}
-                                                        alt={ele.title}
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-0 ms-4">
+                                            <div className="flex-1 min-w-0 ms-4">
+                                                <div className="flex items-center gap-2">
                                                     <p className={`font-medium truncate ${getPlatformColorClass(ele.platform)}`}>
                                                         {ele.title}
                                                     </p>
-                                                    <p className="text-sm truncate flex items-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`mr-1 ${getPlatformColorClass(ele.platform)}`}>
-                                                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
-                                                            <path d="M12 18h.01" />
-                                                        </svg>
-                                                        <span className={`${getPlatformColorClass(ele.platform)} font-medium`}>
-                                                            {ele.platform}
+                                                    {/* Copyright/Premium indicator */}
+                                                    {(ele.copyrighted || ele.isPaid) && (
+                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${ele.copyrighted ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
+                                                            }`}>
+                                                            {ele.copyrighted ? 'Copyright' : 'Premium'}
                                                         </span>
-                                                    </p>
+                                                    )}
                                                 </div>
-                                                <div className="flex-1 flex justify-center text-sm font-semibold text-gray-400 hidden sm:block">
-                                                    {ele.size}
-                                                </div>
-                                                <div className="text-right text-sm text-gray-400 hidden md:block">
-                                                    {formatDate(ele.updatedAt)}
-                                                </div>
-                                            </Link>
-                                        )}
+                                                <p className="text-sm truncate flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`mr-1 ${getPlatformColorClass(ele.platform)}`}>
+                                                        <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                                                        <path d="M12 18h.01" />
+                                                    </svg>
+                                                    <span className={`${getPlatformColorClass(ele.platform)} font-medium`}>
+                                                        {ele.platform}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div className="flex-1 flex justify-center text-sm font-semibold text-gray-400 hidden sm:block">
+                                                {ele.size}
+                                            </div>
+                                            <div className="text-right text-sm text-gray-400 hidden md:block">
+                                                {formatDate(ele.updatedAt)}
+                                            </div>
+                                        </Link>
 
-                                        {/* Lock Icon for Locked Games */}
+                                        {/* Lock Overlay for Locked Games */}
                                         {isLocked && (
-                                            <div className="absolute top-0 left-0 right-0 bottom-0 lg:right-20 flex justify-center items-center z-10 opacity-100">
-                                                <CiLock className="text-white font-bold text-4xl" />
+                                            <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center z-10 bg-black/50 rounded">
+                                                <div className="text-center">
+                                                    <CiLock className="text-white font-bold text-2xl mx-auto mb-1" />
+                                                    <span className="text-white text-xs block">
+                                                        {ele.copyrighted ? "Copyright Claim" : "Premium Game"}
+                                                    </span>
+                                                    <span className="text-gray-300 text-xs block mt-1">
+                                                        {ele.copyrighted
+                                                            ? "Login to access copyrighted content"
+                                                            : "Login to access premium content"
+                                                        }
+                                                    </span>
+                                                </div>
                                             </div>
                                         )}
                                     </li>
