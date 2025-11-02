@@ -126,37 +126,24 @@ const SearchResults = () => {
     };
 
     // Handle search result click for copyrighted/paid games
-    // const handleSearchResultClick = (ele, e) => {
-    //     // If copyrighted and not authenticated, redirect to login
-    //     if (ele.copyrighted && !user) {
-    //         e.preventDefault();
-    //         // Redirect to login with return URL
-    //         navigate('/login', {
-    //             state: {
-    //                 from: location.pathname + location.search,
-    //                 message: 'You need to be logged in to access copyrighted games'
-    //             }
-    //         });
-    //         return;
-    //     }
+    const handleSearchResultClick = (ele, e) => {
+        const purchasedGames = user?.purchasedGames || [];
+        const isPurchased = purchasedGames.includes(ele._id);
+        const isAdmin = user?.role === 'ADMIN' || user?.role === 'MOD' || user?.role === 'PREMIUM';
+        const isUnlocked = isAdmin || !ele.isPaid || isPurchased;
+        const isCopyrighted = ele.copyrighted === true;
 
-    //     // If copyrighted and authenticated, use copyrighted protected route
-    //     if (ele.copyrighted && user) {
-    //         e.preventDefault();
-    //         navigate(`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}/copyrighted`);
-    //         return;
-    //     }
+        // NEW: Priority order - paid lock first, then copyright lock for non-logged in users
+        const isPaidLock = !isUnlocked;
+        const isCopyrightLock = isCopyrighted && !user;
+        const isLocked = isPaidLock || isCopyrightLock;
 
-    //     // If paid and authenticated, use paid protected route
-    //     if (ele.isPaid && user) {
-    //         e.preventDefault();
-    //         navigate(`/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}/protected`);
-    //         return;
-    //     }
-
-    //     // For free games or unauthenticated users (except copyrighted), use normal route
-    //     // Let the default link behavior handle it
-    // };
+        // If the game is locked, prevent navigation
+        if (isLocked) {
+            e.preventDefault();
+            return;
+        }
+    };
 
     return (
         <div>
@@ -199,15 +186,17 @@ const SearchResults = () => {
                     <div className="flow-root relative z-10">
                         <ul role="list" className="divide-y divide-gray-700/30">
                             {data.map((ele) => {
-                                // UPDATED UNLOCK LOGIC TO INCLUDE COPYRIGHTED GAMES
+                                // UPDATED UNLOCK LOGIC WITH PRIORITY ORDER
                                 const purchasedGames = user?.purchasedGames || [];
                                 const isPurchased = purchasedGames.includes(ele._id);
                                 const isAdmin = user?.role === 'ADMIN' || user?.role === 'MOD' || user?.role === 'PREMIUM';
-                                const isUnlocked = isAdmin ||
-                                    (!ele.isPaid && !ele.copyrighted) ||
-                                    (ele.isPaid && isPurchased) ||
-                                    (ele.copyrighted && user);
-                                const isLocked = !isUnlocked;
+                                const isUnlocked = isAdmin || !ele.isPaid || isPurchased;
+                                const isCopyrighted = ele.copyrighted === true;
+
+                                // NEW: Priority order - paid lock first, then copyright lock for non-logged in users
+                                const isPaidLock = !isUnlocked;
+                                const isCopyrightLock = isCopyrighted && !user;
+                                const isLocked = isPaidLock || isCopyrightLock;
 
                                 // Create appropriate URL based on game type and auth status
                                 let downloadUrl = `/download/${createSlug(ele.platform)}/${createSlug(ele.title)}/${ele._id}`;
@@ -237,9 +226,9 @@ const SearchResults = () => {
                                                     </p>
                                                     {/* Copyright/Premium indicator */}
                                                     {(ele.copyrighted || ele.isPaid) && (
-                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${ele.copyrighted ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
+                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${ele.isPaid ? 'bg-purple-500/20 text-purple-400' : 'bg-yellow-500/20 text-yellow-400'
                                                             }`}>
-                                                            {ele.copyrighted ? 'Copyright' : 'Premium'}
+                                                            {ele.isPaid ? 'Premium' : 'Copyright'}
                                                         </span>
                                                     )}
                                                 </div>
@@ -267,12 +256,12 @@ const SearchResults = () => {
                                                 <div className="text-center">
                                                     <CiLock className="text-white font-bold text-2xl mx-auto mb-1" />
                                                     <span className="text-white text-xs block">
-                                                        {ele.copyrighted ? "Copyright Claim" : "Premium Game"}
+                                                        {isPaidLock ? "Premium Game" : "Copyright Claim"}
                                                     </span>
                                                     <span className="text-gray-300 text-xs block mt-1">
-                                                        {ele.copyrighted
-                                                            ? "Login to access copyrighted content"
-                                                            : "Login to access premium content"
+                                                        {isPaidLock
+                                                            ? ""
+                                                            : "Login to access copyrighted content"
                                                         }
                                                     </span>
                                                 </div>
