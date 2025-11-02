@@ -254,16 +254,12 @@ const SearchResults = () => {
                                         {isLocked && (
                                             <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center z-10 bg-black/50 rounded">
                                                 <div className="text-center">
-                                                    <CiLock className="text-white font-bold text-2xl mx-auto mb-1" />
+                                                    <CiLock className="text-cyan-400 font-bold text-2xl mx-auto mb-1" />
                                                     <span className="text-white text-xs block">
-                                                        {isPaidLock ? "Premium Game" : "Copyright Claim"}
+                                                        {isPaidLock ? <span className='text-violet-500'>Premium Game </span> :
+                                                            <span className='text-red-500'>Copyright Claim</span>}
                                                     </span>
-                                                    <span className="text-gray-300 text-xs block mt-1">
-                                                        {isPaidLock
-                                                            ? ""
-                                                            : "Login to access copyrighted content"
-                                                        }
-                                                    </span>
+
                                                 </div>
                                             </div>
                                         )}
