@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../contexts/AuthContext.jsx'; // added
+import { useAuth } from '../../../contexts/AuthContext.jsx';
 import { LuAppWindowMac } from "react-icons/lu";
 import CategorySkeleton from '../../skeletons/CategorySkeleton.jsx';
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 import RandomGame from '../../sidePages/RandomGames/RandomGame';
-
-
 
 // Slugify function (simplified version)
 const slugify = (text = '') => {
@@ -101,9 +99,6 @@ export default function MacGames() {
         };
         fetchData();
     }, [location.search]); // Changed dependency
-
-    // Get loading context (if you have this in React)
-    // const { showSkeleton } = useLoading();
 
     // Function to check if a game is new (within 2 days)
     const isGameNew = (createdAt) => {
@@ -273,45 +268,70 @@ export default function MacGames() {
         return count;
     };
 
+
+
     // Game card component - removed prefetching since React Router doesn't have built-in prefetch
     const GameCard = ({ game = {} }) => {
         const isAdmin = userData?.role === 'ADMIN' || userData?.role === 'MOD' || userData?.role === 'PREMIUM';
         const purchasedGamesFromToken = userData?.purchasedGames || [];
         const isPurchased = purchasedGamesFromToken.includes(game._id);
-        const isUnlocked = isAdmin || !game.isPaid || isPurchased;
 
-        // Create download URL
+        // Updated unlock conditions to include copyrighted games
+        const isUnlocked = isAdmin ||
+            (!game.isPaid && !game.copyrighted) ||
+            (game.isPaid && isPurchased) ||
+            (game.copyrighted && userData);
+
+        // Create download URL with appropriate route
         const downloadUrl = `/download/${createSlug(game.platform)}/${createSlug(game.title)}/${game._id}`;
 
         if (!isUnlocked) {
             // Locked game - render div with lock icon
             return (
-                <div className="relative flex flex-col rounded-xl h-52 overflow-hidden transition-all duration-300 ease-in-out shadow-lg border border-purple-600/20 opacity-90 cursor-not-allowed">
+                <div
+                    className={`relative flex flex-col rounded-xl h-52 overflow-hidden transition-all duration-300 ease-in-out shadow-lg border cursor-not-allowed ${(game.isPaid || game.copyrighted) && !userData
+                        ? 'border-red-500/30 opacity-90'
+                        : 'border-purple-600/20'
+                        }`}
+                    onClick={(e) => handleGameClick(game, e)}
+                >
                     {/* Ambient background elements - always visible */}
                     <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-600 opacity-10 rounded-full blur-xl"></div>
                     <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-600 opacity-10 rounded-full blur-xl"></div>
-                    {/* Subtle overlay gradient for better text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
-                    {/* Lock overlay */}
-                    <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center z-20 bg-black/50">
-                        <div className="bg-black/70 p-3 rounded-full border border-purple-600/30">
+
+                    {/* Lock overlay for paid/copyrighted games when not authenticated */}
+                    {(game.isPaid || game.copyrighted) && !userData && (
+                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-xl z-20 flex flex-col items-center justify-center gap-2">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="34"
-                                height="34"
+                                width="32"
+                                height="32"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                className="text-white"
+                                className="text-red-400"
                             >
-                                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
+                            <span className="text-white font-medium text-sm text-center px-2">
+                                {game.copyrighted ? "Copyright Claim" : "Premium Game"}
+                            </span>
+                            <span className="text-gray-300 text-xs text-center px-4">
+                                {game.copyrighted
+                                    ? "Login to access copyrighted content"
+                                    : "Login to access premium content"
+                                }
+                            </span>
                         </div>
-                    </div>
+                    )}
+
+                    {/* Subtle overlay gradient for better text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+
                     <div className="flex flex-col rounded-xl h-full overflow-hidden">
                         <figure className="flex justify-center items-center rounded-t-xl overflow-hidden h-full">
                             <img
@@ -324,6 +344,7 @@ export default function MacGames() {
                                 }}
                             />
                         </figure>
+
                         {/* Game platform badge */}
                         <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md z-20 border border-purple-600/20">
                             <div className="text-[10px] font-medium text-blue-400 flex items-center">
@@ -331,6 +352,7 @@ export default function MacGames() {
                                 Mac
                             </div>
                         </div>
+
                         {/* NEW badge for games within 2 days */}
                         {isGameNew(game.createdAt) && (
                             <div className="absolute top-2 right-2 z-20">
@@ -349,6 +371,22 @@ export default function MacGames() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Copyright/Premium indicator badge (always visible) */}
+                        {(game.copyrighted || game.isPaid) && (
+                            <div className={`absolute top-10 right-2 z-20 ${game.copyrighted ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-purple-500/20 border-purple-500/50'
+                                } backdrop-blur-sm px-2 py-1 rounded-md border`}>
+                                <div className={`text-[8px] font-medium flex items-center ${game.copyrighted ? 'text-yellow-400' : 'text-purple-400'
+                                    }`}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                    {game.copyrighted ? "Copyright" : "Premium"}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="flex flex-col p-3 bg-gradient-to-br from-[#1E1E1E] to-[#121212] flex-grow relative">
                             {/* Glowing separator line */}
                             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-600/20 to-transparent"></div>
@@ -373,6 +411,7 @@ export default function MacGames() {
                 <a
                     href={downloadUrl}
                     className="block"
+                    onClick={(e) => handleGameClick(game, e)}
                 >
                     <div className="relative flex flex-col rounded-xl h-52 overflow-hidden transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl border border-purple-600/20">
                         {/* Ambient background elements - always visible */}
@@ -417,6 +456,22 @@ export default function MacGames() {
                                     </div>
                                 </div>
                             )}
+
+                            {/* Copyright/Premium indicator badge (always visible) */}
+                            {(game.copyrighted || game.isPaid) && (
+                                <div className={`absolute top-10 right-2 z-20 ${game.copyrighted ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-purple-500/20 border-purple-500/50'
+                                    } backdrop-blur-sm px-2 py-1 rounded-md border`}>
+                                    <div className={`text-[8px] font-medium flex items-center ${game.copyrighted ? 'text-yellow-400' : 'text-purple-400'
+                                        }`}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                        </svg>
+                                        {game.copyrighted ? "Copyright" : "Premium"}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="flex flex-col p-3 bg-gradient-to-br from-[#1E1E1E] to-[#121212] flex-grow relative">
                                 {/* Glowing separator line */}
                                 <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-600/20 to-transparent"></div>
