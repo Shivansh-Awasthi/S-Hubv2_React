@@ -114,13 +114,10 @@ const SearchResults = () => {
     // UPDATED: Platform color function to match header
     const getPlatformColorClass = (platform) => {
         const platformColors = {
-            mac: 'text-blue-400',
-            pc: 'text-green-400',
-            android: 'text-green-500',
-            ps2: 'text-purple-400',
-            ps3: 'text-blue-500',
-            ppsspp: 'text-orange-400',
-            smac: 'text-cyan-400'
+            mac: 'text-blue-600',
+            pc: 'text-red-600',
+            android: 'text-green-600',
+            playstation: 'text-violet-600'
         };
         return platformColors[platform?.toLowerCase()] || 'text-gray-300';
     };
