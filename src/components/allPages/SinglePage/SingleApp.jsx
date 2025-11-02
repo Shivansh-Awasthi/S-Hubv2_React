@@ -57,7 +57,7 @@ const SingleApp = () => {
         }, 1000);
     };
 
-    // Fetch app data client-side
+    // Fetch app data client-side - CHANGED: Try public route first, then protected
     useEffect(() => {
         const fetchAppData = async () => {
             setError(null);
@@ -68,11 +68,11 @@ const SingleApp = () => {
                 const headers = xAuthToken ? { 'X-Auth-Token': xAuthToken } : {};
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                // Try protected route first
+                // Try public route first
                 let res;
                 try {
                     res = await axios.get(
-                        `${import.meta.env.VITE_API_URL}/api/apps/get/${id}/protected`,
+                        `${import.meta.env.VITE_API_URL}/api/apps/get/${id}`,
                         { headers }
                     );
                     if (res.data?.app) {
@@ -80,10 +80,10 @@ const SingleApp = () => {
                         return;
                     }
                 } catch (err) {
-                    // Fallback to public route
+                    // Fallback to protected route if public fails
                     try {
                         res = await axios.get(
-                            `${import.meta.env.VITE_API_URL}/api/apps/get/${id}`,
+                            `${import.meta.env.VITE_API_URL}/api/apps/get/${id}/protected`,
                             { headers }
                         );
                         if (res.data?.app) {
@@ -101,6 +101,35 @@ const SingleApp = () => {
         };
         if (id) fetchAppData();
     }, [id]);
+
+    // NEW: Fetch copyrighted data for logged in users
+    useEffect(() => {
+        const fetchCopyrightedData = async () => {
+            if (data?.copyrighted && userData) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const xAuthToken = import.meta.env.VITE_API_TOKEN;
+                    const headers = xAuthToken ? { 'X-Auth-Token': xAuthToken } : {};
+                    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                    const res = await axios.get(
+                        `${import.meta.env.VITE_API_URL}/api/apps/get/${id}/copyrighted`,
+                        { headers }
+                    );
+                    if (res.data?.app) {
+                        setData(res.data.app);
+                    }
+                } catch (err) {
+                    console.error("Failed to fetch copyrighted data:", err);
+                    // Keep the existing data if copyrighted fetch fails
+                }
+            }
+        };
+
+        if (data?.copyrighted && userData) {
+            fetchCopyrightedData();
+        }
+    }, [data?.copyrighted, userData, id]);
 
     // Robust user data fetching with API + JWT fallback
     const fetchUserData = useCallback(async () => {
@@ -295,6 +324,41 @@ const SingleApp = () => {
                             className="px-6 py-3 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors duration-300"
                         >
                             Go to Home Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // NEW: Show copyrighted lock for non-logged in users
+    if (data?.copyrighted && !userData) {
+        return (
+            <div className="fixed inset-0 flex justify-center items-center z-[2000]" style={{ backdropFilter: 'blur(8px)', background: 'rgba(0,0,0,0.5)' }}>
+                <div className="text-center p-8 bg-gradient-to-br from-[#1E1E1E] to-[#121212] rounded-xl border border-yellow-600/20 max-w-md shadow-2xl" style={{ zIndex: 2001 }}>
+                    <div className="mb-6">
+                        <div className="bg-yellow-500/20 p-4 rounded-full inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <h1 className="text-2xl font-bold text-yellow-400 mb-4">Game Not Available</h1>
+                    <p className="text-gray-300 mb-6">
+                        This game is currently unavailable for download due to <span className='text-red-600 font-bold'>copyright restrictions</span>. Our team has disabled access to this game.
+                    </p>
+                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
+                        >
+                            Go to HomePage
+                        </button>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="px-6 py-3 bg-indigo-700 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors duration-300"
+                        >
+                            Sign up Here
                         </button>
                     </div>
                 </div>
