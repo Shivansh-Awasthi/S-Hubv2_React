@@ -68,11 +68,11 @@ const SingleApp = () => {
                 const headers = xAuthToken ? { 'X-Auth-Token': xAuthToken } : {};
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                // Try public route first
+                // Try protected route first
                 let res;
                 try {
                     res = await axios.get(
-                        `${import.meta.env.VITE_API_URL}/api/apps/get/${id}`,
+                        `${import.meta.env.VITE_API_URL}/api/apps/get/${id}/protected`,
                         { headers }
                     );
                     if (res.data?.app) {
@@ -80,10 +80,10 @@ const SingleApp = () => {
                         return;
                     }
                 } catch (err) {
-                    // Fallback to protected route if public fails
+                    // Fallback to public route if protected fails
                     try {
                         res = await axios.get(
-                            `${import.meta.env.VITE_API_URL}/api/apps/get/${id}/protected`,
+                            `${import.meta.env.VITE_API_URL}/api/apps/get/${id}`,
                             { headers }
                         );
                         if (res.data?.app) {
