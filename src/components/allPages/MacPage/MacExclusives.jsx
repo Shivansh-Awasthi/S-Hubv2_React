@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaApple, FaDownload, FaLock, FaStar, FaCoffee, FaCrown, FaRupeeSign } from "react-icons/fa";
+import { FaApple, FaDownload, FaLock, FaStar, FaCoffee, FaCrown } from "react-icons/fa";
 import EnhancedPagination from '../../Utilities/Pagination/EnhancedPagination';
 import FilterBar from '../../Utilities/Filters/FilterBar';
 import FilterModal from '../../Utilities/Filters/FilterModal';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import CategorySkeleton from '../../skeletons/CategorySkeleton.jsx';
+import { BsCurrencyDollar } from 'react-icons/bs';
 
 
 // Utility function to create URL-friendly slugs
@@ -332,7 +333,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                     {/* Price tag - only visible on hover for locked games */}
                     <div className="absolute top-3 right-3 bg-black/70 px-3 py-1.5 rounded-full z-30 border border-green-500/30 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100">
                         <div className="text-sm font-bold text-green-400 flex items-center">
-                            <FaRupeeSign className="mr-1" />{game.price || '499'}
+                            <BsCurrencyDollar className="mr-1" />{game.price || '499'}
                         </div>
                     </div>
 
@@ -571,7 +572,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                     {/* Contact buttons container */}
                     <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
                         {/* Telegram button */}
-                        <a
+                        {/* <a
                             href="https://t.me/n0t_ur_type"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -581,7 +582,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2zm2.8 14.4c.12 0 .234-.05.318-.134.084-.084.134-.198.134-.318 0-.12-.05-.234-.134-.318-.084-.084-.198-.134-.318-.134H9.2c-.12 0-.234.05-.318.134-.084.084-.134.198-.134.318 0 .12.05.234.134.318.084.084.198.134.318.134h5.6zm-2.8-8.4c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 4.8c-.993 0-1.8-.807-1.8-1.8s.807-1.8 1.8-1.8 1.8.807 1.8 1.8-.807 1.8-1.8 1.8z" />
                             </svg>
                             Buy via Telegram
-                        </a>
+                        </a> */}
 
                         {/* Become a Member button */}
                         <a
@@ -699,7 +700,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                             {/* Contact buttons container */}
                             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
                                 {/* Telegram button */}
-                                <a
+                                {/* <a
                                     href="https://t.me/n0t_ur_type"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -709,7 +710,7 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                                         <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2zm2.8 14.4c.12 0 .234-.05.318-.134.084-.084.134-.198.134-.318 0-.12-.05-.234-.134-.318-.084-.084-.198-.134-.318-.134H9.2c-.12 0-.234.05-.318.134-.084.084-.134.198-.134.318 0 .12.05.234.134.318.084.084.198.134.318.134h5.6zm-2.8-8.4c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 4.8c-.993 0-1.8-.807-1.8-1.8s.807-1.8 1.8-1.8 1.8.807 1.8 1.8-.807 1.8-1.8 1.8z" />
                                     </svg>
                                     Buy via Telegram
-                                </a>
+                                </a> */}
 
                                 {/* Become a Member button */}
                                 <a
