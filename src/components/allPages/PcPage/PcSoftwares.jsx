@@ -300,13 +300,13 @@ export default function PcSoftwares() {
                 name="description"
                 content="Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC."
             />
-            <link rel="canonical" href="https://toxicgames.in/category/pc/softwares" />
+            <link rel="canonical" href="https://toxicgame.net/category/pc/softwares" />
 
             {/* Open Graph / Link preview */}
             <meta property="og:title" content={`Download PC Softwares for Free | ToxicGames`} />
             <meta property="og:description" content={`Explore and download all the best PC softwares for free from ToxicGames. Full Softwares, games,  Pre-Installed , and more for PC.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-            <meta property="og:url" content={`https://toxicgames.in/category/pc/softwares`} />
+            <meta property="og:url" content={`https://toxicgame.net/category/pc/softwares`} />
             <meta property="og:type" content="website" />
 
 

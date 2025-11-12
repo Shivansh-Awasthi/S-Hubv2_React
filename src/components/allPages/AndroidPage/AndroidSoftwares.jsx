@@ -286,12 +286,12 @@ function AndroidSoftwares() {
                 name="description"
                 content="Explore and download all the best Android softwares for free from ToxicGames. Full Softwares, games, Pre-Installed, and more for Android."
             />
-            <link rel="canonical" href="https://toxicgames.in/category/android/softwares" />
+            <link rel="canonical" href="https://toxicgame.net/category/android/softwares" />
             {/* Open Graph / Link preview */}
             <meta property="og:title" content={`Download Android Softwares for Free | ToxicGames`} />
             <meta property="og:description" content={`Explore and download all the best Android softwares for free from ToxicGames. Full Softwares, games, and more for Android.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-            <meta property="og:url" content={`https://toxicgames.in/category/android/softwares`} />
+            <meta property="og:url" content={`https://toxicgame.net/category/android/softwares`} />
             <meta property="og:type" content="website" />
 
 

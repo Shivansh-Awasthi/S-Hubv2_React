@@ -626,12 +626,12 @@ function MacExclusives({ serverData, initialPage = 1 }) {
                 name="description"
                 content="Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games,  Pre-Installed, and more for Mac."
             />
-            <link rel="canonical" href="https://toxicgames.in/category/mac/games" />
+            <link rel="canonical" href="https://toxicgame.net/category/mac/games" />
             {/* Open Graph / Link preview */}
             <meta property="og:title" content={`Purchase our MAC Exclusives Games | ToxicGames`} />
             <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-            <meta property="og:url" content={`https://toxicgames.in/category/mac/games`} />
+            <meta property="og:url" content={`https://toxicgame.net/category/mac/games`} />
             <meta property="og:type" content="website" />
 
 

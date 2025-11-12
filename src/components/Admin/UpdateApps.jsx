@@ -94,7 +94,7 @@ const UpdateApps = () => {
             const fetchApp = async () => {
                 setLoading(true);
                 try {
-                    const apiUrl = import.meta.env.VITE_API_URL || 'https://toxicgames.in';
+                    const apiUrl = import.meta.env.VITE_API_URL || 'https://toxicgame.net';
                     const { data } = await axios.get(`${apiUrl}/api/apps/get/${appId}`,
                         {
                             headers: {

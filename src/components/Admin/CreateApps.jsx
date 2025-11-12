@@ -192,7 +192,7 @@ const CreateApps = () => {
         });
 
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://toxicgames.in';
+            const apiUrl = import.meta.env.VITE_API_URL || 'https://toxicgame.net';
 
             await axios.post(`${apiUrl}/api/apps/admin/create`, formData, {
                 headers: {

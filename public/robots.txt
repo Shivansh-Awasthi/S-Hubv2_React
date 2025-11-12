@@ -5,4 +5,4 @@ Allow: /gamepage
 Allow: /sitemapindex.xml
 Allow: /sitemap.xml
 Allow: /
-Sitemap: https://toxicgames.in/sitemapindex.xml
+Sitemap: https://toxicgame.net/sitemapindex.xml

@@ -2,12 +2,12 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <!--  Backend sitemap for dynamic content  -->
 <sitemap>
-<loc>https://backend.toxicgames.in/sitemap.xml</loc>
+<loc>https://backend.toxicgame.net/sitemap.xml</loc>
 <lastmod>2024-10-16</lastmod>
 </sitemap>
 <!--  Frontend sitemap for static routes  -->
 <sitemap>
-<loc>https://toxicgames.in/sitemap.xml</loc>
+<loc>https://toxicgame.net/sitemap.xml</loc>
 <lastmod>2024-10-16</lastmod>
 </sitemap>
 </sitemapindex>

@@ -310,13 +310,13 @@ function Ps3Iso() {
                 name="description"
                 content="Explore and download all the best PS3 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 3."
             />
-            <link rel="canonical" href="https://toxicgames.in/category/ps3/iso" />
+            <link rel="canonical" href="https://toxicgame.net/category/ps3/iso" />
 
             {/* Open Graph / Link preview */}
             <meta property="og:title" content={`Download PS3 Games Free | ToxicGames`} />
             <meta property="og:description" content={`Explore and download all the best PS3 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 3.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
-            <meta property="og:url" content={`https://toxicgames.in/category/ps3/iso`} />
+            <meta property="og:url" content={`https://toxicgame.net/category/ps3/iso`} />
             <meta property="og:type" content="website" />
 
 

@@ -60,10 +60,10 @@ const GamePage = () => {
                                 "@type": "Game",
                                 "name": ele.title,
                                 "platform": ele.platform,
-                                "url": `https://toxicgames.in/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`,
+                                "url": `https://toxicgame.net/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`,
                                 "description": ele.description,
                                 "image": ele.coverImg,
-                                "downloadUrl": `https://toxicgames.in/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`,
+                                "downloadUrl": `https://toxicgame.net/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`,
                                 "datePublished": ele.createdAt,
                                 "size": ele.size,
                                 "price": ele.isPaid ? `₹${ele.price}` : "Free",
@@ -78,12 +78,12 @@ const GamePage = () => {
                     />
                     <br /><br />
                     <noscript>
-                        <a href={`https://toxicgames.in/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`} className="download-link">
+                        <a href={`https://toxicgame.net/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`} className="download-link">
                             Download {ele.title} for {ele.platform}
                         </a>
                     </noscript>
                     <div className="download-links">
-                        <a href={`https://toxicgames.in/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`} target="_blank" rel="noopener noreferrer">
+                        <a href={`https://toxicgame.net/download/${sanitizeTitle(ele.platform)}/${sanitizeTitle(ele.title)}/${ele._id}`} target="_blank" rel="noopener noreferrer">
                             Download {ele.title} for {ele.platform}
                         </a>
                     </div>

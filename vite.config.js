@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
     preview: {
       host: '0.0.0.0',                  // allow access from outside
       port: 8080,                       // must match your aaPanel config
-      allowedHosts: ['toxicgames.in'], // ✅ allow your domain
+      allowedHosts: ['toxicgame.net'], // ✅ allow your domain
     },
   }
 })

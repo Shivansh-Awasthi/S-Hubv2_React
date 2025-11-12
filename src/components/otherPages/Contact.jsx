@@ -21,7 +21,7 @@ const Contacts = () => {
         },
         {
             question: "Information for copyright holders (DMCA)",
-            answer: `If you are the copyright holder of materials posted on our site and believe your rights have been violated, please send a detailed request to our Administration at <a class="text-blue-400 hover:text-blue-300 transition-colors font-medium" href="mailto:support@toxicgames.in">support@toxicgames.in</a> with comprehensive evidence of ownership.
+            answer: `If you are the copyright holder of materials posted on our site and believe your rights have been violated, please send a detailed request to our Administration at <a class="text-blue-400 hover:text-blue-300 transition-colors font-medium" href="mailto:support@toxicgame.net">support@toxicgame.net</a> with comprehensive evidence of ownership.
         <br /><br />
         Your request will be reviewed within 5 business days. We are committed to resolving all disputes through pre-trial settlement procedures in accordance with applicable laws.`,
             icon: (
@@ -85,10 +85,10 @@ const Contacts = () => {
                             <div>
                                 <h3 className="text-xl font-semibold text-gray-100 mb-2">Email Support</h3>
                                 <a
-                                    href="mailto:support@toxicgames.in"
+                                    href="mailto:support@toxicgame.net"
                                     className="text-cyan-400 hover:text-cyan-300 transition-colors text-lg"
                                 >
-                                    support@toxicgames.in
+                                    support@toxicgame.net
                                 </a>
                                 <p className="text-gray-400 mt-2">For general inquiries and support requests</p>
                             </div>

@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Homepage -->
   <url>
-    <loc>https://toxicgames.in/</loc>
+    <loc>https://toxicgame.net/</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -11,37 +11,37 @@
   <!-- Category Pages -->
   <!-- Mac Games -->
   <url>
-    <loc>https://toxicgames.in/category/mac/games</loc>
+    <loc>https://toxicgame.net/category/mac/games</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games?page=1</loc>
+    <loc>https://toxicgame.net/category/mac/games?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games?page=2</loc>
+    <loc>https://toxicgame.net/category/mac/games?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games?page=3</loc>
+    <loc>https://toxicgame.net/category/mac/games?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games?page=4</loc>
+    <loc>https://toxicgame.net/category/mac/games?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games?page=5</loc>
+    <loc>https://toxicgame.net/category/mac/games?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -49,25 +49,25 @@
 
   <!-- Mac Premium Games -->
   <url>
-    <loc>https://toxicgames.in/category/mac/games/exclusive</loc>
+    <loc>https://toxicgame.net/category/mac/games/exclusive</loc>
     <lastmod>2024-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games/exclusive?page=1</loc>
+    <loc>https://toxicgame.net/category/mac/games/exclusive?page=1</loc>
     <lastmod>2024-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games/exclusive?page=2</loc>
+    <loc>https://toxicgame.net/category/mac/games/exclusive?page=2</loc>
     <lastmod>2024-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/games/exclusive?page=3</loc>
+    <loc>https://toxicgame.net/category/mac/games/exclusive?page=3</loc>
     <lastmod>2024-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -75,37 +75,37 @@
 
   <!-- Mac Software -->
   <url>
-    <loc>https://toxicgames.in/category/mac/softwares</loc>
+    <loc>https://toxicgame.net/category/mac/softwares</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/softwares?page=1</loc>
+    <loc>https://toxicgame.net/category/mac/softwares?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/softwares?page=2</loc>
+    <loc>https://toxicgame.net/category/mac/softwares?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/softwares?page=3</loc>
+    <loc>https://toxicgame.net/category/mac/softwares?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/softwares?page=4</loc>
+    <loc>https://toxicgame.net/category/mac/softwares?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/mac/softwares?page=5</loc>
+    <loc>https://toxicgame.net/category/mac/softwares?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -113,37 +113,37 @@
 
   <!-- PC Games -->
   <url>
-    <loc>https://toxicgames.in/category/pc/games</loc>
+    <loc>https://toxicgame.net/category/pc/games</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/games?page=1</loc>
+    <loc>https://toxicgame.net/category/pc/games?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/games?page=2</loc>
+    <loc>https://toxicgame.net/category/pc/games?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/games?page=3</loc>
+    <loc>https://toxicgame.net/category/pc/games?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/games?page=4</loc>
+    <loc>https://toxicgame.net/category/pc/games?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/games?page=5</loc>
+    <loc>https://toxicgame.net/category/pc/games?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -151,37 +151,37 @@
 
   <!-- PC Software -->
   <url>
-    <loc>https://toxicgames.in/category/pc/softwares</loc>
+    <loc>https://toxicgame.net/category/pc/softwares</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/softwares?page=1</loc>
+    <loc>https://toxicgame.net/category/pc/softwares?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/softwares?page=2</loc>
+    <loc>https://toxicgame.net/category/pc/softwares?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/softwares?page=3</loc>
+    <loc>https://toxicgame.net/category/pc/softwares?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/softwares?page=4</loc>
+    <loc>https://toxicgame.net/category/pc/softwares?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/pc/softwares?page=5</loc>
+    <loc>https://toxicgame.net/category/pc/softwares?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -189,37 +189,37 @@
 
   <!-- Android Games -->
   <url>
-    <loc>https://toxicgames.in/category/android/games</loc>
+    <loc>https://toxicgame.net/category/android/games</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/games?page=1</loc>
+    <loc>https://toxicgame.net/category/android/games?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/games?page=2</loc>
+    <loc>https://toxicgame.net/category/android/games?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/games?page=3</loc>
+    <loc>https://toxicgame.net/category/android/games?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/games?page=4</loc>
+    <loc>https://toxicgame.net/category/android/games?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/games?page=5</loc>
+    <loc>https://toxicgame.net/category/android/games?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -227,37 +227,37 @@
 
   <!-- Android Software -->
   <url>
-    <loc>https://toxicgames.in/category/android/softwares</loc>
+    <loc>https://toxicgame.net/category/android/softwares</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/softwares?page=1</loc>
+    <loc>https://toxicgame.net/category/android/softwares?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/softwares?page=2</loc>
+    <loc>https://toxicgame.net/category/android/softwares?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/softwares?page=3</loc>
+    <loc>https://toxicgame.net/category/android/softwares?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/softwares?page=4</loc>
+    <loc>https://toxicgame.net/category/android/softwares?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/android/softwares?page=5</loc>
+    <loc>https://toxicgame.net/category/android/softwares?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -266,37 +266,37 @@
   <!-- PlayStation Category Pages -->
   <!-- PS2 ISO Games -->
   <url>
-    <loc>https://toxicgames.in/category/ps2/iso</loc>
+    <loc>https://toxicgame.net/category/ps2/iso</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps2/iso?page=1</loc>
+    <loc>https://toxicgame.net/category/ps2/iso?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps2/iso?page=2</loc>
+    <loc>https://toxicgame.net/category/ps2/iso?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps2/iso?page=3</loc>
+    <loc>https://toxicgame.net/category/ps2/iso?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps2/iso?page=4</loc>
+    <loc>https://toxicgame.net/category/ps2/iso?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps2/iso?page=5</loc>
+    <loc>https://toxicgame.net/category/ps2/iso?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -304,37 +304,37 @@
 
   <!-- PS3 ISO Games -->
   <url>
-    <loc>https://toxicgames.in/category/ps3/iso</loc>
+    <loc>https://toxicgame.net/category/ps3/iso</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps3/iso?page=1</loc>
+    <loc>https://toxicgame.net/category/ps3/iso?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps3/iso?page=2</loc>
+    <loc>https://toxicgame.net/category/ps3/iso?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps3/iso?page=3</loc>
+    <loc>https://toxicgame.net/category/ps3/iso?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps3/iso?page=4</loc>
+    <loc>https://toxicgame.net/category/ps3/iso?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps3/iso?page=5</loc>
+    <loc>https://toxicgame.net/category/ps3/iso?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -342,37 +342,37 @@
 
   <!-- PS4 ISO Games -->
   <url>
-    <loc>https://toxicgames.in/category/ps4/iso</loc>
+    <loc>https://toxicgame.net/category/ps4/iso</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps4/iso?page=1</loc>
+    <loc>https://toxicgame.net/category/ps4/iso?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps4/iso?page=2</loc>
+    <loc>https://toxicgame.net/category/ps4/iso?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps4/iso?page=3</loc>
+    <loc>https://toxicgame.net/category/ps4/iso?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps4/iso?page=4</loc>
+    <loc>https://toxicgame.net/category/ps4/iso?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ps4/iso?page=5</loc>
+    <loc>https://toxicgame.net/category/ps4/iso?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -380,37 +380,37 @@
 
   <!-- PPSSPP ISO Games -->
   <url>
-    <loc>https://toxicgames.in/category/ppsspp/iso</loc>
+    <loc>https://toxicgame.net/category/ppsspp/iso</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ppsspp/iso?page=1</loc>
+    <loc>https://toxicgame.net/category/ppsspp/iso?page=1</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ppsspp/iso?page=2</loc>
+    <loc>https://toxicgame.net/category/ppsspp/iso?page=2</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ppsspp/iso?page=3</loc>
+    <loc>https://toxicgame.net/category/ppsspp/iso?page=3</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ppsspp/iso?page=4</loc>
+    <loc>https://toxicgame.net/category/ppsspp/iso?page=4</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/category/ppsspp/iso?page=5</loc>
+    <loc>https://toxicgame.net/category/ppsspp/iso?page=5</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -418,37 +418,37 @@
 
   <!-- Other Pages -->
   <url>
-    <loc>https://toxicgames.in/search</loc>
+    <loc>https://toxicgame.net/search</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/faq</loc>
+    <loc>https://toxicgame.net/faq</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/copyright-holders</loc>
+    <loc>https://toxicgame.net/copyright-holders</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/contacts</loc>
+    <loc>https://toxicgame.net/contacts</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/donate</loc>
+    <loc>https://toxicgame.net/donate</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toxicgames.in/policy</loc>
+    <loc>https://toxicgame.net/policy</loc>
     <lastmod>2024-10-16</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>

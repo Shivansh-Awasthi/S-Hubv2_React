@@ -381,7 +381,7 @@ const SingleApp = () => {
                 name="keywords"
                 content={`${data?.title}, ${data?.platform} games, free download, ToxicGames, ${data?.category?.name || ''}, ${data?.architecture || ''}`}
             />
-            <link rel="canonical" href={`https://toxicgames.in/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
+            <link rel="canonical" href={`https://toxicgame.net/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
 
             {/* Open Graph / Social Media */}
             <meta property="og:title" content={`Download ${data?.title} for ${data?.platform} Free | ToxicGames`} />
@@ -390,7 +390,7 @@ const SingleApp = () => {
                 content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Available now at ToxicGames.`}`}
             />
             <meta property="og:image" content={data?.coverImg || data?.thumbnail?.[1] || data?.thumbnail?.[0] || "https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png"} />
-            <meta property="og:url" content={`https://toxicgames.in/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
+            <meta property="og:url" content={`https://toxicgame.net/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
             <meta property="og:type" content="website" />
             <meta property="og:site_name" content="ToxicGames" />
 
@@ -753,7 +753,7 @@ const SingleApp = () => {
                                             <p className="text-sm sm:text-base text-gray-200">1. Run the downloaded image and drag the application to the Applications folder shortcut.</p>
                                             <p className="text-sm sm:text-base text-gray-200">2. Once copying is complete, the application can be launched via Launchpad.</p>
                                             <div className="bg-black/30 p-4 rounded-lg mt-4 border-l-2 border-yellow-500">
-                                                <p className='text-white text-sm'>If the application shows <span className='text-yellow-400 font-medium'>"The app is damaged and can't be opened. You should move it to the bin"</span> then visit our <a className='text-blue-400 hover:text-blue-300 transition-colors font-medium' href="https://toxicgames.in/faq">FAQ </a>page and refer that video.</p>
+                                                <p className='text-white text-sm'>If the application shows <span className='text-yellow-400 font-medium'>"The app is damaged and can't be opened. You should move it to the bin"</span> then visit our <a className='text-blue-400 hover:text-blue-300 transition-colors font-medium' href="https://toxicgame.net/faq">FAQ </a>page and refer that video.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -784,8 +784,8 @@ const SingleApp = () => {
                                 <div>
                                     <div>
                                         <h2 className="mt-3 text-[#8E8E8E] hover:underline text-lg sm:text-xl">Software MAC</h2>
-                                        <p className="mt-1 text-sm sm:text-base">Follow the instructions to mount the image, then drag the application to the Applications folder.</p>
-                                        <p className="text-sm sm:text-base">This version may require additional configurations for certain users.</p>
+                                        <p className="mt-1 text-sm sm:text-base text-blue-500">Follow the instructions to mount the image, then drag the application to the Applications folder.</p>
+                                        <p className="text-sm sm:text-base text-white">This version may require additional configurations for certain users.</p>
                                     </div>
 
                                     {/* Check if announcement is not empty */}
@@ -798,7 +798,7 @@ const SingleApp = () => {
                                 <div>
                                     <div>
                                         <h2 className="mt-3 text-[#8E8E8E] hover:underline text-lg sm:text-xl">PC</h2>
-                                        <p className="mt-1 text-sm sm:text-base">Game is pre-installed / portable, therefore you do not need to install the game.</p>
+                                        <p className="mt-1 text-sm sm:text-bas text-white">Game is pre-installed / portable, therefore you do not need to install the game.</p>
                                         <p className='text-green-500 text-base'>Just extract the <span className='text-yellow-500'>rar / zip file</span> and lauch the game directly from it's  <span className='text-yellow-500'>exe</span>.</p>
                                     </div>
 
@@ -821,8 +821,8 @@ const SingleApp = () => {
                                 <div>
                                     <div>
                                         <h2 className="mt-3 text-[#8E8E8E] hover:underline text-lg sm:text-xl">Android</h2>
-                                        <p className="mt-1 text-sm sm:text-base">Install the APK directly on your Android device.</p>
-                                        <p className="text-sm sm:text-base">Ensure that you have enabled installation from unknown sources in your device settings.</p>
+                                        <p className="mt-1 text-sm sm:text-base text-green-600">Install the APK directly on your Android device.</p>
+                                        <p className="text-sm sm:text-base text-white">Ensure that you have enabled installation from unknown sources in your device settings.</p>
                                     </div>
 
                                     {/* Check if announcement is not empty */}
@@ -834,8 +834,8 @@ const SingleApp = () => {
                             {data.category?.name === 'sandroid' && (
                                 <>
                                     <h2 className="mt-3 text-[#8E8E8E] hover:underline text-lg sm:text-xl">Android</h2>
-                                    <p className="mt-1 text-sm sm:text-base">Install the APK directly on your Android device.</p>
-                                    <p className="text-sm sm:text-base">Ensure that you have enabled installation from unknown sources in your device settings.</p>
+                                    <p className="mt-1 text-sm sm:text-base text-yellow-600">Install the APK directly on your Android device.</p>
+                                    <p className="text-sm sm:text-base text-white">Ensure that you have enabled installation from unknown sources in your device settings.</p>
                                 </>
                             )}
 
@@ -844,7 +844,7 @@ const SingleApp = () => {
                                 <div>
                                     <div>
                                         <h2 className="mt-3 text-[#8E8E8E] hover:underline text-lg sm:text-xl">PlayStation</h2>
-                                        <p className="mt-1 text-sm sm:text-base">For PlayStation, follow the platform-specific instructions to install or load the game on your console.</p>
+                                        <p className="mt-1 text-sm sm:text-base text-white">For PlayStation, follow the platform-specific instructions to install or load the game on your console.</p>
                                         <p className="text-sm sm:text-base text-yellow-300">To run these on PC, download the appropriate versions of Emulators <a className='text-blue-600 hover:underline' href='https://www.ppsspp.org/download/' target='_blank' rel="noopener noreferrer">PPSSPP</a>, <a className='text-blue-600 hover:underline' href='https://pcsx2.net/' target='_blank' rel="noopener noreferrer">PCSX2</a>, or <a className='text-blue-600 hover:underline' href='https://rpcs3.net/download' target='_blank' rel="noopener noreferrer">RPCS3</a>, and enjoy your gameplay!</p>
                                     </div>
                                     {/* Check if announcement is not empty */}
