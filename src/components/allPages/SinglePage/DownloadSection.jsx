@@ -5,7 +5,7 @@ import React from 'react';
 const platformConfig = {
     Mac: [
         { label: "Viking File" },
-        { label: "OneDrive" },
+        { label: "Data Vaults" },
         { label: "Torrent" },
         { label: "Buzzheavier" },
         { label: "Mediafire" },
@@ -15,7 +15,7 @@ const platformConfig = {
         { label: "Viking File ", custom: (<span className='text-[#55ff00]'>(Pre-Installed)</span>) },
         { label: "Buzzheavier ", custom: (<span className='text-[#55ff00]'>(Pre-Installed)</span>) },
         { label: "FuckingFast ", custom: (<span className='text-[#55ff00]'>(Pre-Installed)</span>) },
-        { label: "Bzzhr.co ", custom: (<span className='text-[#55ff00]'>(Pre-Installed)</span>) },
+        { label: "Data Vaults", custom: (<span className='text-[#55ff00]'>(Pre-Installed)</span>) },
         { label: "Buzzheavier ", custom: (<span className='text-[#55ff00]'>(Pre-Installed)</span>) },
         { label: "AkiraBox ", custom: (<span className='text-[#55ff00]'>(Pre-Installed)</span>) }
     ],
@@ -29,7 +29,7 @@ const platformConfig = {
     Playstation: [
         { label: "Buzzheavier" },
         { label: "FuckingFast" },
-        { label: "Bzzhr.co" },
+        { label: "Data Vaults" },
         { label: "Viking File" },
         { label: "AkiraBox" }
     ]

@@ -257,9 +257,9 @@ const CreateApps = () => {
 
     const downloadLinkLabelsAndPlaceholders = [
         { label: "Viking File (Mac) // VikingFile (PC)", placeholder: "Enter the VikingFile link" },
-        { label: "OneDrive (Mac) // Buzzheavier (PC)", placeholder: "Enter the Buzzheavier link" },
+        { label: "Data Vaults (Mac) // Buzzheavier (PC)", placeholder: "Enter the Buzzheavier link" },
         { label: "Torrent (Mac) // FuckingFast (PC)", placeholder: "Enter the Torrent link" },
-        { label: "BuzzHeavier (Mac) // Bzzhr.co (PC)", placeholder: "Enter other download link" },
+        { label: "BuzzHeavier (Mac) // Data Vaults (PC)", placeholder: "Enter other download link" },
         { label: "MediaFire Link (Mac) // Buzzheavier (PC)", placeholder: "Enter Mediafire link" },
         { label: "Akira Box Link (Mac, PC)", placeholder: "Enter AkiraBox link" }
     ];
