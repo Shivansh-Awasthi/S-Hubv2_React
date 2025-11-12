@@ -8,7 +8,6 @@ import LoadingSkeleton from './LoadingSkeleton';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import CommentBox from '../../CommentBox/CommentBox';
-import DownloadAd from '../../Ads/DownloadAd';
 
 const SingleApp = () => {
     // Get parameters from React Router instead of Next.js props
