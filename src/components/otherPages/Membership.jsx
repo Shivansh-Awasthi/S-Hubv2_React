@@ -20,7 +20,35 @@ const Membership = () => {
                         Become a member to access all exclusive games and premium features
                     </p>
                     <p className='text-red-400 max-w-2xl mx-auto text-sm mt-2'>Note: Only one time Payment</p>
+
+                    {/* Heartwarming message section */}
+                    <div className="mt-8 text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                        <p className="mb-4">
+                            Hello everyone, the site <span className="font-semibold text-red-600">ToxicGames</span> is going through a big change.
+                            I just want to take a moment to thank each and every one of you for the beautiful journey we’ve shared.
+                            With all your support and enthusiasm, this site has thrived and grown far beyond what I ever imagined.
+                        </p>
+                        <p className="mb-4">
+                            Unfortunately, I won’t be continuing to run the site due to several reasons.
+                            However, for those who have <span className="font-semibold text-violet-400">memberships or purchased games</span>,
+                            don’t worry — your access will remain <span className="font-semibold text-amber-400">locked in for another year </span>
+                            as per our agreement.
+                        </p>
+                        <p className="mb-4">
+                            The new host will now rely on ads to keep the site running, and while I’m no longer actively managing things,
+                            I’m still in touch with many of our wonderful supporters. I’ll do my best to help whenever possible.
+                        </p>
+                        <p className="mt-6 text-pink-500 font-semibold">
+                            Thank you for this beautiful journey. From now on, all games will be free for everyone to enjoy —
+                            and our PREMIUM members will continue to receive <span className="underline">early weekly access </span>
+                            to new releases.
+                        </p>
+                        <p className="mt-4 italic text-gray-400">With gratitude,
+                            <br />— VenomX 💛
+                        </p>
+                    </div>
                 </div>
+
 
                 {/* Benefits Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
@@ -112,12 +140,12 @@ const Membership = () => {
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center text-2xl font-bold text-purple-400">
                                         <FaRupeeSign className="mr-1" />
-                                        1999
+                                        1299
                                     </div>
                                     <div className="text-gray-400">|</div>
                                     <div className="flex items-center text-2xl font-bold text-purple-400">
                                         <FaDollarSign className="mr-1" />
-                                        30
+                                        20
                                     </div>
                                 </div>
                                 <div className="text-gray-400 mt-1">one-time payment</div>
@@ -159,7 +187,7 @@ const Membership = () => {
                             <p className="text-gray-400">
                                 You'll receive an activation code via{" "}
                                 <a
-                                    href="https://t.me/n0t_ur_type"
+                                    // href=""
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-400 hover:text-blue-300 underline"
