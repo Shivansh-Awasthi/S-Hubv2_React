@@ -103,6 +103,14 @@ const SingleApp = () => {
         if (id) fetchAppData();
     }, [id]);
 
+    useEffect(() => {
+        if (data?.title && data?.platform) {
+            document.title = `Download ${data.title} for ${data.platform} Free | ToxicGames`;
+        } else {
+            document.title = "ToxicGames – Download Free Games";
+        }
+    }, [data]);
+
     // NEW: Fetch copyrighted data for logged in users
     useEffect(() => {
         const fetchCopyrightedData = async () => {
@@ -370,8 +378,6 @@ const SingleApp = () => {
     return (
 
         <div>
-
-
             <title>Download {data?.title} for {data?.platform} Free | ToxicGames</title>
             <meta
                 name="description"
