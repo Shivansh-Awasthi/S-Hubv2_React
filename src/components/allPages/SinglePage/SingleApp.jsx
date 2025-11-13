@@ -647,7 +647,7 @@ const SingleApp = () => {
                                 onClick={() => {
                                     // Open the ad link in a new tab
                                     window.open(
-                                        "https://qbootarr.cfd/?hash=<?php echo substr(md5(microtime()),0,rand(10,30));?>&z=117",
+                                        "https://krtahnyarkch.icu/direct/?hash=bf8229696f7a3bb4700cfddef19fa23f&user=174",
                                         "_blank",
                                         "noopener,noreferrer"
                                     );
