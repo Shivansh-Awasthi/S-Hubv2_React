@@ -104,9 +104,9 @@ const SingleApp = () => {
 
     useEffect(() => {
         if (data?.title && data?.platform) {
-            document.title = `Download ${data.title} for ${data.platform} Free | ToxicGames`;
+            document.title = `Download ${data.title} for ${data.platform} Free | ToxicGame`;
         } else {
-            document.title = "ToxicGames – Download Free Games";
+            document.title = "ToxicGame – Download Free Games";
         }
     }, [data]);
 
@@ -377,32 +377,32 @@ const SingleApp = () => {
     return (
 
         <div>
-            <title>Download {data?.title} for {data?.platform} Free | ToxicGames</title>
+            <title>Download {data?.title} for {data?.platform} Free | ToxicGame</title>
             <meta
                 name="description"
-                content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Get ${data?.title} and enjoy this ${data?.platform} game at ToxicGames.`}`}
+                content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Get ${data?.title} and enjoy this ${data?.platform} game at ToxicGame.`}`}
             />
             <meta
                 name="keywords"
-                content={`${data?.title}, ${data?.platform} games, free download, ToxicGames, ${data?.category?.name || ''}, ${data?.architecture || ''}`}
+                content={`${data?.title}, ${data?.platform} games, free download, ToxicGame, ${data?.category?.name || ''}, ${data?.architecture || ''}`}
             />
             <link rel="canonical" href={`https://toxicgame.net/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
 
             {/* Open Graph / Social Media */}
-            <meta property="og:title" content={`Download ${data?.title} for ${data?.platform} Free | ToxicGames`} />
+            <meta property="og:title" content={`Download ${data?.title} for ${data?.platform} Free | ToxicGame`} />
             <meta
                 property="og:description"
-                content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Available now at ToxicGames.`}`}
+                content={`Download ${data?.title} for ${data?.platform} for free. ${data?.description ? data.description.substring(0, 160) : `Available now at ToxicGame.`}`}
             />
             <meta property="og:image" content={data?.coverImg || data?.thumbnail?.[1] || data?.thumbnail?.[0] || "https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png"} />
             <meta property="og:url" content={`https://toxicgame.net/download/${data?.platform?.toLowerCase()}/${slugify(data?.title)}/${data?._id}`} />
             <meta property="og:type" content="website" />
-            <meta property="og:site_name" content="ToxicGames" />
+            <meta property="og:site_name" content="ToxicGame" />
 
 
             {/* Additional SEO */}
             <meta name="robots" content="index, follow" />
-            <meta name="author" content="ToxicGames" />
+            <meta name="author" content="ToxicGame" />
 
             {/* Structured Data / Schema.org */}
             <script type="application/ld+json">
@@ -418,7 +418,7 @@ const SingleApp = () => {
                     "dateModified": data?.updatedAt,
                     "author": {
                         "@type": "Organization",
-                        "name": "ToxicGames"
+                        "name": "ToxicGame"
                     },
                     "offers": {
                         "@type": "Offer",

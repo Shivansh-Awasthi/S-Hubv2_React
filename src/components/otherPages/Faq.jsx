@@ -74,7 +74,7 @@ const Faq = () => {
                         Frequently Asked Questions
                     </h1>
                     <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-                        Find answers to common questions about downloading, installing, and troubleshooting games from ToxicGames.
+                        Find answers to common questions about downloading, installing, and troubleshooting games from ToxicGame.
                     </p>
                 </div>
 

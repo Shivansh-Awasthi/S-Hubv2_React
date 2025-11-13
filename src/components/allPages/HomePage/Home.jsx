@@ -119,15 +119,15 @@ const HomeClient = () => {
         <div>
 
 
-            <title>Download Free Games and Softwares for Mac, PC & More | ToxicGames</title>
+            <title>Download Free Games and Softwares for Mac, PC & More | ToxicGame</title>
             <meta
                 name="description"
-                content="Discover and download a wide range of free games, cracked software, and mods for Mac, PC, and more at ToxicGames. Enjoy your favorite games easily!"
+                content="Discover and download a wide range of free games, cracked software, and mods for Mac, PC, and more at ToxicGame. Enjoy your favorite games easily!"
             />
             <link rel="canonical" href="https://toxicgame.net/" />
             {/* Open Graph / Link preview */}
-            <meta property="og:title" content={`Download Free Games and Softwares for Mac, PC & More | ToxicGames`} />
-            <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGames. Full Softwares, games, and more for Mac.`} />
+            <meta property="og:title" content={`Download Free Games and Softwares for Mac, PC & More | ToxicGame`} />
+            <meta property="og:description" content={`Explore and download all the best Mac games for free from ToxicGame. Full Softwares, games, and more for Mac.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
             <meta property="og:url" content={`https://toxicgame.net/`} />
             <meta property="og:type" content="website" />

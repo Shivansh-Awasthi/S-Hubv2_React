@@ -233,7 +233,7 @@ const SpecificUserComments = () => {
                             <Link to="/faq" className="hover:text-cyan-400 transition-colors">FAQ</Link>
                         </div>
                         <p className="text-gray-500 text-sm">
-                            © {new Date().getFullYear()} ToxicGames. All rights reserved.
+                            © {new Date().getFullYear()} ToxicGame. All rights reserved.
                         </p>
                     </div>
                 </div>
@@ -334,8 +334,8 @@ const SpecificUserComments = () => {
 
                                             {/* Comment Text */}
                                             <div className={`text-base mb-4 leading-relaxed ${isImageContent(comment.content)
-                                                    ? 'text-blue-400 font-medium'
-                                                    : 'text-gray-300'
+                                                ? 'text-blue-400 font-medium'
+                                                : 'text-gray-300'
                                                 }`}>
                                                 {isImageContent(comment.content) ? (
                                                     <div className="flex items-center">

@@ -24,14 +24,14 @@ const Membership = () => {
                     {/* Heartwarming message section */}
                     <div className="mt-8 text-gray-300 max-w-3xl mx-auto leading-relaxed">
                         <p className="mb-4">
-                            Hello everyone, the site <span className="font-semibold text-red-600">ToxicGames</span> is going through a big change.
+                            Hello everyone, the site <span className="font-semibold text-red-600">ToxicGame</span> is going through a big change.
                             I just want to take a moment to thank each and every one of you for the beautiful journey we’ve shared.
                             With all your support and enthusiasm, this site has thrived and grown far beyond what I ever imagined.
                         </p>
                         <p className="mb-4">
                             Unfortunately, I won’t be continuing to run the site due to several reasons.
                             However, for those who have <span className="font-semibold text-violet-400">memberships or purchased games</span>,
-                            don’t worry — your access will remain <span className="font-semibold text-amber-400">locked in for another year </span>
+                            don’t worry — your access will remain <span className="font-semibold text-amber-400">and the Premium Games were locked in for another year </span>
                             as per our agreement.
                         </p>
                         <p className="mb-4">
@@ -118,7 +118,7 @@ const Membership = () => {
                                 ))}
                             </ul>
                             <a
-                                href="https://ko-fi.com/toxicgames"
+                                href="https://ko-fi.com/ToxicGame"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center justify-center w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-medium rounded-lg hover:from-amber-700 hover:to-amber-800 transition-all"
@@ -167,7 +167,7 @@ const Membership = () => {
                                 ))}
                             </ul>
                             <a
-                                href="https://ko-fi.com/toxicgames"
+                                href="https://ko-fi.com/ToxicGame"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center justify-center w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all"

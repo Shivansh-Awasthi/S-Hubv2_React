@@ -109,7 +109,7 @@ const Dmca = () => {
                         <Link to="/faq" className="hover:text-cyan-400 transition-colors">FAQ</Link>
                     </div>
                     <p className="text-gray-500 text-sm">
-                        © {new Date().getFullYear()} ToxicGames. All rights reserved.
+                        © {new Date().getFullYear()} ToxicGame. All rights reserved.
                     </p>
                 </div>
             </div>

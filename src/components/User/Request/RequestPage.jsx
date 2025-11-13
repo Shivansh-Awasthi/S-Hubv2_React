@@ -17,7 +17,7 @@ function MemberOnlyCard() {
                             <div className="group relative">
                                 <div className="absolute inset-0 rounded-full blur-2xl bg-gradient-to-r from-blue-500/40 to-indigo-500/40 animate-pulse group-hover:from-blue-600/40 group-hover:to-indigo-600/40 transition-all duration-300"></div>
                                 <div className="relative w-32 h-32 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 group-hover:from-blue-600 group-hover:to-indigo-700 shadow-xl p-4 transition-all duration-300">
-                                    <img src="https://i.postimg.cc/9fxCdJDc/image-removebg-preview.png" alt="ToxicGames" className="w-24 h-24 object-contain transform group-hover:scale-110 transition-transform duration-300" />
+                                    <img src="https://i.postimg.cc/9fxCdJDc/image-removebg-preview.png" alt="ToxicGame" className="w-24 h-24 object-contain transform group-hover:scale-110 transition-transform duration-300" />
                                 </div>
                             </div>
                         </div>

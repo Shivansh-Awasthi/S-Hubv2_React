@@ -47,7 +47,7 @@ const GamePage = () => {
             {Array.isArray(data) ? data.map((ele) => (
                 <div key={ele._id}>
                     <Helmet>
-                        <title>{ele.title} for {ele.platform} | Toxic Games</title>
+                        <title>{ele.title} for {ele.platform} | Toxic Game</title>
                         <meta name="description" content={ele.description} />
                         <meta
                             name="keywords"

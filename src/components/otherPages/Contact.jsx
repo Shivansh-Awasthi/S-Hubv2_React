@@ -67,7 +67,7 @@ const Contacts = () => {
             <div className={`max-w-4xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 mb-4">
-                        Contact ToxicGames
+                        Contact ToxicGame
                     </h1>
                     <p className="text-lg text-gray-400 max-w-2xl mx-auto">
                         Get support, report issues, or connect with our team
@@ -242,7 +242,7 @@ const Contacts = () => {
                 </div>
 
                 <div className="mt-8 text-center text-gray-400">
-                    <p>© {new Date().getFullYear()} ToxicGames. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} ToxicGame. All rights reserved.</p>
                     <p className="mt-2">
                         Made with <span className="text-red-500">❤</span> for the gaming community
                     </p>

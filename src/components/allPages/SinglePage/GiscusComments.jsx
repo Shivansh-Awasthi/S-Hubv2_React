@@ -4,7 +4,7 @@ const GiscusComments = ({ objectId }) => {
     useEffect(() => {
         const script = document.createElement('script');
         script.src = 'https://giscus.app/client.js';
-        script.setAttribute('data-repo', 'Admin-ToxicGames/toxicgames');
+        script.setAttribute('data-repo', 'Admin-ToxicGame/ToxicGame');
         script.setAttribute('data-repo-id', 'R_kgDONQVRhg');
         script.setAttribute('data-category', 'General');
         script.setAttribute('data-category-id', 'DIC_kwDONQVRhs4CkU7x');

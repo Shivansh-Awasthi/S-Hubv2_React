@@ -45,7 +45,7 @@ const Donate = () => {
 
     // Handle Ko-fi donation button click
     const handleKofiClick = () => {
-        window.open('https://ko-fi.com/toxicgames', '_blank');
+        window.open('https://ko-fi.com/ToxicGame', '_blank');
         setShowThankYou(true);
         setTimeout(() => setShowThankYou(false), 5000);
     };

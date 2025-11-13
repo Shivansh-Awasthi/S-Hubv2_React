@@ -306,16 +306,16 @@ function Ps2Iso() {
             {/* SEO things */}
 
 
-            <title>Download PS2 Games Free | ToxicGames</title>
+            <title>Download PS2 Games Free | ToxicGame</title>
             <meta
                 name="description"
-                content="Explore and download all the best PS2 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 2."
+                content="Explore and download all the best PS2 games for free from ToxicGame. Full games, ISOs, and more for PlayStation 2."
             />
             <link rel="canonical" href="https://toxicgame.net/category/ps2/iso" />
 
             {/* Open Graph / Link preview */}
-            <meta property="og:title" content={`Download PS2 Games Free | ToxicGames`} />
-            <meta property="og:description" content={`Explore and download all the best PS2 games for free from ToxicGames. Full games, ISOs, and more for PlayStation 2.`} />
+            <meta property="og:title" content={`Download PS2 Games Free | ToxicGame`} />
+            <meta property="og:description" content={`Explore and download all the best PS2 games for free from ToxicGame. Full games, ISOs, and more for PlayStation 2.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
             <meta property="og:url" content={`https://toxicgame.net/category/ps2/iso`} />
             <meta property="og:type" content="website" />

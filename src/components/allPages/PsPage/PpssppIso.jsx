@@ -303,16 +303,16 @@ function PpssppIso() {
     return (
         <div>
 
-            <title>Download PPSSPP Games Free | ToxicGames</title>
+            <title>Download PPSSPP Games Free | ToxicGame</title>
             <meta
                 name="description"
-                content="Explore and download all the best PPSSPP games for free from ToxicGames. Full games, ISOs, and more for PSP."
+                content="Explore and download all the best PPSSPP games for free from ToxicGame. Full games, ISOs, and more for PSP."
             />
             <link rel="canonical" href="https://toxicgame.net/category/ppsspp/iso" />
 
             {/* Open Graph / Link preview */}
-            <meta property="og:title" content={`Download PPSSPP Games Free | ToxicGames`} />
-            <meta property="og:description" content={`Explore and download all the best PPSSPP games for free from ToxicGames. Full games, ISOs, and more for PSP.`} />
+            <meta property="og:title" content={`Download PPSSPP Games Free | ToxicGame`} />
+            <meta property="og:description" content={`Explore and download all the best PPSSPP games for free from ToxicGame. Full games, ISOs, and more for PSP.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
             <meta property="og:url" content={`https://toxicgame.net/category/ppsspp/iso`} />
             <meta property="og:type" content="website" />

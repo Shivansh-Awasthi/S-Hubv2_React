@@ -22,7 +22,7 @@ const Policy = () => {
                             <section>
                                 <h2 className="text-2xl font-bold text-white mb-4">1. Introduction</h2>
                                 <p className="text-gray-300 leading-relaxed">
-                                    Welcome to ToxicGames. We are committed to protecting your privacy and ensuring
+                                    Welcome to ToxicGame. We are committed to protecting your privacy and ensuring
                                     transparency about how we handle your information. This Privacy Policy explains
                                     what information we collect, how we use it, and your rights regarding your data.
                                 </p>
@@ -162,9 +162,9 @@ const Policy = () => {
                                     please contact us:
                                 </p>
                                 <ul className="list-disc list-inside text-gray-300 space-y-2 ml-4 mt-2">
-                                    <li>Email: privacy@toxicgames.com</li>
+                                    <li>Email: privacy@ToxicGame.com</li>
                                     <li>Telegram: <a href="https://t.me/n0t_ur_type" className="text-cyan-400 hover:text-cyan-300">@n0t_ur_type</a></li>
-                                    <li>Discord: ToxicGames Community</li>
+                                    <li>Discord: ToxicGame Community</li>
                                 </ul>
                             </section>
                         </div>
@@ -201,7 +201,7 @@ const Policy = () => {
                         <Link to="/donate" className="hover:text-cyan-400 transition-colors">Donate</Link>
                     </div>
                     <p className="text-gray-500 text-sm">
-                        © {new Date().getFullYear()} ToxicGames. All rights reserved.
+                        © {new Date().getFullYear()} ToxicGame. All rights reserved.
                     </p>
                 </div>
             </div>

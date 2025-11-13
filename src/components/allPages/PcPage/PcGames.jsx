@@ -609,16 +609,16 @@ function PcGames() {
         <div>
 
 
-            <title>Download Pre-Installed PC Games for Free | ToxicGames</title>
+            <title>Download Pre-Installed PC Games for Free | ToxicGame</title>
             <meta
                 name="description"
-                content="Explore and download all the best PC games for free from ToxicGames. Full games, Pre-Installed , and more for PC."
+                content="Explore and download all the best PC games for free from ToxicGame. Full games, Pre-Installed , and more for PC."
             />
             <link rel="canonical" href="https://toxicgame.net/category/pc/games" />
 
             {/* Open Graph / Link preview */}
-            <meta property="og:title" content={`Download PC Games Free | ToxicGames`} />
-            <meta property="og:description" content={`Explore and download all the best PC games for free from ToxicGames. Full games, Pre-Installed, and more for PC.`} />
+            <meta property="og:title" content={`Download PC Games Free | ToxicGame`} />
+            <meta property="og:description" content={`Explore and download all the best PC games for free from ToxicGame. Full games, Pre-Installed, and more for PC.`} />
             <meta property="og:image" content="https://i.postimg.cc/KcVfdJrH/image-removebg-preview-removebg-preview.png" />
             <meta property="og:url" content={`https://toxicgame.net/category/pc/games`} />
             <meta property="og:type" content="website" />
