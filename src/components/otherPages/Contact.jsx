@@ -114,7 +114,7 @@ const Contacts = () => {
                             </div>
                         </div>
 
-                        <div className="flex items-start">
+                        <div className="flex items-start mb-8">
                             <div className="bg-purple-900/30 p-3 rounded-xl border border-purple-500/30 mr-4">
                                 <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -131,6 +131,29 @@ const Contacts = () => {
                                     Join our Telegram community
                                 </a>
                                 <p className="text-gray-400 mt-2">Connect with other gamers and share experiences</p>
+                            </div>
+                        </div>
+
+                        {/* Advertisement Section */}
+                        <div className="flex items-start">
+                            <div className="bg-green-900/30 p-3 rounded-xl border border-green-500/30 mr-4">
+                                <svg className="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-semibold text-gray-100 mb-2">Advertisement</h3>
+
+                                <a
+                                    href="https://t.me/downloadmacgames"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-green-400 hover:text-green-300 transition-colors text-lg">
+                                    support@toxicgame.net
+                                </a>
+                                <p className="text-gray-300 mt-3">
+                                    Interested in advertising or collaborating with us?
+                                </p>
                             </div>
                         </div>
                     </div>
